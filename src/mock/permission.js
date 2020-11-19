@@ -44,18 +44,32 @@ export default {
                 icon: 'location',
                 children: [
                   {
-                    path: '/page1',
-                    name: 'page1',
+                    path: "/design",
+                    name: "设计文档",
                     label: '设计文档',
                     icon: 'setting',
                     url: 'Other/PageOne'
                   },
                   {
-                    path: '/page2',
-                    name: 'page2',
+                    path: "/audit",
+                    name: "审计文档",
                     label: '审计文档',
                     icon: 'setting',
                     url: 'Other/PageTwo'
+                  },
+                  {
+                    path: "/xz",
+                    name: "行政文档",
+                    label: '行政文档',
+                    icon: 'setting',
+                    url: 'Other/PageThree'
+                  },
+                  {
+                    path: "/dangan",
+                    name: "档案文档",
+                    label: '档案文档',
+                    icon: 'setting',
+                    url: 'Other/PageFour'
                   }
                 ]
               }

@@ -1,6 +1,7 @@
 <template>
   <div class="common-table">
     <el-table :data="tableData" height="90%" stripe v-loading="config.loading">
+      <el-table-column type="selection" width="55" align="center"></el-table-column>
       <el-table-column label="序号" width="85">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ (config.page - 1) * 20 + scope.$index + 1 }}</span>

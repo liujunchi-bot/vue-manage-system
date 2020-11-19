@@ -1,19 +1,45 @@
 <template>
   <div class="manage">
-    <el-dialog :title="operateType === 'add' ? '新增项目' : '更新项目信息'" :visible.sync="isShow">
-      <common-form :formLabel="operateFormLabel" :form="operateForm" ref="form"></common-form>
+    <el-dialog
+      :title="operateType === 'add' ? '新增项目' : '更新项目信息'"
+      :visible.sync="isShow"
+    >
+      <common-form
+        :formLabel="operateFormLabel"
+        :form="operateForm"
+        ref="form"
+      ></common-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="isShow = false">取 消</el-button>
         <el-button type="primary" @click="confirm">确 定</el-button>
       </div>
     </el-dialog>
     <div class="manage-header">
-      <el-button type="primary" @click="addUser">+ 新增</el-button>
+      <div>
+        <el-button type="primary" @click="addUser">新增</el-button>
+        <el-button type="primary" @click="delUser">删除</el-button>
+        <el-button type="primary" @click="delUser">导出</el-button>
+      </div>
+
       <common-form inline :formLabel="formLabel" :form="searchFrom">
-        <el-button type="primary" @click="getList(searchFrom.keyword)">搜索</el-button>
+        <el-button type="primary" @click="getList(searchFrom.keyword)"
+          >搜索</el-button
+        >
       </common-form>
     </div>
-    <common-table :tableData="tableData" :tableLabel="tableLabel" :config="config" @changePage="getList()" @edit="editUser" @del="delUser"></common-table>
+    <el-table-column
+      type="selection"
+      width="55"
+      align="center"
+    ></el-table-column>
+    <common-table
+      :tableData="tableData"
+      :tableLabel="tableLabel"
+      :config="config"
+      @changePage="getList()"
+      @edit="editUser"
+      @del="delUser"
+    ></common-table>
   </div>
 </template>
 
@@ -25,18 +51,18 @@ export default {
     CommonForm,
     CommonTable
   },
-  data() {
+  data () {
     return {
       operateType: 'add',
       isShow: false,
       tableData: [],
       tableLabel: [
         {
-          prop: 'number',
+          prop: 'id',
           label: '项目编号'
         },
         {
-          prop: 'name',
+          prop: 'proname',
           label: '项目名称'
         },
         {
@@ -48,18 +74,22 @@ export default {
           label: '主委托方',
         },
         {
+          prop: 'client',
+          label: '被服务单位',
+        },
+        {
           prop: 'contract',
           label: '合同名称',
           width: 200
         },
         {
-          prop: 'state',
-          label: '合同状态'
+          prop: 'department',
+          label: '部门'
         },
         {
-          prop:'finish_time',
-          label:'项目预计结束时间',
-          width:200
+          prop: 'dname',
+          label: '申请人',
+          width: 100
         }
       ],
       config: {
@@ -74,7 +104,7 @@ export default {
         client: '',
         contract: '',
         state: '',
-        finish_time:'',
+        finish_time: '',
       },
       operateFormLabel: [
         {
@@ -84,7 +114,7 @@ export default {
         {
           model: 'name',
           label: '项目名称'
-        },       
+        },
         {
           model: 'category',
           label: '项目类别',
@@ -127,7 +157,7 @@ export default {
           model: 'finish_time',
           label: '项目预计结束时间',
           type: 'date'
-        }      
+        }
       ],
       searchFrom: {
         keyword: ''
@@ -141,7 +171,7 @@ export default {
     }
   },
   methods: {
-    getList(name = '') {
+    getList (name = '') {
       this.config.loading = true
       // 搜索时，页码需要设置为1，才能正确返回数据，因为数据是从第一页开始返回的
       name ? (this.config.page = 1) : ''
@@ -161,17 +191,17 @@ export default {
           this.config.loading = false
         })
     },
-    addUser() {
+    addUser () {
       this.operateForm = {}
       this.operateType = 'add'
       this.isShow = true
     },
-    editUser(row) {
+    editUser (row) {
       this.operateType = 'edit'
       this.isShow = true
       this.operateForm = row
     },
-    confirm() {
+    confirm () {
       if (this.operateType === 'edit') {
         this.$http.post('/api/user/edit', this.operateForm).then(res => {
           console.log(res.data)
@@ -186,7 +216,7 @@ export default {
         })
       }
     },
-    delUser(row) {
+    delUser (row) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -217,12 +247,12 @@ export default {
         })
     }
   },
-  created() {
+  created () {
     this.getList()
   }
 }
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/common';
+@import "@/assets/scss/common";
 </style>
