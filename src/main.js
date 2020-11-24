@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import axios from 'axios'
 
 // 全局配置
 import '@/assets/scss/reset.scss'
@@ -16,6 +17,11 @@ Vue.use(ElementUI)
 Vue.prototype.$http = http
 
 Vue.config.productionTip = false
+
+axios.defaults.withCredentials = true
+axios.defaults.baseURL = "http://localhost:8080"
+Vue.prototype.$http = axios
+Vue.use(axios)
 
 router.beforeEach((to, from, next) => {
   // 防止刷新后vuex里丢失token
@@ -35,7 +41,7 @@ new Vue({
   router,
   store,
   render: h => h(App),
-  created() {
+  created () {
     store.commit('addMenu', router)
   }
 }).$mount('#app')
