@@ -1,18 +1,18 @@
 import Mock from 'mockjs'
 
 // get请求从config.url获取参数，post从config.body中获取参数
-function param2Obj(url) {
+function param2Obj (url) {
   const search = url.split('?')[1]
   if (!search) {
     return {}
   }
   return JSON.parse(
     '{"' +
-      decodeURIComponent(search)
-        .replace(/"/g, '\\"')
-        .replace(/&/g, '","')
-        .replace(/=/g, '":"') +
-      '"}'
+    decodeURIComponent(search)
+      .replace(/"/g, '\\"')
+      .replace(/&/g, '","')
+      .replace(/=/g, '":"') +
+    '"}'
   )
 }
 
@@ -36,6 +36,12 @@ for (let i = 0; i < count; i++) {
       //   "进行中"
       // ],
       // finish_time: Mock.Random.date()
+      "type|1": [
+        "财务审计",
+        "工程审计",
+        "税务审计"
+      ],
+      project_name: Mock.Random.cname(),
       id: Mock.Random.guid(),
       cname: Mock.Random.cname(),
       name: Mock.Random.cname(),
@@ -47,44 +53,61 @@ for (let i = 0; i < count; i++) {
       sex: Mock.Random.integer(0, 1),
       version: Mock.Random.integer(),
       blproject: Mock.Random.name(),
-      "state|1":[
+      "state|1": [
         "已完成",
         "进行中",
         "审核中"
       ],
       // name: Mock.Random.cname(),
-        "category|1": [
-          "税审",
-          "年审"
-        ],
-        "client|1":[
-          "WXN2",
-          "北京三联永信科技有限公司",
-          "asdf",
-          "湖南大学软件学院",
-          "谷歌",
-          "腾讯",
-          "阿里"
-        ],
-        "contract|1":[
-          "湖北光明会计所签章系统",
-          "中南大学专项经费审计业务约定书",
-          "工程造价",
-          "WXN2",
-          "dsafadf",
-          "asdf",
-          "Micro Lee",
-          "测试123"
-        ],
-        "department|1":[
-          "销售部",
-          "运营部",
-          "研发部",
-          "策划部"
-        ],
-        proname:Mock.Random.string(5),
-        dname:Mock.Random.cname(),
-        fileversion:Mock.Random.float(0,0,1,1)
+      "category|1": [
+        "税审",
+        "年审"
+      ],
+      "client|1": [
+        "WXN2",
+        "北京三联永信科技有限公司",
+        "asdf",
+        "湖南大学软件学院",
+        "谷歌",
+        "腾讯",
+        "阿里"
+      ],
+      "contract|1": [
+        "湖北光明会计所签章系统",
+        "中南大学专项经费审计业务约定书",
+        "工程造价",
+        "WXN2",
+        "dsafadf",
+        "asdf",
+        "Micro Lee",
+        "测试123"
+      ],
+      "department|1": [
+        "销售部",
+        "运营部",
+        "研发部",
+        "策划部"
+      ],
+      reportNo: Mock.Random.natural(1, 100000),
+      project_type: Mock.Random.cword(10),
+      partner: Mock.Random.cname(),
+      number: Mock.Random.natural(1, 10000),
+      quality_control: Mock.Random.cname(),
+      leader: Mock.Random.cname(),
+      group_members: Mock.Random.cname(),
+      accountant: Mock.Random.cname(),
+      cost_engineer: Mock.Random.cname(),
+      tax_accountant: Mock.Random.cname(),
+      suggestion: Mock.Random.cword(10),
+      start_time: Mock.Random.date(),
+      finish_time: Mock.Random.date(),
+      organization: Mock.Random.cname(),
+      total_assets: Mock.Random.natural(10000, 1000000),
+      check_money: Mock.Random.natural(10000, 1000000),
+      reduction_money: Mock.Random.natural(10000, 1000000),
+      proname: Mock.Random.string(5),
+      dname: Mock.Random.cname(),
+      fileversion: Mock.Random.float(0, 0, 1, 1)
     })
   )
 }
