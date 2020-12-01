@@ -36,6 +36,8 @@
 <script>
 import CommonForm from '../../components/CommonForm'
 import CommonTable from '../../components/CommonTable'
+import axios from '../../axios/ajax'
+import qs from 'qs'
 export default {
   components: {
     CommonForm,
@@ -48,7 +50,11 @@ export default {
       tableData: [],
       tableLabel: [
         {
-          prop: 'type',
+          prop: 'project_id',
+          label: 'id',
+        },
+        {
+          prop: 'project_type',
           label: '审计大类类型',
         },
         {
@@ -56,75 +62,71 @@ export default {
           label: '项目名称'
         },
         {
-          prop: 'client',
+          prop: 'project_client',
           label: '客户名称',
         },
         {
-          prop: 'reportNo',
+          prop: 'project_reportnumber',
           label: '审计报告号'
         },
         {
-          prop: 'project_type',
+          prop: 'project_class',
           label: '项目类型'
         },
         {
-          prop: 'partner',
+          prop: 'project_partner',
           label: '项目合伙人'
         },
         {
-          prop: 'number',
+          prop: 'project_code',
           label: '项目编号',
         },
         {
-          prop: 'quality_control',
+          prop: 'project_qualitycontroler',
           label: '质控负责人'
         },
         {
-          prop: 'leader',
+          prop: 'project_head',
           label: '项目负责人',
         },
         {
-          prop: 'group_members',
+          prop: 'project_members',
           label: '组员',
         },
         {
-          prop: 'accountant',
+          prop: 'project_accountant',
           label: '签字注册会计师',
         },
         {
-          prop: 'cost_engineer',
+          prop: 'project_costengineer',
           label: '签字注册造价师',
         },
         {
-          prop: 'tax_accountant',
+          prop: 'project_taxaccountant',
           label: '签字税务师',
         },
         {
-          prop: 'suggestion',
+          prop: 'project_comment',
           label: '报告意见类型',
         },
         {
-          prop: 'start_time',
-          label: '执行起始时间',
+          prop: 'project_startandendtime',
+          label: '执行起止时间',
         },
         {
-          prop: 'finish_time',
-          label: '执行结束时间',
-        },
-        {
-          prop: 'organization',
+          prop: 'project_construction',
           label: '施工单位',
         },
         {
-          prop: 'total_assets',
+          prop: 'project_assets',
           label: '资产总额',
         },
         {
-          prop: 'check_money',
+          prop: 'project_audit',
           label: '审核金额',
         },
         {
-          prop: 'reduction_money',
+          prop: 'project_reduction',
           label: '审减金额',
         },
       ],
@@ -134,31 +136,29 @@ export default {
         loading: false
       },
       operateForm: {
-        type: '',
-        project_name: '',
-        client: '',
-        reportNo: '',
         project_type: '',
-        partner: '',
-        number: '',
-        quality_control: '',
-        leader: '',
-        group_members: '',
-        accountant: '',
-        cost_engineer: '',
-        tax_accountant: '',
-        suggestion: '',
-        start_time: '',
-        finish_time: '',
-        organization: '',
-        total_assets: '',
-        total_assets: '',
-        check_money: '',
-        reduction_money: ''
+        project_name: '',
+        project_client: '',
+        project_reportnumber: '',
+        project_class: '',
+        project_partner: '',
+        project_code: '',
+        project_qualitycontroler: '',
+        project_head: '',
+        project_members: '',
+        project_accountant: '',
+        project_costengineer: '',
+        project_taxaccountant: '',
+        project_comment: '',
+        project_startandendtime: '',
+        project_construction: '',
+        project_assets: '',
+        project_audit: '',
+        project_reduction: ''
       },
       operateFormLabel: [
         {
-          model: 'type',
+          model: 'project_type',
           label: '审计大类类型',
           type: 'select',
           opts: [
@@ -181,77 +181,72 @@ export default {
           label: '项目名称'
         },
         {
-          model: 'client',
+          model: 'project_client',
           label: '客户名称'
         },
         {
-          model: 'reportNo',
+          model: 'project_reportnumber',
           label: '审计报告号'
         },
         {
-          model: 'project_type',
+          model: 'project_class',
           label: '项目类型'
         },
         {
-          model: 'partner',
+          model: 'project_partner',
           label: '项目合伙人'
         },
         {
-          model: 'number',
+          model: 'project_code',
           label: '项目编号'
         },
         {
-          model: 'quality_control',
+          model: 'project_qualitycontroler',
           label: '质控负责人'
         },
         {
-          model: 'leader',
+          model: 'project_head',
           label: '项目负责人'
         },
         {
-          model: 'group_members',
+          model: 'project_members',
           label: '组员'
         },
         {
-          model: 'accountant',
+          model: 'project_accountant',
           label: '签字注册会计师'
         },
         {
-          model: 'cost_engineer',
+          model: 'project_costengineer',
           label: '签字注册造价师'
         },
         {
-          model: 'tax_accountant',
+          model: 'project_taxaccountant',
           label: '签字税务师'
         },
         {
-          model: 'suggestion',
+          model: 'project_comment',
           label: '报告意见类型'
         },
         {
-          model: 'start_time',
-          label: '执行起始时间',
+          model: 'project_startandendtime',
+          label: '执行起止时间',
           type: 'date'
         },
         {
-          model: 'finish_time',
-          label: '执行结束时间',
-          type: 'date'
-        },
-        {
-          model: 'organization',
+          model: 'project_construction',
           label: '施工单位'
         },
         {
-          model: 'total_assets',
+          model: 'project_assets',
           label: '资产总额'
         },
         {
-          model: 'check_money',
+          model: 'project_audit',
           label: '审计金额'
         },
         {
-          model: 'reduction_money',
+          model: 'project_reduction',
           label: '审减金额'
         },
       ],
@@ -267,25 +262,50 @@ export default {
     }
   },
   methods: {
+    // getList (name = '') {
+    //   this.config.loading = true
+    //   // 搜索时，页码需要设置为1，才能正确返回数据，因为数据是从第一页开始返回的
+    //   name ? (this.config.page = 1) : ''
+    //   this.$http
+    //     .get('/api/user/getUser', {
+    //       params: {
+    //         page: this.config.page,
+    //         name,
+    //       }
+    //     })
+    //     .then(res => {
+    //       this.tableData = res.data.list.map(item => {
+    //         item.categoryLabel = item.category === 0 ? '税审' : '年审'
+    //         return item
+    //       })
+    //       this.config.total = res.data.count
+    //       this.config.loading = false
+    //     })
+    // },
     getList (name = '') {
       this.config.loading = true
-      // 搜索时，页码需要设置为1，才能正确返回数据，因为数据是从第一页开始返回的
       name ? (this.config.page = 1) : ''
-      this.$http
-        .get('/api/user/getUser', {
-          params: {
-            page: this.config.page,
-            name,
-          }
-        })
-        .then(res => {
-          this.tableData = res.data.list.map(item => {
-            item.categoryLabel = item.category === 0 ? '税审' : '年审'
-            return item
-          })
-          this.config.total = res.data.count
-          this.config.loading = false
-        })
+      axios._get("http://127.0.0.1:8081/getAllProject").then(res => {
+        this.$message.success("获取项目列表成功！")
+
+        // const mockList = res.filter(user => {
+        //   if (name && user.name.indexOf(name) === -1 && user.addr.indexOf(name) === -1) return false
+        //   return true
+        // })
+        // let List=res.data;
+        // const mockList = List.filter(user => {
+        //   var name=''
+        //   if (name && user.name.indexOf(name) === -1 && user.addr.indexOf(name) === -1) return false
+        //   return true
+        // })
+        // const list=mockList.filter((item, index) => index < limit * 10 && index >= limit * (10 - 1))
+        this.tableData = res;
+        // this.config.total = res.data.count;
+        this.config.loading = false;
+        //console.log("tabledata: "+JSON.stringify(res));
+      }, err => {
+        alert("error!!!");
+      })
     },
     addUser () {
       this.operateForm = {}
@@ -297,37 +317,92 @@ export default {
       this.isShow = true
       this.operateForm = row
     },
+    // confirm () {
+    //   if (this.operateType === 'edit') {
+    //     this.$http.post('/api/user/edit', this.operateForm).then(res => {
+    //       console.log(res.data)
+    //       this.isShow = false
+    //       this.getList()
+    //     })
+    //   } else {
+    //     this.$http.post('/api/user/add', this.operateForm).then(res => {
+    //       console.log(res.data)
+    //       this.isShow = false
+    //       this.getList()
+    //     })
+    //   }
+    // },
     confirm () {
       if (this.operateType === 'edit') {
-        this.$http.post('/api/user/edit', this.operateForm).then(res => {
+        axios._post('http://127.0.0.1:8081/update', qs.stringify(this.operateForm)).then(res => {
           console.log(res.data)
           this.isShow = false
           this.getList()
         })
       } else {
-        this.$http.post('/api/user/add', this.operateForm).then(res => {
-          console.log(res.data)
+        alert("添加成功！")
+        console.log("111111" + qs.stringify(this.operateForm));
+        axios._post('http://127.0.0.1:8081/insert', qs.stringify(this.operateForm)).then(res => {
+          this.$message.success("创建用户成功！");
           this.isShow = false
           this.getList()
+        }, err => {
+          alert("error!!!");
         })
       }
     },
+    //   delUser (row) {
+    //     this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+    //       confirmButtonText: '确定',
+    //       cancelButtonText: '取消',
+    //       type: 'warning'
+    //     })
+    //       .then(() => {
+    //         let id = row.id
+    //         this.$http
+    //           .get('/api/user/del', {
+    //             params: {
+    //               id
+    //             }
+    //           })
+    //           .then(res => {
+    //             console.log(res.data)
+    //             this.$message({
+    //               type: 'success',
+    //               message: '删除成功!'
+    //             })
+    //             this.getList()
+    //           })
+    //       })
+    //       .catch(() => {
+    //         this.$message({
+    //           type: 'info',
+    //           message: '已取消删除'
+    //         })
+    //       })
+    //   }
+    // },
     delUser (row) {
+      //alert(row)
+      // console.log("row"+qs.stringify(row));
+      //alert("delid+ "+row.project_id)
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          let id = row.id
-          this.$http
-            .get('/api/user/del', {
+          // let project_id=row.project_id;
+          //console.log("id+  "+id);
+          axios
+            ._remove('http://127.0.0.1:8081/delete', {
               params: {
-                id
+                project_id: row.project_id
               }
             })
+
             .then(res => {
-              console.log(res.data)
+              console.log(qs.stringify(row))
               this.$message({
                 type: 'success',
                 message: '删除成功!'

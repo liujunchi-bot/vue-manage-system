@@ -71,6 +71,34 @@ export default {
                     icon: 'setting',
                     url: 'Other/PageFour'
                   }
+
+                ]
+              },
+              {
+                label: '前台管理',
+                icon: 'user',
+                children: [
+                  {
+                    path: "/case",
+                    name: "案例维护",
+                    label: '案例维护',
+                    icon: 'setting',
+                    url: 'Front/Case'
+                  },
+                  {
+                    path: "/knowledge",
+                    name: "问答维护",
+                    label: '问答维护',
+                    icon: 'setting',
+                    url: 'Front/Knowledge'
+                  },
+                  {
+                    path: "/information",
+                    name: "信息维护",
+                    label: '信息维护',
+                    icon: 'setting',
+                    url: 'Front/Information'
+                  }
                 ]
               }
             ],

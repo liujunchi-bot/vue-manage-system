@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import axios from 'axios'
+// import axios from 'axios'
 
 // 全局配置
 import '@/assets/scss/reset.scss'
@@ -12,16 +12,17 @@ import './mock'
 
 // 第三方包
 import ElementUI from 'element-ui'
+import VueParticles from 'vue-particles'
+Vue.use(VueParticles)
 
 Vue.use(ElementUI)
 Vue.prototype.$http = http
 
 Vue.config.productionTip = false
 
-axios.defaults.withCredentials = true
-axios.defaults.baseURL = "http://localhost:8080"
-Vue.prototype.$http = axios
-Vue.use(axios)
+// axios.defaults.withCredentials = true
+// axios.defaults.baseURL = "http://localhost:8080"
+// Vue.prototype.$axios = axios
 
 router.beforeEach((to, from, next) => {
   // 防止刷新后vuex里丢失token

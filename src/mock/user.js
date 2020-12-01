@@ -127,6 +127,8 @@ export default {
       return true
     })
     const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
+    // console("oageList")
+    console.log(pageList)
     return {
       code: 20000,
       count: mockList.length,
