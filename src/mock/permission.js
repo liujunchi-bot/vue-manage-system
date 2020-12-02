@@ -79,6 +79,13 @@ export default {
                 icon: 'user',
                 children: [
                   {
+                    path: "/banner",
+                    name: "轮播图维护",
+                    label: '轮播图维护',
+                    icon: 'setting',
+                    url: 'Front/Banner'
+                  },
+                  {
                     path: "/bussiness-scope",
                     name: "业务范围维护",
                     label: '业务范围维护',
