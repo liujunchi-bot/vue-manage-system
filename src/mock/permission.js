@@ -70,8 +70,14 @@ export default {
                     label: '档案文档',
                     icon: 'setting',
                     url: 'Other/PageFour'
-                  }
-
+                  },
+                  {
+                    path: "/test",
+                    name: "测试文档",
+                    label: "测试文档",
+                    icon: "setting",
+                    url: "Other/PageFive"
+                  },
                 ]
               },
               {
