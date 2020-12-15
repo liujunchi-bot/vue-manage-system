@@ -22,6 +22,7 @@
         >
       </common-form>
     </div>
+    
     <common-table
       :tableData="tableData"
       :tableLabel="tableLabel"

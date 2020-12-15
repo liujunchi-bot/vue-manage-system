@@ -1,7 +1,7 @@
 <template>
   <div class="contractmanage">
     <el-dialog :title="operateType === 'add' ? '上传合同' : '编辑合同'" :visible.sync="isShow">
-      <common-form :formLabel="operateFormLabel" :form="operateForm" ref="form" :rules="rules"> </common-form>
+      <common-form :formLabel="operateFormLabel" :form="operateForm" ref="form"> </common-form>
 
       <el-upload class="upload-demo" ref="upload" action="doUpload"  :limit="1" :file-list="fileList"
       :before-upload="beforeUpload" :on-preview="handlePreview" :on-remove="handleRemove" :on-success="handleSuccess" :before-remove="beforeRemove"
@@ -18,11 +18,6 @@
     </el-dialog>
 
     <div class="manage-header">
-      <el-row :gutter="20">
-        <el-col :span="10">
-          <el-button type="primary" @click="addUser">上传</el-button>
-        </el-col>
-      </el-row>
           <common-form inline :formLabel="formLabel" :form="searchFrom">
             <el-button type="primary" @click="getList(searchFrom.keyword)">搜索</el-button>
           </common-form>
@@ -35,9 +30,7 @@
 
 <script>
 import CommonForm from '../../components/CommonForm'
-import ContractTable from '../../components/ContractTable'
-import axios from '../../axios/ajax'
-import qs from 'qs'
+import ContractTable from '../../components/ContractTable2'
 export default {
   components: {
     CommonForm,
@@ -84,8 +77,8 @@ export default {
           width: 150
         },
         {
-          prop: 'file_state',
-          label: '状态'
+          prop: 'file_operator',
+          label: '经办人'
         }
       ],
       config: {
@@ -94,47 +87,48 @@ export default {
         loading: false
       },
       operateForm: {
-        file_name: '',
-        file_id: '',
-        file_uploaddate: '',
-        file_updatedate: '',
-        //sex: '',
-        file_version: '',
-        file_project: '',
-        file_property: '',
-        file_state: ''
+        name: '',
+        addr: '',
+        age: '',
+        birth: '',
+        sex: '',
+        department: '',
+        project: '',
+        state: ''
       },
       operateFormLabel: [
         {
-          model: 'file_id',
-          label: '*合同编号'
-        },
-        {
-          model: 'file_type',
-          label: '*文件类型',
-          type: 'select',
-          opts: [
-            {
-              label: '合同',
-              value: '合同'
-            },
-          ]
-        },
-        {
-          model: 'file_property',
-          label: '说明'
-        },
-        {
-          model: 'file_name',
+          model: 'name',
           label: '*合同名称'
         },
         {
-          model: 'file_version',
-          label: '*版本号'
+          model: 'age',
+          label: '*合同编号'
         },
         {
-          model: 'file_project',
+          model: 'sex',
+          label: '客户名称'
+        },
+        {
+          model: 'birth',
+          label: '上传日期',
+          type: 'date'
+        },
+        {
+          model: 'addr',
+          label: '上传人'
+        },
+        {
+          model: 'department',
+          label: '*部门'
+        },
+        {
+          model: 'project',
           label: '所属项目'
+        },
+        {
+          model: 'state',
+          label: '运营状态'
         }
       ],
       searchFrom: {
@@ -167,7 +161,7 @@ export default {
         return;
       }
       this.filename = file.name;
-      return ;
+      //return any;
     },
     handleSuccess: function () {
     },
@@ -185,41 +179,25 @@ export default {
         return this.$confirm(`确定移除 ${ file.name }？`);
       }
     },
-    //rules:{
-    //  name: [{required: true, message: "合同名称不能为空", trigger: 'blur'}],
-    //},
-    // getList(name = '') {
-    //   this.config.loading = true
-    //   // 搜索时，页码需要设置为1，才能正确返回数据，因为数据是从第一页开始返回的
-    //   name ? (this.config.page = 1) : ''
-    //   this.$http
-    //     .get('/api/user/getUser', {
-    //       params: {
-    //         page: this.config.page,
-    //         name
-    //       }
-    //     })
-    //     .then(res => {
-    //       this.tableData = res.data.list.map(item => {
-    //         item.sexLabel = item.sex === 0 ? '女' : '男'
-    //         return item
-    //       })
-    //       this.config.total = res.data.count
-    //       this.config.loading = false
-    //     })
-    // },
     getList(name = '') {
-      this.config.loading = true;
-      name ? (this.config.page = 1): '';
-      axios._get("").then(res => {
-        this.$message.success("获取合同列表成功！")
-        this.tableData = res;
-        // this.config.total = res.data.count;
-        this.config.loading = false;
-        //console.log("tabledata: "+JSON.stringify(res));
-    }, err => {
-      alert("error!!");
-    })
+      this.config.loading = true
+      // 搜索时，页码需要设置为1，才能正确返回数据，因为数据是从第一页开始返回的
+      name ? (this.config.page = 1) : ''
+      this.$http
+        .get('/api/user/getUser', {
+          params: {
+            page: this.config.page,
+            name
+          }
+        })
+        .then(res => {
+          this.tableData = res.data.list.map(item => {
+            item.sexLabel = item.sex === 0 ? '女' : '男'
+            return item
+          })
+          this.config.total = res.data.count
+          this.config.loading = false
+        })
     },
     addUser() {
       this.operateForm = {}
@@ -231,41 +209,18 @@ export default {
       this.isShow = true
       this.operateForm = row
     },
-    // confirm() {
-    //   if (this.operateType === 'edit') {
-    //     this.$http.post('/api/user/edit', this.operateForm).then(res => {
-    //       console.log(res.data)
-    //       this.isShow = false
-    //       this.getList()
-    //     })
-    //   } else {
-    //     this.$http.post('/api/user/add', this.operateForm).then(res => {
-    //       console.log(res.data)
-    //       this.isShow = false
-    //       this.getList()
-    //     })
-    //   }
-    // },
-    confirm () {
-      //if(!this.name){
-      //  showToast('请输入姓名！')
-      //  return false
-      //}
+    confirm() {
       if (this.operateType === 'edit') {
-        axios._post('', qs.stringify(this.operateForm)).then(res => {
+        this.$http.post('/api/user/edit', this.operateForm).then(res => {
           console.log(res.data)
           this.isShow = false
           this.getList()
         })
       } else {
-        alert("添加成功！")
-        console.log("111111" + qs.stringify(this.operateForm));
-        axios._post('', qs.stringify(this.operateForm)).then(res => {
-          this.$message.success("创建合同成功！");
+        this.$http.post('/api/user/add', this.operateForm).then(res => {
+          console.log(res.data)
           this.isShow = false
           this.getList()
-        }, err => {
-          alert("error!!!");
         })
       }
     },
@@ -295,19 +250,13 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          axios
-            ._remove('',{
+          let id = row.id
+          this.$http
+            .get('/api/user/del', {
               params: {
-                file_id: row.file_id
+                id
               }
             })
-          // let id = row.id
-          // this.$http
-          //   .get('/api/user/del', {
-          //     params: {
-          //       id
-          //     }
-          //   })
             .then(res => {
               console.log(res.data)
               this.$message({
@@ -326,7 +275,7 @@ export default {
     }
   },
   created() {
-    this.getList();
+    this.getList()
   }
 }
 </script>
