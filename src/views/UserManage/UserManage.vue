@@ -110,8 +110,12 @@ export default {
           label: '报告意见类型',
         },
         {
-          prop: 'project_startandendtime',
-          label: '执行起止时间',
+          prop: 'project_starttime',
+          label: '执行开始时间',
+        },
+        {
+          prop: 'project_endtime',
+          label: '执行结束时间',
         },
         {
           prop: 'project_construction',
@@ -150,7 +154,8 @@ export default {
         project_costengineer: '',
         project_taxaccountant: '',
         project_comment: '',
-        project_startandendtime: '',
+        project_starttime: '',
+        project_endtime: '',
         project_construction: '',
         project_assets: '',
         project_audit: '',
@@ -229,8 +234,13 @@ export default {
           label: '报告意见类型'
         },
         {
-          model: 'project_startandendtime',
-          label: '执行起止时间',
+          model: 'project_starttime',
+          label: '执行开始时间',
+          type: 'date'
+        },
+        {
+          model: 'project_endtime',
+          label: '执行结束时间',
           type: 'date'
         },
         {
@@ -285,7 +295,7 @@ export default {
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
-      axios._get("http://127.0.0.1:8081/getAllProject").then(res => {
+      axios._get("http://127.0.0.1:8080/project/getAllProject").then(res => {
         this.$message.success("获取项目列表成功！")
 
         // const mockList = res.filter(user => {
@@ -334,7 +344,7 @@ export default {
     // },
     confirm () {
       if (this.operateType === 'edit') {
-        axios._post('http://127.0.0.1:8081/update', qs.stringify(this.operateForm)).then(res => {
+        axios._post('http://127.0.0.1:8080/project/update', qs.stringify(this.operateForm)).then(res => {
           console.log(res.data)
           this.isShow = false
           this.getList()
@@ -342,7 +352,8 @@ export default {
       } else {
         alert("添加成功！")
         console.log("111111" + qs.stringify(this.operateForm));
-        axios._post('http://127.0.0.1:8081/insert', qs.stringify(this.operateForm)).then(res => {
+        axios._post('http://127.0.0.1:8080/project/insert', qs.stringify(this.operateForm)).then(res => {
+
           this.$message.success("创建用户成功！");
           this.isShow = false
           this.getList()
@@ -395,7 +406,7 @@ export default {
           // let project_id=row.project_id;
           //console.log("id+  "+id);
           axios
-            ._remove('http://127.0.0.1:8081/delete', {
+            ._remove('http://127.0.0.1:8080/project/delete', {
               params: {
                 project_id: row.project_id
               }
