@@ -255,16 +255,16 @@
                 const isIMAGE = file.type === "image/jpeg"||"image/png"||"image/gif"||"image/jpg";
                 const isDOCUMENT = file.type === "application/pdf"||"application/doc"||"application/docx"
                 const isZip = file.type === "application/zip"||"application/rar"||"application/7z";
-                const isLt50M = file.size /1024/1024 < 50;
+                const isLt100M = file.size /1024/1024 < 100;
 
                 if (!isIMAGE||!isDOCUMENT||!isZip){
                     this.$message.error('上传文件格式只能为jpeg,png,gif,jpg,pdf,doc,docx,zip.rar,7z');
                 }
 
-                if (!isLt50M){
-                    this.$message.error('上传文件大小不得大于50MB');
+                if (!isLt100M){
+                    this.$message.error('上传文件大小不得大于100MB');
                 }
-                return (isIMAGE || isDOCUMENT || isZip) && isLt50M;
+                return (isIMAGE || isDOCUMENT || isZip) && isLt100M;
             },
             getList (name = '') {
                 this.config.loading = true
