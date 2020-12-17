@@ -102,7 +102,7 @@ export default {
     return oPost(url, params);
   },
 
-  _update (param, params) {
+  _update (url, param, params) {
     return oUpdate(url + param, params);
   },
 
