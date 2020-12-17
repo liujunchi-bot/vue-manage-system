@@ -16,7 +16,8 @@
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
-          <el-button size="mini" type="primary" @click="handleSubmit(scope.row)">提交</el-button>
+          <el-button size="mini" type="primary" @click="handlePass(scope.row)">通过</el-button>
+          <el-button size="mini" type="danger" @click="handleRefuse(scope.row)">退回</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -42,10 +43,14 @@ export default {
     changePage(page) {
       this.$emit('changePage', page)
     },
-    handleSubmit(row) {
+    handlePass(row) {
       
-      this.$emit('sub',row)
-    }
+      this.$emit('pass',row)
+    },
+    handleRefuse(row) {
+      
+      this.$emit('refuse',row)
+    },
   }
 }
 </script>

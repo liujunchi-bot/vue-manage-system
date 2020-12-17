@@ -146,18 +146,94 @@ export default {
           data: {
             menu: [
               {
+                path: '/dynamic',
+                name: 'dynamic',
+                label: '项目动态',
+                icon: 's-home',
+                url: 'Dynamic/Dynamic'
+              },
+              {
                 path: '/',
                 name: 'home',
-                label: '首页',
+                label: '项目统计',
                 icon: 's-home',
                 url: 'Home/Home'
               },
               {
                 path: '/video',
                 name: 'video',
-                label: '视频管理页',
+                label: '合同管理',
                 icon: 'video-play',
                 url: 'VideoManage/VideoManage'
+              },
+              {
+                path: '/user',
+                name: 'user',
+                label: '项目列表',
+                icon: 'user',
+                url: 'CheckManage/CheckManage'
+              },
+              {
+                label: '文档管理',
+                icon: 'location',
+                children: [
+                  {
+                    path: "/design",
+                    name: "设计文档",
+                    label: '设计文档',
+                    icon: 'setting',
+                    url: 'Other/PageOne'
+                  },
+                  {
+                    path: "/audit",
+                    name: "审计文档",
+                    label: '审计文档',
+                    icon: 'setting',
+                    url: 'Other/PageTwo'
+                  },
+                  {
+                    path: "/xz",
+                    name: "行政文档",
+                    label: '行政文档',
+                    icon: 'setting',
+                    url: 'Other/PageThree'
+                  },
+                  {
+                    path: "/dangan",
+                    name: "档案文档",
+                    label: '档案文档',
+                    icon: 'setting',
+                    url: 'Other/PageFour'
+                  }
+
+                ]
+              },
+              {
+                label: '前台管理',
+                icon: 'user',
+                children: [
+                  {
+                    path: "/case",
+                    name: "案例维护",
+                    label: '案例维护',
+                    icon: 'setting',
+                    url: 'Front/Case'
+                  },
+                  {
+                    path: "/knowledge",
+                    name: "问答维护",
+                    label: '问答维护',
+                    icon: 'setting',
+                    url: 'Front/Knowledge'
+                  },
+                  {
+                    path: "/information",
+                    name: "信息维护",
+                    label: '信息维护',
+                    icon: 'setting',
+                    url: 'Front/Information'
+                  }
+                ]
               }
             ],
             token: Mock.Random.guid(),
