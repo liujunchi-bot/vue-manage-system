@@ -29,14 +29,15 @@
       @changePage="getList()"
       @edit="editUser"
       @del="delUser"
-      @sub="subProject"
+      @pass="passProject"
+      @refuse="refuseProject"
     ></common-table>
   </div>
 </template>
 
 <script>
 import CommonForm from '../../components/CommonForm'
-import CommonTable from '../../components/CommonTable'
+import CommonTable from '../../components/CommonTable2'
 import axios from '../../axios/ajax'
 import qs from 'qs'
 import username from '../../mock/permission'
@@ -112,12 +113,14 @@ export default {
           label: '报告意见类型',
         },
         {
-          prop: 'project_starttime',
+          model: 'project_starttime',
           label: '项目开始时间',
+          type: 'date'
         },
         {
-          prop: 'project_enttime',
-          label: '项目结束时间'
+          model: 'project_endtime',
+          label: '项目结束时间',
+          type: 'date'
         },
         {
           prop: 'project_construction',
@@ -136,8 +139,8 @@ export default {
           label: '审减金额',
         },
         {
-          prop: 'project_state',
-          label: '项目状态',
+          prop: 'project_agent',
+          label: '经办人'
         }
       ],
       config: {
@@ -166,7 +169,7 @@ export default {
         project_assets: '',
         project_audit: '',
         project_reduction: '',
-        project_state: ''
+        project_agent: ''
       },
       operateFormLabel: [
         {
@@ -267,23 +270,8 @@ export default {
           label: '审减金额'
         },
         {
-          model: 'project_state',
-          label: '项目状态',
-          type: 'select',
-          opts: [
-            {
-              label: '未提交',
-              value: '未提交'
-            },
-            {
-              label: '待审核',
-              value: '待审核'
-            },
-            {
-              label: '已审核',
-              value: '已审核'
-            },
-          ]
+          model: 'project_agent',
+          label: '经办人'
         }
       ],
       searchFrom: {
@@ -353,8 +341,13 @@ export default {
       this.isShow = true
       this.operateForm = row
     },
-    subProject(row) {
-      this.operateType = 'sub'
+    passProject(row) {
+      this.operateType = 'pass'
+      this.isShow = true
+      this.operateForm = row
+    },
+    refuseProject(row) {
+      this.operateType = 'refuse'
       this.isShow = true
       this.operateForm = row
     },
@@ -390,16 +383,26 @@ export default {
         }, err => {
           alert("error!!!");
         })
-      } else {
-        alert("提交成功！待审核")
-        console.log("okkkkkk"+ qs.stringify(this.operateForm)+username)
+      } else if(this.operateType === 'pass'){
+        alert("已通过")
+        console.log("ok"+ qs.stringify(this.operateForm)+username)
         axios._post('http://127.0.0.1:8081/',qs.stringify(this.operateForm)+username).then(res => {
-          this.$message.success('提交成功');
+          this.$message.success('通过');
           this.isShow = false;
           this.getList()
         }),err => {
           alert("error!");
-        }
+        } 
+      } else {
+        alert("退回")
+        console.log("exitttt"+qs.stringify(this.operateForm)+username)
+        axios._post('http://127.0.0.1:8081/',qs.stringify(this.operateForm)+username).then(res => {
+          this.$message.success('退回');
+          this.isShow = false;
+          this.getList();
+        }),err => {
+          alert("error!");
+        } 
       }
     },
     //   delUser (row) {
