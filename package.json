@@ -12,12 +12,14 @@
     "core-js": "^2.6.5",
     "echarts": "^4.3.0",
     "element-ui": "^2.12.0",
+    "file-saver": "^2.0.5",
     "js-cookie": "^2.2.1",
     "mockjs": "^1.0.1-beta3",
     "vue": "^2.6.10",
     "vue-particles": "^1.0.9",
     "vue-router": "3.0",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "xlsx": "^0.16.9"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",

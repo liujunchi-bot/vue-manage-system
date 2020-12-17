@@ -70,8 +70,14 @@ export default {
                     label: '档案文档',
                     icon: 'setting',
                     url: 'Other/PageFour'
-                  }
-
+                  },
+                  {
+                    path: "/test",
+                    name: "测试文档",
+                    label: "测试文档",
+                    icon: "setting",
+                    url: "Other/PageFive"
+                  },
                 ]
               },
               {
@@ -79,25 +85,53 @@ export default {
                 icon: 'user',
                 children: [
                   {
+                    path: "/banner",
+                    name: "轮播图维护",
+                    label: '轮播图维护',
+                    icon: 'setting',
+                    url: 'Front/Banner'
+                  },
+                  {
+                    path: "/bussiness-scope",
+                    name: "业务范围维护",
+                    label: '业务范围维护',
+                    icon: 'setting',
+                    url: 'Front/BussinessScope'
+                  },
+                  {
                     path: "/case",
-                    name: "案例维护",
-                    label: '案例维护',
+                    name: "经典案例维护",
+                    label: '经典案例维护',
                     icon: 'setting',
                     url: 'Front/Case'
                   },
                   {
-                    path: "/knowledge",
-                    name: "问答维护",
-                    label: '问答维护',
+                    path: "/case-processing",
+                    name: "处理案例维护",
+                    label: '处理案例维护',
                     icon: 'setting',
-                    url: 'Front/Knowledge'
+                    url: 'Front/CaseProcessing'
+                  },
+                  {
+                    path: "/people",
+                    name: "会计师维护",
+                    label: '会计师维护',
+                    icon: 'setting',
+                    url: 'Front/People'
                   },
                   {
                     path: "/information",
-                    name: "信息维护",
-                    label: '信息维护',
+                    name: "联系信息维护",
+                    label: '联系信息维护',
                     icon: 'setting',
                     url: 'Front/Information'
+                  },
+                  {
+                    path: "/knowledge",
+                    name: "问答系统维护",
+                    label: '问答系统维护',
+                    icon: 'setting',
+                    url: 'Front/Knowledge'
                   }
                 ]
               }
