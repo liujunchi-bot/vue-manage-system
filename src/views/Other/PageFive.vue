@@ -1,14 +1,15 @@
 <template>
     <div class="manage">
         <el-dialog
-                :title="operateType === 'add' ? '新增设计文档' : '更新设计文档'"
+                :title="operateType === 'add' ? '新增文档' : '更新文档'"
                 :visible.sync="isShow"
         >
-            <common-form
+            <file-form
                     :formLabel="operateFormLabel"
                     :form="operateForm"
+                    :rules="rules"
                     ref="form"
-            ></common-form>
+            ></file-form>
             <!-- action表示文件要上传到的后台API地址 -->
             <el-upload
                     class="upload-demo"
@@ -40,7 +41,7 @@
             <div>
                 <el-button type="primary" @click="addUser">新增</el-button>
                 <el-button type="primary" @click="delUser">删除</el-button>
-                <el-button type="primary" @click="delUser">导出</el-button>
+                <el-button type="primary" @click="exportUser">导出</el-button>
             </div>
 
             <common-form inline :formLabel="formLabel" :form="searchFrom">
@@ -49,31 +50,38 @@
                 >
             </common-form>
         </div>
-        <common-table
+        <file-table
                 :tableData="tableData"
                 :tableLabel="tableLabel"
                 :config="config"
                 @changePage="getList()"
                 @edit="editUser"
                 @del="delUser"
-        ></common-table>
+                @export="exportUser"
+                id="out-table"
+        ></file-table>
     </div>
 </template>
 
 <script>
     import CommonForm from "../../components/CommonForm";
-    import CommonTable from "../../components/CommonTable";
+    import FileTable from "../../components/FileTable";
+    import FileForm from "../../components/FileForm";
+    import FileSaver from "file-saver";
+    import XLSX from "xlsx";
     import axios from '../../axios/ajax'
     import qs from 'qs'
     export default {
         components: {
             CommonForm,
-            CommonTable
+            FileTable,
+            FileForm
         },
         data () {
             return {
                 operateType: "add",
                 isShow: false,
+                updateFile: false,
                 tableData: [],
                 tableLabel: [
                     {
@@ -115,6 +123,12 @@
                         prop: "file_updatedate",
                         label: "更新日期",
                         width: 220
+                    },
+                    {
+                        prop:"file_url",
+                        label: "下载链接",
+                        width: 220,
+                        type: "link"
                     }
                 ],
                 config: {
@@ -156,7 +170,27 @@
                         width: 180
                     }
                 ],
-
+                rules: {
+                    file_name: [
+                        { required: true, message: '请输入文档名称', trigger: 'blur' },
+                        { min: 4, max: 255, message: '文档名称长度需要在 4 到 255 个字符', trigger: 'blur' }
+                    ],
+                    file_type: [
+                        { type: "enum", enum: ['设计文档', '审计文档', '行政文档','档案文档'], required: true, message: '请输入文档类型：设计文档，审计文档，行政文档或档案文档', trigger: 'blur' }
+                    ],
+                    file_property: [
+                        { message: '请输入文档说明', trigger: 'blur' },
+                        { max: 255, message: '文档名称长度最多 255 个字符', trigger: 'blur' }
+                    ],
+                    file_version: [
+                        { required: true, message: '请输入文档版本', trigger: 'blur' },
+                        { max: 255, message: '文档版本长度最多 255 个字符', trigger: 'blur' }
+                    ],
+                    file_project: [
+                        { message: '请输入文档相关项目', trigger: 'blur' },
+                        { max: 255, message: '文档相关项目长度最多 255 个字符', trigger: 'blur' }
+                    ]
+                },
                 searchFrom: {
                     keyword: ""
                 },
@@ -170,7 +204,7 @@
 
                 ],
                 formData: "",
-                uploadApiUrl : "http://127.0.0.1:8080/file/upload",
+                uploadApiUrl : "/file/upload",
             };
         },
         methods: {
@@ -196,6 +230,28 @@
               this.formData.append("file", file.file);
             },
             onBeforeUpload(file){
+                var result = true;
+                for (var key in this.operateForm)
+                {
+                    if (key === "file_url"&&this.operateForm[key] != "NULL")
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+                if (result === false)
+                {
+                    result = this.$confirm("已经上传的旧文件将会被覆盖，请问确定要上传新的文件吗？","提示",{
+                        confirmButtonText: "确定",
+                        cancelButtonText: "取消",
+                        type: "warning"
+                    })
+                }
+                if (result === false)
+                {
+                    return false;
+                }
+
                 const isIMAGE = file.type === "image/jpeg"||"image/png"||"image/gif"||"image/jpg";
                 const isDOCUMENT = file.type === "application/pdf"||"application/doc"||"application/docx"
                 const isZip = file.type === "application/zip"||"application/rar"||"application/7z";
@@ -213,21 +269,20 @@
             getList (name = '') {
                 this.config.loading = true
                 name ? (this.config.page = 1) : ''
-                axios._get("http://127.0.0.1:8080/file/GetAllFile").then(res => {
+                axios._get("http://8.131.96.2:8080/file/GetAllFile").then(res => {
                     this.$message.success("获取项目列表成功！")
-
-                    // const mockList = res.filter(user => {
-                    //   if (name && user.name.indexOf(name) === -1 && user.addr.indexOf(name) === -1) return false
-                    //   return true
-                    // })
-                    // let List=res.data;
-                    // const mockList = List.filter(user => {
-                    //   var name=''
-                    //   if (name && user.name.indexOf(name) === -1 && user.addr.indexOf(name) === -1) return false
-                    //   return true
-                    // })
-                    // const list=mockList.filter((item, index) => index < limit * 10 && index >= limit * (10 - 1))
                     this.tableData = res;
+                    for (var i=0;i<this.tableData.length;i++)
+                    {
+                        if (this.tableData[i]["file_url"] == null)
+                        {
+                            this.tableData[i]["file_url"] = "NULL";
+                        }
+                        else
+                        {
+                            this.tableData[i]["file_url"] = window.encodeURI(this.tableData[i]["file_url"]);
+                        }
+                    }
                     // this.config.total = res.data.count;
                     this.config.loading = false;
                     //console.log("tabledata: "+JSON.stringify(res));
@@ -246,35 +301,46 @@
                 this.isShow = true;
                 this.operateForm = row;
             },
-            downloadUser (row) {
-                this.operateType = "download";
-                this.isShow = true;
-                this.operateForm = row;
-            },
             confirm () {
                 if (this.operateType === "edit") {
-                    this.$http.post("/api/user/edit", this.operateForm).then(res => {
-                        console.log(res.data);
-                        this.isShow = false;
-                        this.getList();
-                    });
-                } else if (this.operateType === "add") {
-                    // this.$http.post("http://127.0.0.1:8080/file/insert", this.operateForm).then(res => {
-                    //     console.log(res.data);
-                    //     this.isShow = false;
-                    //     this.getList();
-                    // });
                     let formdata = new FormData();
                     for (var key in this.operateForm)
                     {
                       formdata.append(key,this.operateForm[key])
                     }
-                    formdata.append("file",this.fileList[0].raw)
-                    console.log()
-                    axios._post('http://127.0.0.1:8080/file/upload', formdata).then(res => {
+
+                    if (this.fileList.length != 0)
+                    {
+                        formdata.append("file",this.fileList[0].raw)
+                        this.fileList.splice(0,1);
+                    }
+                    
+                    axios._post('http://8.131.96.2:8080/file/update', formdata).then(res => {
+                        this.$message.success("更新文档成功！");
+                        this.isShow = false;
+                        console.log("Inserted "+res);//res是返回插入数据的id
+                        this.getList()
+                    }, err => {
+                        alert("error!!!");
+                        console.log(JSON.stringify(formdata));
+                        console.log(formdata);
+                    })
+                } else if (this.operateType === "add") {
+                    let formdata = new FormData();
+                    for (var key2 in this.operateForm)
+                    {
+                      formdata.append(key2,this.operateForm[key2])
+                    }
+                    if (this.fileList.length != 0)
+                    {
+                        formdata.append("file",this.fileList[0].raw)
+                        this.fileList.splice(0,1);
+                    }
+                    
+                    axios._post('http://8.131.96.2:8080/file/upload', formdata).then(res => {
                         this.$message.success("添加文档成功！");
                         this.isShow = false;
-                        console.log("aaaaaa"+res);//res是返回插入数据的id
+                        console.log("Inserted "+res);//res是返回插入数据的id
                         this.getList()
                     }, err => {
                         alert("error!!!");
@@ -282,36 +348,34 @@
                         console.log(formdata);
                     })
                 }
-                else {
-                    this.$http.post("/api/user/download", this.operateForm).then(res => {
-                        console.log(res.data);
-                        this.isShow = false;
-                        this.getList();
-                    });
-                }
             },
             delUser (row) {
-                this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+                this.$confirm("此操作将永久删除该文档信息及文件, 是否继续?", "提示", {
                     confirmButtonText: "确定",
                     cancelButtonText: "取消",
                     type: "warning"
                 })
                     .then(() => {
-                        let id = row.id;
-                        this.$http
-                            .get("/api/user/del", {
-                                params: {
-                                    id
-                                }
-                            })
-                            .then(res => {
-                                console.log(res.data);
-                                this.$message({
-                                    type: "success",
-                                    message: "删除成功!"
-                                });
-                                this.getList();
+                        this.operateForm = row;
+                        let formdata = new FormData();
+                        for (var key3 in this.operateForm)
+                        {
+                            formdata.append(key3,this.operateForm[key3])
+                        }
+
+                        axios._post('http://8.131.96.2:8080/file/deletefile', formdata).then(res => {
+                            this.$message({
+                                type: "success",
+                                message: "删除成功!"
                             });
+                            this.getList();
+                        }, err => {
+                            this.$message({
+                                type: "error",
+                                message: "删除失败"
+                            });
+                            this.getList();
+                        })
                     })
                     .catch(() => {
                         this.$message({
@@ -319,6 +383,31 @@
                             message: "已取消删除"
                         });
                     });
+            },
+            //定义导出Excel表格事件
+            exportUser() {
+            /* 从表生成工作簿对象 */
+            var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+            /* 获取二进制字符串作为输出 */
+            var wbout = XLSX.write(wb, {
+                bookType: "xlsx",
+                bookSST: true,
+                type: "array"
+            });
+            try {
+                FileSaver.saveAs(
+                //Blob 对象表示一个不可变、原始数据的类文件对象。
+                //Blob 表示的不一定是JavaScript原生格式的数据。
+                //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+                //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+                new Blob([wbout], { type: "application/octet-stream" }),
+                //设置导出文件名称
+                "导出文档.xlsx"
+                );
+            } catch (e) {
+                if (typeof console !== "undefined") console.log(e, wbout);
+            }
+            return wbout;
             }
         },
         created () {
