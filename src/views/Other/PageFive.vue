@@ -45,7 +45,7 @@
             </div>
 
             <common-form inline :formLabel="formLabel" :form="searchFrom">
-                <el-button type="primary" @click="getList(searchFrom.keyword)"
+                <el-button type="primary" @click="searchKey(searchFrom.keyword)"
                 >搜索</el-button
                 >
             </common-form>
@@ -107,7 +107,7 @@
                     {
                         prop: "file_version",
                         label: "设计文档版本",
-                        width: 100
+                        width: 200
                     },
                     {
                         prop: "file_project",
@@ -408,6 +408,34 @@
                 if (typeof console !== "undefined") console.log(e, wbout);
             }
             return wbout;
+            },
+            searchKey(keyword) {
+                if (keyword == ""||keyword == undefined||keyword == null)
+                {
+                    this.getList();
+                }
+                else
+                {
+                    this.config.loading = true;
+                    var dataList = [];
+
+                    for(var i=0;i<this.tableData.length;i++)
+                    {
+                        for (var j=0;j<this.tableLabel.length;j++)
+                        {
+                            var keyStr = this.tableLabel[j]["prop"];
+                            console.log(keyStr);
+                            console.log(this.tableData[i][keyStr]);
+                            if (this.tableData[i][keyStr].toString().indexOf(keyword) != -1&&keyStr != "file_url")
+                            {
+                                dataList.push(this.tableData[i]);
+                                break;
+                            }
+                        }
+                    }
+                    this.tableData = dataList;
+                    this.config.loading = false;
+                }
             }
         },
         created () {
