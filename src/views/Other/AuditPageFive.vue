@@ -1,7 +1,7 @@
 <template>
     <div class="manage">
-        <el-dialog
-                :title="operateType === 'add' ? '新增文档' : '更新文档'"
+                <el-dialog
+                title="更新文档"
                 :visible.sync="isShow"
         >
             <file-form
@@ -39,8 +39,6 @@
         </el-dialog>
         <div class="manage-header">
             <div>
-                <el-button type="primary" @click="addRow">新增</el-button>
-                <el-button type="primary" @click="delRow">删除</el-button>
                 <el-button type="primary" @click="exportRow">导出</el-button>
             </div>
 
@@ -50,23 +48,22 @@
                 >
             </common-form>
         </div>
-        <file-table
+        <audit-file-table
                 :tableData="tableData"
                 :tableLabel="tableLabel"
                 :config="config"
                 @changePage="getList()"
+                @pass="passRow"
+                @reject="rejectRow"
                 @edit="editRow"
-                @del="delRow"
-                @submit="submitRow"
                 id="out-table"
-        ></file-table>
+        ></audit-file-table>
     </div>
 </template>
 
 <script>
     import CommonForm from "../../components/CommonForm";
-    import FileTable from "../../components/FileTable";
-    import FileForm from "../../components/FileForm";
+    import AuditFileTable from "../../components/AuditFileTable";
     import FileSaver from "file-saver";
     import XLSX from "xlsx";
     import axios from '../../axios/ajax'
@@ -74,12 +71,11 @@
     export default {
         components: {
             CommonForm,
-            FileTable,
-            FileForm
+            AuditFileTable,
         },
         data () {
             return {
-                operateType: "add",
+                operateType: "edit",
                 isShow: false,
                 updateFile: false,
                 tableData: [],
@@ -131,20 +127,14 @@
                         type: "link"
                     },
                     {
-                        prop: "if_submit",
-                        label: "提交状态",
-                        width: 150,
-                        type: "status"
-                    },
-                    {
                         prop: "if_issued",
                         label: "审核状态",
                         width: 150,
                         type: "status"
                     },
                     {
-                        prop: "checker",
-                        label: "审核人",
+                        prop: "operatorname",
+                        label: "经办人",
                         width: 150,
                         type: "name"
                     },
@@ -212,14 +202,14 @@
                 searchFrom: {
                     keyword: ""
                 },
+                fileList: [
+
+                ],
                 formLabel: [
                     {
                         model: "keyword",
                         label: ""
                     }
-                ],
-                fileList: [
-
                 ],
                 formData: "",
                 uploadApiUrl : "/file/upload",
@@ -300,6 +290,11 @@
                         {
                             this.tableData[i]["file_url"] = window.encodeURI(this.tableData[i]["file_url"]);
                         }
+
+                        if (this.tableData[i]["if_submit"] === "0" || this.tableData[i]["if_delete"] === "1")
+                        {
+                            this.tableData.splice(i, 1);
+                        }
                     }
                     // this.config.total = res.data.count;
                     this.config.loading = false;
@@ -309,11 +304,6 @@
                 })
             },
 
-            addRow () {
-                this.operateForm = {};
-                this.operateType = "add";
-                this.isShow = true;
-            },
             editRow (row) {
                 this.operateType = "edit";
                 this.isShow = true;
@@ -343,32 +333,10 @@
                         console.log(JSON.stringify(formdata));
                         console.log(formdata);
                     })
-                } else if (this.operateType === "add") {
-                    let formdata = new FormData();
-                    for (var key2 in this.operateForm)
-                    {
-                      formdata.append(key2,this.operateForm[key2])
-                    }
-                    if (this.fileList.length != 0)
-                    {
-                        formdata.append("file",this.fileList[0].raw)
-                        this.fileList.splice(0,1);
-                    }
-                    
-                    axios._post('http://8.131.96.2:8080/file/upload', formdata).then(res => {
-                        this.$message.success("添加文档成功！");
-                        this.isShow = false;
-                        console.log("Inserted "+res);//res是返回插入数据的id
-                        this.getList()
-                    }, err => {
-                        alert("error!!!");
-                        console.log(JSON.stringify(formdata));
-                        console.log(formdata);
-                    })
                 }
             },
             delRow (row) {
-                this.$confirm("此操作将永久删除该文档信息及文件, 是否继续?", "提示", {
+                this.$confirm("此操作将不再显示该文档信息, 是否继续?", "提示", {
                     confirmButtonText: "确定",
                     cancelButtonText: "取消",
                     type: "warning"
@@ -376,12 +344,12 @@
                     .then(() => {
                         this.operateForm = row;
                         let formdata = new FormData();
-                        for (var key3 in this.operateForm)
+                        for (var key in this.operateForm)
                         {
-                            formdata.append(key3,this.operateForm[key3])
+                            formdata.append(key,this.operateForm[key])
                         }
 
-                        axios._post('http://8.131.96.2:8080/file/deletefile', formdata).then(res => {
+                        axios._post('http://8.131.96.2:8080/file/checkdelete', formdata).then(res => {
                             this.$message({
                                 type: "success",
                                 message: "删除成功!"
@@ -402,8 +370,8 @@
                         });
                     });
             },
-            submitRow (row) {
-                this.$confirm("此操作将提交文档信息及文件至审核人, 是否继续?", "提示", {
+            passRow (row) {
+                this.$confirm("此操作将审核通过该文档, 是否继续?", "提示", {
                     confirmButtonText: "确定",
                     cancelButtonText: "取消",
                     type: "warning"
@@ -411,21 +379,56 @@
                     .then(() => {
                         this.operateForm = row;
                         let formdata = new FormData();
-                        for (var key4 in this.operateForm)
+                        for (var key2 in this.operateForm)
                         {
-                            formdata.append(key4,this.operateForm[key4])
+                            formdata.append(key2,this.operateForm[key2])
                         }
 
-                        axios._post('http://8.131.96.2:8080/file/submitfile', formdata).then(res => {
+                        axios._post('http://8.131.96.2:8080/file/checkpass', formdata).then(res => {
                             this.$message({
                                 type: "success",
-                                message: "提交成功!"
+                                message: "审核结果保存成功!"
                             });
                             this.getList();
                         }, err => {
                             this.$message({
                                 type: "error",
-                                message: "提交失败"
+                                message: "审核结果保存失败"
+                            });
+                            this.getList();
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: "info",
+                            message: "已取消提交"
+                        });
+                    });
+            },
+            rejectRow (row) {
+                this.$confirm("此操作将驳回该文档, 是否继续?", "提示", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    type: "warning"
+                })
+                    .then(() => {
+                        this.operateForm = row;
+                        let formdata = new FormData();
+                        for (var key3 in this.operateForm)
+                        {
+                            formdata.append(key3,this.operateForm[key3])
+                        }
+
+                        axios._post('http://8.131.96.2:8080/file/checknotpass', formdata).then(res => {
+                            this.$message({
+                                type: "success",
+                                message: "审核结果保存成功!"
+                            });
+                            this.getList();
+                        }, err => {
+                            this.$message({
+                                type: "error",
+                                message: "审核结果保存失败"
                             });
                             this.getList();
                         })
