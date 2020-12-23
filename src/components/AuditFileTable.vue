@@ -1,6 +1,6 @@
 <template>
   <div class="common-table">
-    <el-table :data="tableData" height="80%" stripe v-loading="config.loading">
+    <el-table :data="tableData" height="90%" stripe v-loading="config.loading">
       <el-table-column type="selection" width="55" align="center"></el-table-column>
 
       <el-table-column label="序号" width="85">
@@ -14,20 +14,12 @@
           <span style="margin-left: 10px" v-if="!item.type">
             {{ scope.row[item.prop] }}
           </span>
-          
-          <span style="margin-left: 10px" v-if="item.prop === 'checker' && scope.row['shen_he_ren'] != 0">
+
+          <span style="margin-left: 10px" v-if="item.prop === 'operatorname'">
             {{ scope.row[item.prop] }}
           </span>
 
-          <span style="margin-left: 10px" v-if="item.prop === 'checker' && scope.row['shen_he_ren'] === 0">
-            -
-          </span>
-
-          <span style="margin-left: 10px" v-if="item.prop === 'if_issued' && scope.row['if_issued'] === '0' && scope.row['if_submit'] ==='0'">
-            -
-          </span>
-
-          <span style="margin-left: 10px" v-if="item.prop === 'if_issued' && scope.row['if_issued'] === '0' && scope.row['if_submit'] === '1'">
+          <span style="margin-left: 10px" v-if="item.prop === 'if_issued' && scope.row['if_issued'] === '0'">
             未审核
           </span>
 
@@ -37,14 +29,6 @@
           
           <span style="margin-left: 10px" v-if="item.prop === 'if_issued' && scope.row['if_issued'] === '2'">
             已通过
-          </span>
-          
-          <span style="margin-left: 10px" v-if="item.prop === 'if_submit' && scope.row['if_submit'] === '0'">
-            未提交
-          </span>
-          
-          <span style="margin-left: 10px" v-if="item.prop === 'if_submit' && scope.row['if_submit'] === '1'">
-            已提交
           </span>
 
           <a :href="scope.row[item.prop]" v-if="item.type === 'link' && scope.row[item.prop] != 'NULL'">
@@ -58,19 +42,16 @@
       <el-table-column label="操作" min-width="80">
         <template slot-scope="scope" >
           <div>
-            <el-button size="mini" type="primary" @click="handleEdit(scope.row)" v-if="scope.row['if_submit'] === '0'">编辑</el-button>
-            <el-button size="mini" type="primary" @click="handleEdit(scope.row)" v-else-if="scope.row['if_issued'] === '1'">编辑</el-button>
+            <el-button size="mini" type="primary" @click="handleEdit(scope.row)" v-if="scope.row['if_issued'] === '0'">编辑</el-button>
             <el-button size="mini" type="info" v-else disabled>编辑</el-button>
           </div>
           <div>
-            <el-button size="mini" type="danger" @click="handleDelete(scope.row)" v-if="scope.row['if_submit'] === '0'">删除</el-button>
-            <el-button size="mini" type="danger" @click="handleDelete(scope.row)" v-else-if="scope.row['if_issued'] === '1'">删除</el-button>
-            <el-button size="mini" type="info" v-else disabled>删除</el-button>
+            <el-button size="mini" type="success" @click="handlePass(scope.row)" v-if="scope.row['if_issued'] === '0'">通过</el-button>
+            <el-button size="mini" type="info" v-else disabled>通过</el-button>
           </div>
           <div>
-            <el-button size="mini" type="success" @click="handleSubmit(scope.row)" v-if="scope.row['if_submit'] === '0'">提交</el-button>
-            <el-button size="mini" type="success" @click="handleSubmit(scope.row)" v-else-if="scope.row['if_issued'] === '1'">提交</el-button>
-            <el-button size="mini" type="info" v-else disabled>提交</el-button>
+            <el-button size="mini" type="danger" @click="handleReject(scope.row)" v-if="scope.row['if_issued'] === '0'">驳回</el-button>
+            <el-button size="mini" type="info" v-else disabled>驳回</el-button>
           </div>
         </template>
       </el-table-column>
@@ -95,8 +76,11 @@ export default {
     handleDelete(row) {
       this.$emit('del', row)
     },
-    handleSubmit(row) {
-      this.$emit('submit',row)
+    handlePass(row) {
+      this.$emit('pass',row)
+    },
+    handleReject(row) {
+      this.$emit('reject',row)
     },
     changePage(page) {
       this.$emit('changePage', page)
