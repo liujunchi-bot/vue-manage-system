@@ -39,7 +39,6 @@ import CommonForm from '../../components/CommonForm'
 import CommonTable from '../../components/CommonTable'
 import axios from '../../axios/ajax'
 import qs from 'qs'
-import username from '../../mock/permission'
 export default {
   components: {
     CommonForm,
@@ -47,6 +46,8 @@ export default {
   },
   data () {
     return {
+      if_submit: false,
+      if_issued: false,
       operateType: 'add',
       isShow: false,
       tableData: [],
@@ -116,7 +117,7 @@ export default {
           label: '项目开始时间',
         },
         {
-          prop: 'project_enttime',
+          prop: 'project_endtime',
           label: '项目结束时间'
         },
         {
@@ -138,6 +139,22 @@ export default {
         {
           prop: 'project_state',
           label: '项目状态',
+        },
+        {
+          prop: 'jing_ban_ren',
+          label: '经办人id'
+        },
+        {
+          prop: 'staff_namej',
+          label: '经办人名字'
+        },
+        {
+          prop: 'shen_he_ren',
+          label: '审核人id'
+        },
+        {
+          prop: 'staff_names',
+          label: '审核人名字'
         }
       ],
       config: {
@@ -146,6 +163,7 @@ export default {
         loading: false
       },
       operateForm: {
+
         project_type: '',
         project_name: '',
         project_client: '',
@@ -166,7 +184,10 @@ export default {
         project_assets: '',
         project_audit: '',
         project_reduction: '',
-        project_state: ''
+        jing_ban_ren: '',
+        staff_namej: '',
+        shen_he_ren: '',
+        staff_names: ''
       },
       operateFormLabel: [
         {
@@ -266,25 +287,42 @@ export default {
           model: 'project_reduction',
           label: '审减金额'
         },
+        // {
+        //   model: 'project_state',
+        //   label: '项目状态',
+        //   type: 'select',
+        //   opts: [
+        //     {
+        //       label: '未提交',
+        //       value: '未提交'
+        //     },
+        //     {
+        //       label: '待审核',
+        //       value: '待审核'
+        //     },
+        //     {
+        //       label: '已审核',
+        //       value: '已审核'
+        //     },
+        //   ]
+        // },
         {
-          model: 'project_state',
-          label: '项目状态',
-          type: 'select',
-          opts: [
-            {
-              label: '未提交',
-              value: '未提交'
-            },
-            {
-              label: '待审核',
-              value: '待审核'
-            },
-            {
-              label: '已审核',
-              value: '已审核'
-            },
-          ]
+          model: 'jing_ban_ren',
+          label: '经办人id'
+        },
+        {
+          model: 'staff_namej',
+          label: '经办人名字'
+        },
+        {
+          model: 'shen_he_ren',
+          label: '审核人id'
+        },
+        {
+          model: 'staff_names',
+          label: '审核人名字'
         }
+
       ],
       searchFrom: {
         keyword: ''
@@ -321,7 +359,7 @@ export default {
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
-      axios._get("http://127.0.0.1:8081/getAllProject").then(res => {
+      axios._get("http://127.0.0.1:8080/project/getAllProject").then(res => {
         this.$message.success("获取项目列表成功！")
 
         // const mockList = res.filter(user => {
@@ -337,10 +375,20 @@ export default {
         // const list=mockList.filter((item, index) => index < limit * 10 && index >= limit * (10 - 1))
         this.tableData = res;
         // this.config.total = res.data.count;
+        //this.tabelData=res.data;
+        this.if_submint = res.if_submint;
+        this.if_issued = res.if_issued;
         this.config.loading = false;
-        //console.log("tabledata: "+JSON.stringify(res));
+        // if(!this.if_submit&&!this.if_issued) {
+        //   this.tableData.project_state = '待提交';
+        // } else if(this.if_submit&&!this.if_issued){
+        //   this.tableData.project_state = '待审核';
+        // } else if(this.if_submit&&this.if_issued) {
+        //   this.tableData.project_state = '已审核';
+        // }
+        // console.log("tabledata: "+JSON.stringify(res));
       }, err => {
-        alert("error!!!");
+        alert("getlist error!!!");
       })
     },
     addUser () {
@@ -353,7 +401,7 @@ export default {
       this.isShow = true
       this.operateForm = row
     },
-    subProject(row) {
+    subProject (row) {
       this.operateType = 'sub'
       this.isShow = true
       this.operateForm = row
@@ -375,29 +423,29 @@ export default {
     // },
     confirm () {
       if (this.operateType === 'edit') {
-        axios._post('http://127.0.0.1:8081/update', qs.stringify(this.operateForm)).then(res => {
+        axios._post('http://127.0.0.1:8080/project/update', qs.stringify(this.operateForm)).then(res => {
           console.log(res.data)
           this.isShow = false
           this.getList()
         })
-      } else if(this.operateType === 'add'){
+      } else if (this.operateType === 'add') {
         alert("添加成功！")
         console.log("111111" + qs.stringify(this.operateForm));
-        axios._post('http://127.0.0.1:8081/insert', qs.stringify(this.operateForm)).then(res => {
+        axios._post('http://127.0.0.1:8080/project/insert', qs.stringify(this.operateForm)).then(res => {
           this.$message.success("创建用户成功！");
           this.isShow = false
           this.getList()
         }, err => {
-          alert("error!!!");
+          alert("add error!!!");
         })
       } else {
         alert("提交成功！待审核")
-        console.log("okkkkkk"+ qs.stringify(this.operateForm)+username)
-        axios._post('http://127.0.0.1:8081/',qs.stringify(this.operateForm)+username).then(res => {
+        console.log("okkkkkk" + qs.stringify(this.operateForm))
+        axios._post('http://127.0.0.1:8080/project/submit', qs.stringify(this.operateForm)).then(res => {
           this.$message.success('提交成功');
           this.isShow = false;
           this.getList()
-        }),err => {
+        }), err => {
           alert("error!");
         }
       }
@@ -446,7 +494,7 @@ export default {
           // let project_id=row.project_id;
           //console.log("id+  "+id);
           axios
-            ._remove('http://127.0.0.1:8081/delete', {
+            ._remove('http://127.0.0.1:8080/project/delete', {
               params: {
                 project_id: row.project_id
               }
