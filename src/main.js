@@ -2,13 +2,14 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-// import axios from 'axios'
+import axios from 'axios'
 
 // 全局配置
 import '@/assets/scss/reset.scss'
 import 'element-ui/lib/theme-chalk/index.css'
 import http from '@/api/config'
 import './mock'
+import qs from 'qs'
 
 // 第三方包
 import ElementUI from 'element-ui'
@@ -18,7 +19,14 @@ Vue.use(VueParticles)
 Vue.use(ElementUI)
 Vue.prototype.$http = http
 
+// Vue.config.productionTip = false
+
+var axios1 = require('axios')
+axios.defaults.baseURL = 'http://localhost:3333'//需要加东西
+Vue.prototype.$axios = axios1
+Vue.prototype.$qs = qs
 Vue.config.productionTip = false
+
 
 // axios.defaults.withCredentials = true
 // axios.defaults.baseURL = "http://localhost:8080"

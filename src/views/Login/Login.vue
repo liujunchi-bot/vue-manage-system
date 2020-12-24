@@ -99,6 +99,7 @@
 </template>
 
 <script>
+import axios from '../../axios/ajax';
 export default {
   data () {
     return {
@@ -107,24 +108,93 @@ export default {
       form: {
         username: '',
         password: ''
-      }
+      },
+      type: '1',
+      permission: '3',
+      status: "fail",
     }
   },
   methods: {
+    // login () {
+
+    //   this.$http.post('api/permission/getMenu', this.form).then(res => {
+    //     res = res.data
+    //     if (res.code === 20000) {
+    //       this.$store.commit('clearMenu')
+    //       this.$store.commit('setMenu', res.data.menu)
+    //       this.$store.commit('setToken', res.data.token)
+    //       this.$store.commit('addMenu', this.$router)
+    //       if (res.type == '管理员') {
+    //         this.$router.push({ name: '我的客户' })
+    //       }
+    //       if (res.type == '经办人') {
+    //         this.$router.push({ name: 'project' })
+    //       }
+    //       if (res.type == '审核人') {
+    //         this.$router.push({ name: 'check' })
+    //       }
+    //       // this.$router.push({ name: 'contract' })
+    //     } else {
+    //       this.$message.warning(res.data.message)
+    //     }
+    //   })
+    // }
     login () {
-      this.$http.post('api/permission/getMenu', this.form).then(res => {
-        res = res.data
-        if (res.code === 20000) {
-          this.$store.commit('clearMenu')
-          this.$store.commit('setMenu', res.data.menu)
-          this.$store.commit('setToken', res.data.token)
-          this.$store.commit('addMenu', this.$router)
-          this.$router.push({ name: 'home' })
-        } else {
-          this.$message.warning(res.data.message)
+      let obj = {
+        account: this.form.username,
+        password: this.form.password
+      }
+      var that = this;
+      var params = new URLSearchParams();
+      params.append("account", this.form.username);           //重点
+      params.append("password", this.form.password);           //重点
+      axios._post("http://127.0.0.1:8080/staff/login", params).then((response) => {
+        if (response.status === 'success') {
+          that.$message({
+            message: 'success',
+            type: 'success'
+          });
+          this.type = response.data.staff_type;
+          this.permission = response.data.staff_permission;
+          if (this.type === null) {
+            this.type = "1"
+          }
+          if (this.permission === null) {
+            this.permission = "0"
+          }
+          this.$http.post('api/permission/getMenu', {
+            type: this.type,
+            permission: this.permission
+          }).then(res => {
+            res = res.data
+            if (res.code === 20000) {
+              this.$store.commit('clearMenu')
+              this.$store.commit('setMenu', res.data.menu)
+              this.$store.commit('setToken', res.data.token)
+              this.$store.commit('addMenu', this.$router)
+              // this.$router.push({ name: 'home' })
+              if (res.type == '管理员') {
+                this.$router.push({ name: '我的客户' })
+              }
+              if (res.type == '经办人') {
+                this.$router.push({ name: 'project' })
+              }
+              if (res.type == '审核人') {
+                this.$router.push({ name: 'check' })
+              }
+            }
+          })
+        }
+        else {
+          that.$message({
+            message: 'fail',
+            type: 'error'
+          });
+          this.$message.warning("登录失败")
         }
       })
     }
+
   }
 }
 </script>

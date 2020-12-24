@@ -2,7 +2,7 @@ module.exports = {
   assetsDir: 'static',
   publicPath: './',
   devServer: {
-    // port: 3333,
+    port: 3333,
     open: true,
     // proxy: "http://localhost:3000"
   },

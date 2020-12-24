@@ -22,7 +22,7 @@
         >
       </common-form>
     </div>
-    <common-table
+    <common-table2
       :tableData="tableData"
       :tableLabel="tableLabel"
       :config="config"
@@ -31,23 +31,25 @@
       @del="delUser"
       @pass="passProject"
       @refuse="refuseProject"
-    ></common-table>
+    ></common-table2>
   </div>
 </template>
 
 <script>
 import CommonForm from '../../components/CommonForm'
-import CommonTable from '../../components/CommonTable2'
+import CommonTable2 from '../../components/CommonTable2'
 import axios from '../../axios/ajax'
 import qs from 'qs'
-import username from '../../mock/permission'
+
 export default {
   components: {
     CommonForm,
-    CommonTable
+    CommonTable2
   },
   data () {
     return {
+      if_submit: false,
+      if_issued: false,
       operateType: 'add',
       isShow: false,
       tableData: [],
@@ -139,8 +141,12 @@ export default {
           label: '审减金额',
         },
         {
-          prop: 'project_agent',
+          prop: 'jing_ban_ren',
           label: '经办人'
+        },
+        {
+          prop: 'shen_he_ren',
+          label: '审核人'
         }
       ],
       config: {
@@ -169,7 +175,8 @@ export default {
         project_assets: '',
         project_audit: '',
         project_reduction: '',
-        project_agent: ''
+        jing_ban_ren: '',
+        shen_he_ren: ''
       },
       operateFormLabel: [
         {
@@ -272,6 +279,14 @@ export default {
         {
           model: 'project_agent',
           label: '经办人'
+        },
+        {
+          model: 'jing_ban_ren',
+          label: '经办人'
+        },
+        {
+          model: 'shen_he_ren',
+          label: '审核人'
         }
       ],
       searchFrom: {
@@ -309,7 +324,7 @@ export default {
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
-      axios._get("http://127.0.0.1:8081/getAllProject").then(res => {
+      axios._get("http://127.0.0.1:8080/project/getCheckProject").then(res => {
         this.$message.success("获取项目列表成功！")
 
         // const mockList = res.filter(user => {
@@ -325,10 +340,19 @@ export default {
         // const list=mockList.filter((item, index) => index < limit * 10 && index >= limit * (10 - 1))
         this.tableData = res;
         // this.config.total = res.data.count;
+        this.if_submint = res.if_submint;
+        this.if_issued = res.if_issued;
         this.config.loading = false;
+        if (!this.if_submit && !this.if_issued) {
+          this.formLabel.project_state = '待提交';
+        } else if (this.if_submit && !this.if_issued) {
+          this.formLabel.project_state = '待审核';
+        } else if (this.if_submit && this.if_issued) {
+          this.formLabel.project_state = '已审核';
+        }
         //console.log("tabledata: "+JSON.stringify(res));
       }, err => {
-        alert("error!!!");
+        alert("getlisterror!!!");
       })
     },
     addUser () {
@@ -341,13 +365,18 @@ export default {
       this.isShow = true
       this.operateForm = row
     },
-    passProject(row) {
+    passProject (row) {
       this.operateType = 'pass'
       this.isShow = true
       this.operateForm = row
     },
-    refuseProject(row) {
+    refuseProject (row) {
       this.operateType = 'refuse'
+      this.isShow = true
+      this.operateForm = row
+    },
+    delUser (row) {
+      this.operateType = 'if_delete'
       this.isShow = true
       this.operateForm = row
     },
@@ -368,41 +397,55 @@ export default {
     // },
     confirm () {
       if (this.operateType === 'edit') {
-        axios._post('http://127.0.0.1:8081/update', qs.stringify(this.operateForm)).then(res => {
+        axios._post('http://127.0.0.1:8080/project/update', qs.stringify(this.operateForm)).then(res => {
           console.log(res.data)
           this.isShow = false
           this.getList()
         })
-      } else if(this.operateType === 'add'){
+      } else if (this.operateType === 'add') {
         alert("添加成功！")
         console.log("111111" + qs.stringify(this.operateForm));
-        axios._post('http://127.0.0.1:8081/insert', qs.stringify(this.operateForm)).then(res => {
+        axios._post('http://127.0.0.1:8080/project/insert', qs.stringify(this.operateForm)).then(res => {
           this.$message.success("创建用户成功！");
           this.isShow = false
           this.getList()
         }, err => {
-          alert("error!!!");
+          alert("add error!!!");
         })
-      } else if(this.operateType === 'pass'){
+      } else if (this.operateType === 'pass') {
         alert("已通过")
-        console.log("ok"+ qs.stringify(this.operateForm)+username)
-        axios._post('http://127.0.0.1:8081/',qs.stringify(this.operateForm)+username).then(res => {
+        console.log("ok" + qs.stringify(this.operateForm))
+        axios._post('http://127.0.0.1:8080/project/pass', qs.stringify(this.operateForm)).then(res => {
           this.$message.success('通过');
           this.isShow = false;
           this.getList()
-        }),err => {
+        }), err => {
           alert("error!");
-        } 
-      } else {
+        }
+      } else if (this.operateType === 'refuse') {
         alert("退回")
-        console.log("exitttt"+qs.stringify(this.operateForm)+username)
-        axios._post('http://127.0.0.1:8081/',qs.stringify(this.operateForm)+username).then(res => {
+        console.log("exitttt" + qs.stringify(this.operateForm))
+        axios._post('http://127.0.0.1:8080/project/refuse', qs.stringify(this.operateForm)).then(res => {
           this.$message.success('退回');
           this.isShow = false;
           this.getList();
-        }),err => {
+        }), err => {
           alert("error!");
-        } 
+        }
+      } else if (this.operateType === 'if_delete') {
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        console.log("exitttt" + qs.stringify(this.operateForm))
+        axios._post('http://127.0.0.1:8080/project/if_delete', qs.stringify(this.operateForm)).then(res => {
+          this.$message.success('删除');
+          this.isShow = false;
+          this.getList();
+        }), err => {
+          alert("error!");
+        }
       }
     },
     //   delUser (row) {
@@ -436,41 +479,41 @@ export default {
     //       })
     //   }
     // },
-    delUser (row) {
-      //alert(row)
-      // console.log("row"+qs.stringify(row));
-      //alert("delid+ "+row.project_id)
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          // let project_id=row.project_id;
-          //console.log("id+  "+id);
-          axios
-            ._remove('http://127.0.0.1:8081/delete', {
-              params: {
-                project_id: row.project_id
-              }
-            })
-
-            .then(res => {
-              console.log(qs.stringify(row))
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
-              })
-              this.getList()
-            })
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
-    }
+    // delUser(row) {
+    //   //alert(row)
+    //   // console.log("row"+qs.stringify(row));
+    //   //alert("delid+ "+row.project_id)
+    //   this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     type: 'warning'
+    //   })
+    //     .then(() => {
+    //       // let project_id=row.project_id;
+    //       //console.log("id+  "+id);
+    //       axios
+    //         ._remove('http://127.0.0.1:8080/project/if_delete', {
+    //           params: {
+    //             project_id: row.project_id
+    //           }
+    //         })
+    //
+    //         .then(res => {
+    //           console.log(qs.stringify(row))
+    //           this.$message({
+    //             type: 'success',
+    //             message: '删除成功!'
+    //           })
+    //           this.getList()
+    //         })
+    //     })
+    //     .catch(() => {
+    //       this.$message({
+    //         type: 'info',
+    //         message: '已取消删除'
+    //       })
+    //     })
+    // }
   },
   created () {
     this.getList()

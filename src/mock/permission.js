@@ -1,82 +1,45 @@
 import Mock from 'mockjs'
 export default {
   getMenu: config => {
-    const { username, password } = JSON.parse(config.body)
-    console.log(JSON.parse(config.body))
+    // const { username, password } = JSON.parse(config.body)
+    // console.log(JSON.parse(config.body))
+    const { type, permission } = JSON.parse(config.body)
+    console.log("type   " + type + '\n' + "permission   " + permission)
+    console.log("getmenu    " + JSON.parse(config.body))
     // 先判断用户是否存在
-    if (username === 'admin' || username === 'wp') {
+    if (permission === '1' || permission === '2' || permission === '3') {
       // 判断账号和密码是否对应
-      if (username === 'admin' && password === '123456') {
+      if (permission === '3') {
         return {
+          type: '经办人',
           code: 20000,
           data: {
             menu: [
+
               {
-                path: '/dynamic',
-                name: 'dynamic',
-                label: '项目动态',
-                icon: 's-home',
-                url: 'Dynamic/Dynamic'
-              },
-              {
-                path: '/',
-                name: 'home',
-                label: '项目统计',
-                icon: 's-home',
-                url: 'Home/Home'
-              },
-              {
-                path: '/video',
-                name: 'video',
+                path: '/contractmanage',
+                name: 'contract',
                 label: '合同管理',
                 icon: 'video-play',
-                url: 'VideoManage/VideoManage'
+                url: 'ContractManage/ContractManage'
               },
               {
-                path: '/user',
-                name: 'user',
+                path: '/project',
+                name: 'project',
                 label: '项目列表',
                 icon: 'user',
-                url: 'UserManage/UserManage'
+                url: 'ProjectManage/ProjectManage'
               },
               {
                 label: '文档管理',
                 icon: 'location',
                 children: [
                   {
-                    path: "/design",
-                    name: "设计文档",
-                    label: '设计文档',
-                    icon: 'setting',
-                    url: 'Other/PageOne'
-                  },
-                  {
-                    path: "/audit",
-                    name: "审计文档",
-                    label: '审计文档',
-                    icon: 'setting',
-                    url: 'Other/PageTwo'
-                  },
-                  {
-                    path: "/xz",
-                    name: "行政文档",
-                    label: '行政文档',
-                    icon: 'setting',
-                    url: 'Other/PageThree'
-                  },
-                  {
-                    path: "/dangan",
-                    name: "档案文档",
-                    label: '档案文档',
-                    icon: 'setting',
-                    url: 'Other/PageFour'
-                  },
-                  {
-                    path: "/test",
-                    name: "测试文档",
-                    label: "测试文档",
+                    path: "/file",
+                    name: "所有文档",
+                    label: "所有文档",
                     icon: "setting",
-                    url: "Other/PageFive"
+                    url: "FileManage/FileManage"
                   },
                 ]
               },
@@ -140,35 +103,23 @@ export default {
             message: '获取成功'
           }
         }
-      } else if (username === 'wp' && password === '123456') {
+      } else if (permission === '1') {
         return {
+          type: '审核人',
           code: 20000,
           data: {
             menu: [
+
               {
-                path: '/dynamic',
-                name: 'dynamic',
-                label: '项目动态',
-                icon: 's-home',
-                url: 'Dynamic/Dynamic'
-              },
-              {
-                path: '/',
-                name: 'home',
-                label: '项目统计',
-                icon: 's-home',
-                url: 'Home/Home'
-              },
-              {
-                path: '/video',
-                name: 'video',
+                path: '/contractmanage',
+                name: 'contract',
                 label: '合同管理',
                 icon: 'video-play',
-                url: 'VideoManage/VideoManage'
+                url: 'ContractManage/ContractManage'
               },
               {
-                path: '/user',
-                name: 'user',
+                path: '/check',
+                name: 'check',
                 label: '项目列表',
                 icon: 'user',
                 url: 'CheckManage/CheckManage'
@@ -178,34 +129,12 @@ export default {
                 icon: 'location',
                 children: [
                   {
-                    path: "/design",
-                    name: "设计文档",
-                    label: '设计文档',
-                    icon: 'setting',
-                    url: 'Other/PageOne'
+                    path: "/auditfile",
+                    name: "所有文档",
+                    label: "所有文档",
+                    icon: "setting",
+                    url: "FileManage/AuditFileManage"
                   },
-                  {
-                    path: "/audit",
-                    name: "审计文档",
-                    label: '审计文档',
-                    icon: 'setting',
-                    url: 'Other/PageTwo'
-                  },
-                  {
-                    path: "/xz",
-                    name: "行政文档",
-                    label: '行政文档',
-                    icon: 'setting',
-                    url: 'Other/PageThree'
-                  },
-                  {
-                    path: "/dangan",
-                    name: "档案文档",
-                    label: '档案文档',
-                    icon: 'setting',
-                    url: 'Other/PageFour'
-                  }
-
                 ]
               },
               {
@@ -240,7 +169,75 @@ export default {
             message: '获取成功'
           }
         }
-      } else {
+      }
+      else if (permission === '2') {
+        return {
+          type: '管理员',
+          code: 20000,
+          data: {
+            menu: [
+              {
+                label: '客户管理',
+                icon: 'user',
+                children: [
+                  {
+                    path: "/mycustomer",
+                    name: "我的客户",
+                    label: '我的客户',
+                    icon: 'setting',
+                    url: 'CustomerManager/MyCustomer'
+                  },
+                  {
+                    path: "/allcustomer",
+                    name: "所有客户",
+                    label: '所有客户',
+                    icon: 'setting',
+                    url: 'CustomerManager/AllCustomer'
+                  }
+                ]
+              },
+              {
+                label: '用户管理',
+                icon: 'user',
+                children: [
+                  {
+                    path: "/user",
+                    name: "用户信息",
+                    label: '用户信息',
+                    icon: 'setting',
+                    url: 'UserManage/User'
+                  },
+                  {
+                    path: "/alluer",
+                    name: "所有用户",
+                    label: '所有用户',
+                    icon: 'setting',
+                    url: 'UserManage/AllUer'
+                  },
+                  {
+                    path: "/thisaccount",
+                    name: "当前用户",
+                    label: '当前用户',
+                    icon: 'setting',
+                    url: 'UserManage/ThisAccount'
+                  },
+                  {
+                    path: "/modification",
+                    name: "修改用户",
+                    label: '修改用户',
+                    icon: 'setting',
+                    url: 'UserManage/Modification'
+                  }
+                ]
+              }
+            ],
+            token: Mock.Random.guid(),
+            message: '获取成功'
+          }
+        }
+      }
+
+      else {
         return {
           code: -999,
           data: {
