@@ -228,7 +228,7 @@ export default {
       let params = {
         //user_id:JSON.parse(sessionStorage.getItem('user')).user_id,
       };
-      let url = 'http://127.0.0.1:8080/readAllClient'
+      let url = 'http://8.129.86.121:8080/readAllClient'
       this.$axios
         .post(url, qs.stringify(params))
         .then(successResponse => {
@@ -249,7 +249,7 @@ export default {
             let params = {
               client_id: item.client_id
             }
-            let url = 'http://127.0.0.1:8080/client/delete'
+            let url = 'http://8.129.86.121:8080/client/delete'
             this.$axios
               .post(url, qs.stringify(params))
               .then(successResponse => {
@@ -285,7 +285,7 @@ export default {
               client_type: item.client_type,
               client_business: item.client_business
             };
-            let url = "http://127.0.0.1:8080/client/update"
+            let url = "http://8.129.86.121:8080/client/update"
             this.$axios
               .post(url, qs.stringify(params))
               .then(successResponse => {
@@ -312,7 +312,7 @@ export default {
           client_business: this.newObject.client_business
         };
         console.log("params:   " + qs.stringify(params))
-        let url = "http://127.0.0.1:8080/client/add"
+        let url = "http://8.129.86.121:8080/client/add"
         this.$axios
           .post(url, qs.stringify(params))
           .then(successResponse => {

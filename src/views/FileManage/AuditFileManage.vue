@@ -295,7 +295,7 @@ export default {
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
-      axios._get("http://8.131.96.2:8080/file/getChecker").then(res => {
+      axios._get("http://8.129.86.121:8080/file/getChecker").then(res => {
         this.$message.success("获取项目列表成功！")
         this.tableData = res;
         for (var i = 0; i < this.tableData.length; i++) {
@@ -335,7 +335,7 @@ export default {
           this.fileList.splice(0, 1);
         }
 
-        axios._post('http://8.131.96.2:8080/file/update', formdata).then(res => {
+        axios._post('http://8.129.86.121:8080/file/update', formdata).then(res => {
           this.$message.success("更新文档成功！");
           this.isShow = false;
           console.log("Inserted " + res);//res是返回插入数据的id
@@ -360,7 +360,7 @@ export default {
             formdata.append(key, this.operateForm[key])
           }
 
-          axios._post('http://8.131.96.2:8080/file/checkdelete', formdata).then(res => {
+          axios._post('http://8.129.86.121:8080/file/checkdelete', formdata).then(res => {
             this.$message({
               type: "success",
               message: "删除成功!"
@@ -394,7 +394,7 @@ export default {
             formdata.append(key2, this.operateForm[key2])
           }
 
-          axios._post('http://8.131.96.2:8080/file/checkpass', formdata).then(res => {
+          axios._post('http://8.129.86.121:8080/file/checkpass', formdata).then(res => {
             if (res.code == "250") {
               this.$message({
                 type: "error",
@@ -437,7 +437,7 @@ export default {
             formdata.append(key3, this.operateForm[key3])
           }
 
-          axios._post('http://8.131.96.2:8080/file/checknotpass', formdata).then(res => {
+          axios._post('http://8.129.86.121:8080/file/checknotpass', formdata).then(res => {
             if (res.code == "250") {
               this.$message({
                 type: "error",

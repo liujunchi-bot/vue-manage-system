@@ -148,7 +148,7 @@ export default {
       var params = new URLSearchParams();
       params.append("account", this.form.username);           //重点
       params.append("password", this.form.password);           //重点
-      axios._post("http://127.0.0.1:8080/staff/login", params).then((response) => {
+      axios._post("http://8.129.86.121:8080/staff/login", params).then((response) => {
         if (response.status === 'success') {
           that.$message({
             message: 'success',
@@ -156,6 +156,8 @@ export default {
           });
           this.type = response.data.staff_type;
           this.permission = response.data.staff_permission;
+          console.log("permission:   " + this.permission)
+          console.log("type:   " + this.type)
           if (this.type === null) {
             this.type = "1"
           }

@@ -324,7 +324,7 @@ export default {
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
-      axios._get("http://127.0.0.1:8080/project/getCheckProject").then(res => {
+      axios._get("http://8.129.86.121:8080/project/getCheckProject").then(res => {
         this.$message.success("获取项目列表成功！")
 
         // const mockList = res.filter(user => {
@@ -397,7 +397,7 @@ export default {
     // },
     confirm () {
       if (this.operateType === 'edit') {
-        axios._post('http://127.0.0.1:8080/project/update', qs.stringify(this.operateForm)).then(res => {
+        axios._post('http://8.129.86.121:8080/project/update', qs.stringify(this.operateForm)).then(res => {
           console.log(res.data)
           this.isShow = false
           this.getList()
@@ -405,7 +405,7 @@ export default {
       } else if (this.operateType === 'add') {
         alert("添加成功！")
         console.log("111111" + qs.stringify(this.operateForm));
-        axios._post('http://127.0.0.1:8080/project/insert', qs.stringify(this.operateForm)).then(res => {
+        axios._post('http://8.129.86.121:8080/project/insert', qs.stringify(this.operateForm)).then(res => {
           this.$message.success("创建用户成功！");
           this.isShow = false
           this.getList()
@@ -415,7 +415,7 @@ export default {
       } else if (this.operateType === 'pass') {
         alert("已通过")
         console.log("ok" + qs.stringify(this.operateForm))
-        axios._post('http://127.0.0.1:8080/project/pass', qs.stringify(this.operateForm)).then(res => {
+        axios._post('http://8.129.86.121:8080/project/pass', qs.stringify(this.operateForm)).then(res => {
           this.$message.success('通过');
           this.isShow = false;
           this.getList()
@@ -425,7 +425,7 @@ export default {
       } else if (this.operateType === 'refuse') {
         alert("退回")
         console.log("exitttt" + qs.stringify(this.operateForm))
-        axios._post('http://127.0.0.1:8080/project/refuse', qs.stringify(this.operateForm)).then(res => {
+        axios._post('http://8.129.86.121:8080/project/refuse', qs.stringify(this.operateForm)).then(res => {
           this.$message.success('退回');
           this.isShow = false;
           this.getList();
@@ -439,7 +439,7 @@ export default {
           type: 'warning'
         })
         console.log("exitttt" + qs.stringify(this.operateForm))
-        axios._post('http://127.0.0.1:8080/project/if_delete', qs.stringify(this.operateForm)).then(res => {
+        axios._post('http://8.129.86.121:8080/project/if_delete', qs.stringify(this.operateForm)).then(res => {
           this.$message.success('删除');
           this.isShow = false;
           this.getList();
@@ -492,7 +492,7 @@ export default {
     //       // let project_id=row.project_id;
     //       //console.log("id+  "+id);
     //       axios
-    //         ._remove('http://127.0.0.1:8080/project/if_delete', {
+    //         ._remove('http://8.129.86.121:8080/project/if_delete', {
     //           params: {
     //             project_id: row.project_id
     //           }
