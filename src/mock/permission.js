@@ -95,24 +95,11 @@ export default {
           data: {
             menu: [
               {
+                path: "/allcustomer",
+                name: "所有客户",
                 label: '客户管理',
                 icon: 'user',
-                children: [
-                  {
-                    path: "/mycustomer",
-                    name: "我的客户",
-                    label: '我的客户',
-                    icon: 'setting',
-                    url: 'CustomerManager/MyCustomer'
-                  },
-                  {
-                    path: "/allcustomer",
-                    name: "所有客户",
-                    label: '所有客户',
-                    icon: 'setting',
-                    url: 'CustomerManager/AllCustomer'
-                  }
-                ]
+                url: 'CustomerManager/AllCustomer'
               },
               {
                 label: '用户管理',
