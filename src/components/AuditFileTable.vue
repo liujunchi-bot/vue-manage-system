@@ -19,16 +19,18 @@
             {{ scope.row[item.prop] }}
           </span>
 
-          <span style="margin-left: 10px" v-if="item.prop === 'if_issued' && scope.row['if_issued'] === '0'">
-            未审核
+          <span
+            style="margin-left: 10px"
+            v-if="item.prop === 'staff_names' && scope.row['shen_he_ren'] != 0"
+          >
+            {{ scope.row[item.prop] }}
           </span>
 
-          <span style="margin-left: 10px" v-if="item.prop === 'if_issued' && scope.row['if_issued'] === '1'">
-            被驳回
-          </span>
-          
-          <span style="margin-left: 10px" v-if="item.prop === 'if_issued' && scope.row['if_issued'] === '2'">
-            已通过
+          <span
+            style="margin-left: 10px"
+            v-if="item.prop === 'staff_names' && scope.row['shen_he_ren'] === 0"
+          >
+            -
           </span>
 
           <a :href="scope.row[item.prop]" v-if="item.type === 'link' && scope.row[item.prop] != 'NULL'">

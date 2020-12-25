@@ -11,51 +11,58 @@
         ref="form"
       ></common-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="isShow = false">取 消</el-button>
+        <el-button  @click="isShow = false">取 消</el-button>
         <el-button type="primary" @click="confirm">确 定</el-button>
       </div>
     </el-dialog>
     <div class="manage-header">
-      <el-button type="primary" @click="addUser">+ 新增</el-button>
+      <div>
+        <el-button type="primary" @click="addRow">新增</el-button>
+        <el-button type="primary" @click="exportRow">导出</el-button>
+      </div>
       <common-form inline :formLabel="formLabel" :form="searchFrom">
-        <el-button type="primary" @click="getList(searchFrom.keyword)"
+        <el-button type="primary" @click="searchKey(searchFrom.keyword)"
           >搜索</el-button
         >
       </common-form>
     </div>
-    <common-table
+    <project-table
       :tableData="tableData"
       :tableLabel="tableLabel"
       :config="config"
       @changePage="getList()"
-      @edit="editUser"
-      @del="delUser"
+      @edit="editRow"
+      @del="delRow"
       @sub="subProject"
-    ></common-table>
+      id="out-table"
+    ></project-table>
   </div>
 </template>
 
 <script>
 import CommonForm from '../../components/CommonForm'
-import CommonTable from '../../components/CommonTable'
+import ProjectTable from '../../components/ProjectTable'
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 import axios from '../../axios/ajax'
 import qs from 'qs'
 export default {
   components: {
     CommonForm,
-    CommonTable
+    ProjectTable
   },
   data () {
     return {
-      if_submit: false,
-      if_issued: false,
+      tempData:[],
+      if_submit: '',
+      if_issued: '',
       operateType: 'add',
       isShow: false,
       tableData: [],
       tableLabel: [
         {
-          prop: 'project_id',
-          label: 'id',
+          prop: 'project_code',
+          label: '项目编号',
         },
         {
           prop: 'project_type',
@@ -71,7 +78,7 @@ export default {
         },
         {
           prop: 'project_reportnumber',
-          label: '审计报告号'
+          label: '审计报告编号'
         },
         {
           prop: 'project_class',
@@ -80,10 +87,6 @@ export default {
         {
           prop: 'project_partner',
           label: '项目合伙人'
-        },
-        {
-          prop: 'project_code',
-          label: '项目编号',
         },
         {
           prop: 'project_qualitycontroler',
@@ -131,23 +134,27 @@ export default {
         },
         {
           prop: 'project_audit',
-          label: '审核金额',
+          label: '审定金额',
         },
         {
           prop: 'project_reduction',
           label: '审减金额',
         },
         {
-          prop: 'project_state',
-          label: '项目状态',
+          prop: 'submit_state',
+          label: '提交状态',
+          width: 100
         },
         {
-          prop: 'staff_namej',
-          label: '经办人名字'
+          prop: 'issue_state',
+          label: '审核状态',
+          width: 100
         },
         {
           prop: 'staff_names',
-          label: '审核人名字'
+          label: '审核人',
+          width: 100,
+          type: "name"
         }
       ],
       config: {
@@ -156,7 +163,7 @@ export default {
         loading: false
       },
       operateForm: {
-
+        project_code: '',
         project_type: '',
         project_name: '',
         project_client: '',
@@ -176,13 +183,17 @@ export default {
         project_construction: '',
         project_assets: '',
         project_audit: '',
-        project_reduction: '',
-        jing_ban_ren: '',
-        staff_namej: '',
-        shen_he_ren: '',
-        staff_names: ''
+        project_reduction: ''
       },
       operateFormLabel: [
+        {
+          model: 'project_code',
+          label: '项目编号'
+        },
+        {
+          model: 'project_name',
+          label: '项目名称'
+        },
         {
           model: 'project_type',
           label: '审计大类类型',
@@ -203,8 +214,8 @@ export default {
           ]
         },
         {
-          model: 'project_name',
-          label: '项目名称'
+          model: 'project_class',
+          label: '项目类型'
         },
         {
           model: 'project_client',
@@ -212,19 +223,7 @@ export default {
         },
         {
           model: 'project_reportnumber',
-          label: '审计报告号'
-        },
-        {
-          model: 'project_class',
-          label: '项目类型'
-        },
-        {
-          model: 'project_partner',
-          label: '项目合伙人'
-        },
-        {
-          model: 'project_code',
-          label: '项目编号'
+          label: '审计报告编号'
         },
         {
           model: 'project_qualitycontroler',
@@ -233,6 +232,20 @@ export default {
         {
           model: 'project_head',
           label: '项目负责人'
+        },
+        {
+          model: 'project_starttime',
+          label: '项目开始时间',
+          type: 'date'
+        },
+        {
+          model: 'project_endtime',
+          label: '项目结束时间',
+          type: 'date'
+        },
+        {
+          model: 'project_partner',
+          label: '项目合伙人'
         },
         {
           model: 'project_members',
@@ -255,16 +268,6 @@ export default {
           label: '报告意见类型'
         },
         {
-          model: 'project_starttime',
-          label: '项目开始时间',
-          type: 'date'
-        },
-        {
-          model: 'project_endtime',
-          label: '项目结束时间',
-          type: 'date'
-        },
-        {
           model: 'project_construction',
           label: '施工单位'
         },
@@ -274,25 +277,25 @@ export default {
         },
         {
           model: 'project_audit',
-          label: '审计金额'
+          label: '审定金额'
         },
         {
           model: 'project_reduction',
           label: '审减金额'
-        },
-        {
-          model: 'staff_namej',
-          label: '经办人名字'
-        },
-        {
-          model: 'staff_names',
-          label: '审核人名字'
         }
       ],
       rules: {
+        project_code: [
+          { required: true, message: '请输入项目编号', trigger: 'blur' },
+          { min: 10, max: 20, message: '项目名称长度需要在 10 到 20 个字符', trigger: 'blur' }
+        ],
         project_name: [
           { required: true, message: '请输入项目名称', trigger: 'blur' },
           { min: 4, max: 255, message: '项目名称长度需要在 4 到 255 个字符', trigger: 'blur' }
+        ],
+        project_class: [
+          { required: true, message: '请输入项目类型', trigger: 'blur' },
+          { min: 4, max: 255, message: '项目类型长度需要在 4 到 255 个字符', trigger: 'blur' }
         ],
         project_type: [
           { type: "enum", enum: ['财务审计', '工程审计', '税务审计'], required: true, message: '请选择项目类型：财务审计，工程审计或税务审计', trigger: 'blur' }
@@ -305,10 +308,6 @@ export default {
           { required: true, message: '请输入审计报告号', trigger: 'blur' },
           { max: 255, message: '审计报告号长度最多 255 个字符', trigger: 'blur' }
         ],
-        project_class: [
-          { required: true, message: '请输入项目类型', trigger: 'blur' },
-          { max: 255, message: '项目类型长度最多 255 个字符', trigger: 'blur' }
-        ],
         project_qualitycontroler: [
           { required: true, message: '请输入质控负责人', trigger: 'blur' },
           { max: 255, message: '质控负责人长度最多 255 个字符', trigger: 'blur' }
@@ -317,12 +316,11 @@ export default {
           { required: true, message: '请输入项目负责人', trigger: 'blur' },
           { max: 255, message: '项目负责人长度最多 255 个字符', trigger: 'blur' }
         ],
-        project_members: [
-          { required: true, message: '请输入项目组员', trigger: 'blur' },
-          { max: 255, message: '项目组员长度最多 255 个字符', trigger: 'blur' }
-        ],
         project_starttime: [
           { required: true, message: '请输入项目开始时间', trigger: 'blur' },
+        ],
+        project_endtime: [
+          { required: true, message: '请输入项目结束时间', trigger: 'blur' },
         ],
       },
       searchFrom: {
@@ -342,92 +340,138 @@ export default {
       name ? (this.config.page = 1) : ''
       axios._get("http://8.129.86.121:8080/project/getAllProject").then(res => {
         this.$message.success("获取项目列表成功！")
-
-        // const mockList = res.filter(user => {
-        //   if (name && user.name.indexOf(name) === -1 && user.addr.indexOf(name) === -1) return false
-        //   return true
-        // })
-        // let List=res.data;
-        // const mockList = List.filter(user => {
-        //   var name=''
-        //   if (name && user.name.indexOf(name) === -1 && user.addr.indexOf(name) === -1) return false
-        //   return true
-        // })
-        // const list=mockList.filter((item, index) => index < limit * 10 && index >= limit * (10 - 1))
         this.tableData = res;
-        // this.config.total = res.data.count;
-        //this.tabelData=res.data;
-        this.if_submint = res.if_submint;
-        this.if_issued = res.if_issued;
+
+        for (var i = 0; i < this.tableData.length; i++) {
+          this.if_submit = this.tableData[i].if_submit;
+          this.if_issued = this.tableData[i].if_issued;
+
+          if (this.if_submit == '0')
+          {
+            this.tableData[i]["submit_state"] = '待提交';
+            this.tableData[i]["issue_state"] = '-';
+          }
+          else 
+          {
+            this.tableData[i]["submit_state"] = '已提交';
+            if (this.if_issued == '0')
+            {
+              this.tableData[i]["issue_state"] = '待审核';
+            }
+            else if (this.if_issued == '1')
+            {
+              this.tableData[i]["issue_state"] = '被驳回';
+            }
+            else
+            {
+              this.tableData[i]["issue_state"] = '已通过';
+            }
+          }
+        }
+
         this.config.loading = false;
-        // if(!this.if_submit&&!this.if_issued) {
-        //   this.tableData.project_state = '待提交';
-        // } else if(this.if_submit&&!this.if_issued){
-        //   this.tableData.project_state = '待审核';
-        // } else if(this.if_submit&&this.if_issued) {
-        //   this.tableData.project_state = '已审核';
-        // }
-        // console.log("tabledata: "+JSON.stringify(res));
+        
       }, err => {
         alert("getlist error!!!");
       })
     },
-    addUser () {
+    addRow () {
       this.operateForm = {}
       this.operateType = 'add'
       this.isShow = true
     },
-    editUser (row) {
+    editRow (row) {
       this.operateType = 'edit'
       this.isShow = true
       this.operateForm = row
     },
     subProject (row) {
-      this.operateType = 'sub'
-      this.isShow = true
-      this.operateForm = row
+      this.$confirm("此操作将提交该项目信息至审核人, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.operateForm = row;
+          let formdata = new FormData();
+          for (var key in this.operateForm) {
+            if (key != "issue_state" && key != "submit_state")
+            {
+              formdata.append(key, this.operateForm[key])
+            }
+          }
+          
+          axios._post('http://8.129.86.121:8080/project/submit', formdata).then(res => {
+            this.$message({
+              type: "success",
+              message: "提交成功!"
+            });
+            this.getList();
+          }, err => {
+            this.$message({
+              type: "error",
+              message: "提交失败"
+            });
+            this.getList();
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消提交"
+          });
+        });
     },
     confirm () {
       if (this.operateType === 'edit') {
-        axios._post('http://8.129.86.121:8080/project/update', qs.stringify(this.operateForm)).then(res => {
+        let formdata = new FormData();
+        for (var key2 in this.operateForm) {
+          if (key2 != "issue_state" && key2 != "submit_state")
+          {
+            formdata.append(key2, this.operateForm[key2])
+          }
+        }
+
+        axios._post('http://8.129.86.121:8080/project/update', formdata).then(res => {
           console.log(res.data)
           this.isShow = false
           this.getList()
         })
       } else if (this.operateType === 'add') {
-        alert("添加成功！")
-        console.log("111111" + qs.stringify(this.operateForm));
-        axios._post('http://8.129.86.121:8080/project/insert', qs.stringify(this.operateForm)).then(res => {
-          this.$message.success("创建用户成功！");
+        let formdata = new FormData();
+        for (var key3 in this.operateForm) {
+          if (key3 != "issue_state" && key3 != "submit_state")
+          {
+            formdata.append(key3, this.operateForm[key3])
+          }
+        }
+        
+        axios._post('http://8.129.86.121:8080/project/insert', formdata).then(res => {
+          this.$message.success("新建项目成功！");
           this.isShow = false
           this.getList()
         }, err => {
           alert("add error!!!");
         })
-      } else {
-        alert("提交成功！待审核")
-        console.log("okkkkkk" + qs.stringify(this.operateForm))
-        axios._post('http://8.129.86.121:8080/project/submit', qs.stringify(this.operateForm)).then(res => {
-          this.$message.success('提交成功');
-          this.isShow = false;
-          this.getList()
-        }), err => {
-          alert("error!");
-        }
       }
     },
-    delUser (row) {
-      //alert(row)
-      // console.log("row"+qs.stringify(row));
-      //alert("delid+ "+row.project_id)
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+    delRow (row) {
+      this.$confirm('此操作将永久删除该项目信息, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          // let project_id=row.project_id;
-          //console.log("id+  "+id);
+          this.operateForm = row
+          let formdata = new FormData();
+          for (var key4 in this.operateForm) {
+            if (key4 != "issue_state" && key4 != "submit_state")
+            {
+              formdata.append(key4, this.operateForm[key4])
+            }
+          }
+
+          // ￥￥￥￥￥
           axios
             ._remove('http://8.129.86.121:8080/project/delete', {
               params: {
@@ -450,6 +494,53 @@ export default {
             message: '已取消删除'
           })
         })
+    },
+    //定义导出Excel表格事件
+    exportRow () {
+      /* 从表生成工作簿对象 */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+      /* 获取二进制字符串作为输出 */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          //Blob 对象表示一个不可变、原始数据的类文件对象。
+          //Blob 表示的不一定是JavaScript原生格式的数据。
+          //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+          //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+          new Blob([wbout], { type: "application/octet-stream" }),
+          //设置导出文件名称
+          "导出文档.xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
+    searchKey (keyword) {
+      if (keyword == "" || keyword == undefined || keyword == null) {
+        this.getList();
+      }
+      else {
+        this.config.loading = true;
+        var dataList = [];
+
+        for (var i = 0; i < this.tableData.length; i++) {
+          for (var j = 0; j < this.tableLabel.length; j++) {
+            var keyStr = this.tableLabel[j]["prop"];
+
+            if (this.tableData[i][keyStr] != null && this.tableData[i][keyStr].toString().indexOf(keyword) != -1 && keyStr != "file_url") {
+              dataList.push(this.tableData[i]);
+              break;
+            }
+          }
+        }
+        this.tableData = dataList;
+        this.config.loading = false;
+      }
     }
   },
   created () {

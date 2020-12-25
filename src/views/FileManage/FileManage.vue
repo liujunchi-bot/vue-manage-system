@@ -81,12 +81,18 @@ export default {
   },
   data () {
     return {
-      tempData: [],
+      if_submit: '',
+      if_issued: '',
       operateType: "add",
       isShow: false,
       updateFile: false,
       tableData: [],
       tableLabel: [
+        {
+          prop: "file_code",
+          label: "文档编号",
+          width: 150
+        },
         {
           prop: "file_name",
           label: "文档名称",
@@ -101,11 +107,6 @@ export default {
           prop: "file_property",
           label: "文档说明",
           width: 200
-        },
-        {
-          prop: "file_id",
-          label: "文档编号",
-          width: 150
         },
         {
           prop: "file_version",
@@ -134,16 +135,14 @@ export default {
           type: "link"
         },
         {
-          prop: "if_submit",
-          label: "提交状态",
-          width: 100,
-          type: "status"
+          prop: 'submit_state',
+          label: '提交状态',
+          width: 100
         },
         {
-          prop: "if_issued",
-          label: "审核状态",
-          width: 100,
-          type: "status"
+          prop: 'issue_state',
+          label: '审核状态',
+          width: 100
         },
         {
           prop: "checker",
@@ -158,6 +157,7 @@ export default {
         loading: false
       },
       operateForm: {
+        file_code: "",
         file_name: "",
         file_type: "",
         file_property: "",
@@ -166,8 +166,13 @@ export default {
       },
       operateFormLabel: [
         {
+          model: "file_code",
+          label: "文档编号",
+          width: 160
+        },
+        {
           model: "file_name",
-          label: "设计文档名称",
+          label: "文档名称",
           width: 160
         },
         {
@@ -176,10 +181,6 @@ export default {
           width: 160,
           type: 'select',
           opts: [
-            {
-              label: '合同文档',
-              value: '合同文档'
-            },
             {
               label: '设计文档',
               value: '设计文档'
@@ -205,22 +206,26 @@ export default {
         },
         {
           model: "file_version",
-          label: "设计文档版本",
+          label: "文档版本",
           width: 100
         },
         {
           model: "file_project",
-          label: "所属项目",
+          label: "所属项目名称",
           width: 180
         }
       ],
       rules: {
+        file_code: [
+          { required: true, message: '请输入文档编号', trigger: 'blur' },
+          { min: 10, max: 20, message: '文档名称长度需要在 10 到 20 个字符', trigger: 'blur' }
+        ],
         file_name: [
           { required: true, message: '请输入文档名称', trigger: 'blur' },
           { min: 4, max: 255, message: '文档名称长度需要在 4 到 255 个字符', trigger: 'blur' }
         ],
         file_type: [
-          { type: "enum", enum: ['合同文档', '设计文档', '审计文档', '行政文档', '档案文档'], required: true, message: '请选择文档类型：设计文档，审计文档，行政文档或档案文档', trigger: 'blur' }
+          { type: "enum", enum: ['设计文档', '审计文档', '行政文档', '档案文档'], required: true, message: '请选择文档类型：设计文档，审计文档，行政文档或档案文档', trigger: 'blur' }
         ],
         file_property: [
           { message: '请输入文档说明', trigger: 'blur' },
@@ -312,7 +317,7 @@ export default {
       axios._get("http://8.129.86.121:8080/file/getOperator").then(res => {
         this.$message.success("获取项目列表成功！")
         this.tableData = res;
-        this.tempData = this.tableData;
+        
         for (var i = 0; i < this.tableData.length; i++) {
           if (this.tableData[i]["file_url"] == null) {
             this.tableData[i]["file_url"] = "NULL";
@@ -320,10 +325,34 @@ export default {
           else {
             this.tableData[i]["file_url"] = window.encodeURI(this.tableData[i]["file_url"]);
           }
+
+          this.if_submit = this.tableData[i].if_submit;
+          this.if_issued = this.tableData[i].if_issued;
+
+          if (this.if_submit == '0')
+          {
+            this.tableData[i]["submit_state"] = '待提交';
+            this.tableData[i]["issue_state"] = '-';
+          }
+          else 
+          {
+            this.tableData[i]["submit_state"] = '已提交';
+            if (this.if_issued == '0')
+            {
+              this.tableData[i]["issue_state"] = '待审核';
+            }
+            else if (this.if_issued == '1')
+            {
+              this.tableData[i]["issue_state"] = '被驳回';
+            }
+            else
+            {
+              this.tableData[i]["issue_state"] = '已通过';
+            }
+          }
         }
-        // this.config.total = res.data.count;
+        
         this.config.loading = false;
-        //console.log("tabledata: "+JSON.stringify(res));
       }, err => {
         alert("error!!!");
       })
@@ -483,12 +512,13 @@ export default {
       else {
         this.config.loading = true;
         var dataList = [];
-        for (var i = 0; i < this.tempData.length; i++) {
+
+        for (var i = 0; i < this.tableData.length; i++) {
           for (var j = 0; j < this.tableLabel.length; j++) {
             var keyStr = this.tableLabel[j]["prop"];
 
-            if (this.tempData[i][keyStr] != null && this.tempData[i][keyStr].toString().indexOf(keyword) != -1 && keyStr != "file_url") {
-              dataList.push(this.tempData[i]);
+            if (this.tableData[i][keyStr] != null && this.tableData[i][keyStr].toString().indexOf(keyword) != -1 && keyStr != "file_url") {
+              dataList.push(this.tableData[i]);
               break;
             }
           }

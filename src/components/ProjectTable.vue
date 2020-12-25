@@ -6,7 +6,6 @@
         width="55"
         align="center"
       ></el-table-column>
-
       <el-table-column label="序号" width="85">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{
@@ -14,50 +13,30 @@
           }}</span>
         </template>
       </el-table-column>
-
       <el-table-column
         show-overflow-tooltip
         v-for="item in tableLabel"
         :key="item.prop"
         :label="item.label"
-        :width="item.width ? item.width : 100"
+        :width="item.width ? item.width : 125"
       >
         <template slot-scope="scope">
-          <span style="margin-left: 10px" v-if="!item.type">
-            {{ scope.row[item.prop] }}
-          </span>
-
+          <span style="margin-left: 10px"  v-if="!item.type">{{ scope.row[item.prop] }}</span>
           <span
             style="margin-left: 10px"
-            v-if="item.prop === 'checker' && scope.row['shen_he_ren'] != 0"
+            v-if="item.prop === 'staff_names' && scope.row['shen_he_ren'] != 0"
           >
             {{ scope.row[item.prop] }}
           </span>
 
           <span
             style="margin-left: 10px"
-            v-if="item.prop === 'checker' && scope.row['shen_he_ren'] === 0"
+            v-if="item.prop === 'staff_names' && scope.row['shen_he_ren'] === 0"
           >
             -
           </span>
-
-          <a
-            :href="scope.row[item.prop]"
-            v-if="item.type === 'link' && scope.row[item.prop] != 'NULL'"
-          >
-            <el-button size="mini" type="primary">文件下载</el-button>
-          </a>
-
-          <el-button
-            size="mini"
-            type="info"
-            v-if="item.type === 'link' && scope.row[item.prop] === 'NULL'"
-            disabled
-            >暂无文件</el-button
-          >
         </template>
       </el-table-column>
-
       <el-table-column label="操作" min-width="80">
         <template slot-scope="scope">
           <div>
@@ -140,11 +119,11 @@ export default {
     handleDelete (row) {
       this.$emit('del', row)
     },
-    handleSubmit (row) {
-      this.$emit('submit', row)
-    },
     changePage (page) {
       this.$emit('changePage', page)
+    },
+    handleSubmit (row) {
+      this.$emit('sub', row)
     }
   }
 }
@@ -152,7 +131,7 @@ export default {
 
 <style lang="scss" scoped>
 .common-table {
-  height: calc(100% - 30px);
+  height: calc(100% - 62px);
   background-color: #fff;
   position: relative;
   .pager {

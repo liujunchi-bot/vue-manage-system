@@ -74,11 +74,18 @@ export default {
   },
   data () {
     return {
+      if_submit: '',
+      if_issued: '',
       operateType: "edit",
       isShow: false,
       updateFile: false,
       tableData: [],
       tableLabel: [
+        {
+          prop: "file_code",
+          label: "文档编号",
+          width: 150
+        },
         {
           prop: "file_name",
           label: "文档名称",
@@ -126,14 +133,19 @@ export default {
           type: "link"
         },
         {
-          prop: "if_issued",
-          label: "审核状态",
-          width: 100,
-          type: "status"
-        },
-        {
           prop: "operatorname",
           label: "经办人",
+          width: 100,
+          type: "name"
+        },
+        {
+          prop: 'issue_state',
+          label: '审核状态',
+          width: 100
+        },
+        {
+          prop: "checker",
+          label: "审核人",
           width: 100,
           type: "name"
         },
@@ -144,6 +156,7 @@ export default {
         loading: false
       },
       operateForm: {
+        file_code: "",
         file_name: "",
         file_type: "",
         file_property: "",
@@ -152,8 +165,13 @@ export default {
       },
       operateFormLabel: [
         {
+          model: "file_code",
+          label: "文档编号",
+          width: 160
+        },
+        {
           model: "file_name",
-          label: "设计文档名称",
+          label: "文档名称",
           width: 160
         },
         {
@@ -163,23 +181,19 @@ export default {
           type: 'select',
           opts: [
             {
-              label: 'contractFile',
-              value: '合同文档'
-            },
-            {
-              label: 'designFile',
+              label: '设计文档',
               value: '设计文档'
             },
             {
-              label: 'auditFile',
+              label: '审计文档',
               value: '审计文档'
             },
             {
-              label: 'administrativeFile',
+              label: '行政文档',
               value: '行政文档'
             },
             {
-              label: 'archiveFile',
+              label: '档案文档',
               value: '档案文档'
             }
           ]
@@ -201,12 +215,16 @@ export default {
         }
       ],
       rules: {
+        project_code: [
+          { required: true, message: '请输入文档编号', trigger: 'blur' },
+          { min: 10, max: 20, message: '项目名称长度需要在 10 到 20 个字符', trigger: 'blur' }
+        ],
         file_name: [
           { required: true, message: '请输入文档名称', trigger: 'blur' },
           { min: 4, max: 255, message: '文档名称长度需要在 4 到 255 个字符', trigger: 'blur' }
         ],
         file_type: [
-          { type: "enum", enum: ['合同文档', '设计文档', '审计文档', '行政文档', '档案文档'], required: true, message: '请选择文档类型：设计文档，审计文档，行政文档或档案文档', trigger: 'blur' }
+          { type: "enum", enum: ['设计文档', '审计文档', '行政文档', '档案文档'], required: true, message: '请选择文档类型：设计文档，审计文档，行政文档或档案文档', trigger: 'blur' }
         ],
         file_property: [
           { message: '请输入文档说明', trigger: 'blur' },
@@ -298,6 +316,7 @@ export default {
       axios._get("http://8.129.86.121:8080/file/getChecker").then(res => {
         this.$message.success("获取项目列表成功！")
         this.tableData = res;
+
         for (var i = 0; i < this.tableData.length; i++) {
           if (this.tableData[i]["file_url"] == null) {
             this.tableData[i]["file_url"] = "NULL";
@@ -308,16 +327,41 @@ export default {
 
           if (this.tableData[i]["if_submit"] === "0" || this.tableData[i]["if_delete"] === "1") {
             this.tableData.splice(i, 1);
+            i--;
+          }
+
+          this.if_submit = this.tableData[i].if_submit;
+          this.if_issued = this.tableData[i].if_issued;
+          
+          if (this.if_submit == '0')
+          {
+            this.tableData[i]["submit_state"] = '待提交';
+          }
+          else 
+          {
+            this.tableData[i]["submit_state"] = '已提交';
+            if (this.if_issued == '0')
+            {
+              this.tableData[i]["issue_state"] = '待审核';
+            }
+            else if (this.if_issued == '1')
+            {
+              this.tableData[i]["issue_state"] = '被驳回';
+            }
+            else
+            {
+              this.tableData[i]["issue_state"] = '已通过';
+            }
           }
         }
+
         // this.config.total = res.data.count;
         this.config.loading = false;
         //console.log("tabledata: "+JSON.stringify(res));
       }, err => {
-        alert("error!!!");
+        alert("getlist error!!!");
       })
     },
-
     editRow (row) {
       this.operateType = "edit";
       this.isShow = true;
@@ -338,7 +382,6 @@ export default {
         axios._post('http://8.129.86.121:8080/file/update', formdata).then(res => {
           this.$message.success("更新文档成功！");
           this.isShow = false;
-          console.log("Inserted " + res);//res是返回插入数据的id
           this.getList()
         }, err => {
           alert("error!!!");
@@ -420,7 +463,7 @@ export default {
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消提交"
+            message: "已取消审核"
           });
         });
     },
@@ -462,7 +505,7 @@ export default {
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消提交"
+            message: "已取消审核"
           });
         });
     },

@@ -9,15 +9,42 @@
       </el-table-column>
       <el-table-column show-overflow-tooltip v-for="item in tableLabel" :key="item.prop" :label="item.label" :width="item.width ? item.width : 125">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row[item.prop] }}</span>
+          <span style="margin-left: 10px" v-if="!item.type">{{ scope.row[item.prop] }}</span>
+          
+          <span style="margin-left: 10px" v-if="item.prop === 'staff_namej'">
+            {{ scope.row[item.prop] }}
+          </span>
+
+          <span
+            style="margin-left: 10px"
+            v-if="item.prop === 'staff_names' && scope.row['shen_he_ren'] != 0"
+          >
+            {{ scope.row[item.prop] }}
+          </span>
+
+          <span
+            style="margin-left: 10px"
+            v-if="item.prop === 'staff_names' && scope.row['shen_he_ren'] === 0"
+          >
+            -
+          </span>
+
         </template>
       </el-table-column>
-      <el-table-column label="操作" min-width="360">
+      <el-table-column label="操作" min-width="80">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
-          <el-button size="mini" type="primary" @click="handlePass(scope.row)">通过</el-button>
-          <el-button size="mini" type="danger" @click="handleRefuse(scope.row)">退回</el-button>
+          <div>
+            <el-button size="mini" type="primary" @click="handleEdit(scope.row)" v-if="scope.row['if_issued'] === '0'">编辑</el-button>
+            <el-button size="mini" type="info" v-else disabled>编辑</el-button>
+          </div>
+          <div>
+            <el-button size="mini" type="success" @click="handlePass(scope.row)" v-if="scope.row['if_issued'] === '0'">通过</el-button>
+            <el-button size="mini" type="info" v-else disabled>通过</el-button>
+          </div>
+          <div>
+            <el-button size="mini" type="danger" @click="handleRefuse(scope.row)" v-if="scope.row['if_issued'] === '0'">驳回</el-button>
+            <el-button size="mini" type="info" v-else disabled>驳回</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
