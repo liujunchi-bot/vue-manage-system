@@ -1,7 +1,8 @@
 <template>
-  <el-form :inline="inline" :model="form" ref="form" label-width="100px">
+  <el-form :inline="inline" :model="form" ref="form" :rules="rules" label-width="100px" class="demo-ruleForm">
     <el-form-item
       v-for="item in formLabel"
+      :prop="item.model"
       :key="item.model"
       :label="item.label"
     >
@@ -44,7 +45,8 @@ export default {
   props: {
     inline: Boolean,
     form: Object,
-    formLabel: Array
+    formLabel: Array,
+    rules: Object
   }
 }
 </script>

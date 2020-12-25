@@ -20,7 +20,7 @@
         v-for="item in tableLabel"
         :key="item.prop"
         :label="item.label"
-        :width="item.width ? item.width : 125"
+        :width="item.width ? item.width : 100"
       >
         <template slot-scope="scope">
           <span style="margin-left: 10px" v-if="!item.type">

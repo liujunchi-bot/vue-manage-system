@@ -7,6 +7,7 @@
       <common-form
         :formLabel="operateFormLabel"
         :form="operateForm"
+        :rules="rules"
         ref="form"
       ></common-form>
       <div slot="footer" class="dialog-footer">
@@ -277,10 +278,6 @@ export default {
           label: '审减金额'
         },
         {
-          model: 'project_agent',
-          label: '经办人'
-        },
-        {
           model: 'jing_ban_ren',
           label: '经办人'
         },
@@ -289,6 +286,42 @@ export default {
           label: '审核人'
         }
       ],
+      rules: {
+        project_name: [
+          { required: true, message: '请输入项目名称', trigger: 'blur' },
+          { min: 4, max: 255, message: '项目名称长度需要在 4 到 255 个字符', trigger: 'blur' }
+        ],
+        project_type: [
+          { type: "enum", enum: ['财务审计', '工程审计', '税务审计'], required: true, message: '请选择项目类型：财务审计，工程审计或税务审计', trigger: 'blur' }
+        ],
+        project_client: [
+          { required: true, message: '请输入客户名称', trigger: 'blur' },
+          { max: 255, message: '客户名称长度最多 255 个字符', trigger: 'blur' }
+        ],
+        project_reportnumber: [
+          { required: true, message: '请输入审计报告号', trigger: 'blur' },
+          { max: 255, message: '审计报告号长度最多 255 个字符', trigger: 'blur' }
+        ],
+        project_class: [
+          { required: true, message: '请输入项目类型', trigger: 'blur' },
+          { max: 255, message: '项目类型长度最多 255 个字符', trigger: 'blur' }
+        ],
+        project_qualitycontroler: [
+          { required: true, message: '请输入质控负责人', trigger: 'blur' },
+          { max: 255, message: '质控负责人长度最多 255 个字符', trigger: 'blur' }
+        ],
+        project_head: [
+          { required: true, message: '请输入项目负责人', trigger: 'blur' },
+          { max: 255, message: '项目负责人长度最多 255 个字符', trigger: 'blur' }
+        ],
+        project_members: [
+          { required: true, message: '请输入项目组员', trigger: 'blur' },
+          { max: 255, message: '项目组员长度最多 255 个字符', trigger: 'blur' }
+        ],
+        project_starttime: [
+          { required: true, message: '请输入项目开始时间', trigger: 'blur' },
+        ],
+      },
       searchFrom: {
         keyword: ''
       },

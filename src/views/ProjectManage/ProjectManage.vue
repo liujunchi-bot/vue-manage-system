@@ -7,6 +7,7 @@
       <common-form
         :formLabel="operateFormLabel"
         :form="operateForm"
+        :rules="rules"
         ref="form"
       ></common-form>
       <div slot="footer" class="dialog-footer">
@@ -141,16 +142,8 @@ export default {
           label: '项目状态',
         },
         {
-          prop: 'jing_ban_ren',
-          label: '经办人id'
-        },
-        {
           prop: 'staff_namej',
           label: '经办人名字'
-        },
-        {
-          prop: 'shen_he_ren',
-          label: '审核人id'
         },
         {
           prop: 'staff_names',
@@ -287,43 +280,51 @@ export default {
           model: 'project_reduction',
           label: '审减金额'
         },
-        // {
-        //   model: 'project_state',
-        //   label: '项目状态',
-        //   type: 'select',
-        //   opts: [
-        //     {
-        //       label: '未提交',
-        //       value: '未提交'
-        //     },
-        //     {
-        //       label: '待审核',
-        //       value: '待审核'
-        //     },
-        //     {
-        //       label: '已审核',
-        //       value: '已审核'
-        //     },
-        //   ]
-        // },
-        {
-          model: 'jing_ban_ren',
-          label: '经办人id'
-        },
         {
           model: 'staff_namej',
           label: '经办人名字'
         },
         {
-          model: 'shen_he_ren',
-          label: '审核人id'
-        },
-        {
           model: 'staff_names',
           label: '审核人名字'
         }
-
       ],
+      rules: {
+        project_name: [
+          { required: true, message: '请输入项目名称', trigger: 'blur' },
+          { min: 4, max: 255, message: '项目名称长度需要在 4 到 255 个字符', trigger: 'blur' }
+        ],
+        project_type: [
+          { type: "enum", enum: ['财务审计', '工程审计', '税务审计'], required: true, message: '请选择项目类型：财务审计，工程审计或税务审计', trigger: 'blur' }
+        ],
+        project_client: [
+          { required: true, message: '请输入客户名称', trigger: 'blur' },
+          { max: 255, message: '客户名称长度最多 255 个字符', trigger: 'blur' }
+        ],
+        project_reportnumber: [
+          { required: true, message: '请输入审计报告号', trigger: 'blur' },
+          { max: 255, message: '审计报告号长度最多 255 个字符', trigger: 'blur' }
+        ],
+        project_class: [
+          { required: true, message: '请输入项目类型', trigger: 'blur' },
+          { max: 255, message: '项目类型长度最多 255 个字符', trigger: 'blur' }
+        ],
+        project_qualitycontroler: [
+          { required: true, message: '请输入质控负责人', trigger: 'blur' },
+          { max: 255, message: '质控负责人长度最多 255 个字符', trigger: 'blur' }
+        ],
+        project_head: [
+          { required: true, message: '请输入项目负责人', trigger: 'blur' },
+          { max: 255, message: '项目负责人长度最多 255 个字符', trigger: 'blur' }
+        ],
+        project_members: [
+          { required: true, message: '请输入项目组员', trigger: 'blur' },
+          { max: 255, message: '项目组员长度最多 255 个字符', trigger: 'blur' }
+        ],
+        project_starttime: [
+          { required: true, message: '请输入项目开始时间', trigger: 'blur' },
+        ],
+      },
       searchFrom: {
         keyword: ''
       },
@@ -336,26 +337,6 @@ export default {
     }
   },
   methods: {
-    // getList (name = '') {
-    //   this.config.loading = true
-    //   // 搜索时，页码需要设置为1，才能正确返回数据，因为数据是从第一页开始返回的
-    //   name ? (this.config.page = 1) : ''
-    //   this.$http
-    //     .get('/api/user/getUser', {
-    //       params: {
-    //         page: this.config.page,
-    //         name,
-    //       }
-    //     })
-    //     .then(res => {
-    //       this.tableData = res.data.list.map(item => {
-    //         item.categoryLabel = item.category === 0 ? '税审' : '年审'
-    //         return item
-    //       })
-    //       this.config.total = res.data.count
-    //       this.config.loading = false
-    //     })
-    // },
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
@@ -406,21 +387,6 @@ export default {
       this.isShow = true
       this.operateForm = row
     },
-    // confirm () {
-    //   if (this.operateType === 'edit') {
-    //     this.$http.post('/api/user/edit', this.operateForm).then(res => {
-    //       console.log(res.data)
-    //       this.isShow = false
-    //       this.getList()
-    //     })
-    //   } else {
-    //     this.$http.post('/api/user/add', this.operateForm).then(res => {
-    //       console.log(res.data)
-    //       this.isShow = false
-    //       this.getList()
-    //     })
-    //   }
-    // },
     confirm () {
       if (this.operateType === 'edit') {
         axios._post('http://8.129.86.121:8080/project/update', qs.stringify(this.operateForm)).then(res => {
@@ -450,37 +416,6 @@ export default {
         }
       }
     },
-    //   delUser (row) {
-    //     this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-    //       confirmButtonText: '确定',
-    //       cancelButtonText: '取消',
-    //       type: 'warning'
-    //     })
-    //       .then(() => {
-    //         let id = row.id
-    //         this.$http
-    //           .get('/api/user/del', {
-    //             params: {
-    //               id
-    //             }
-    //           })
-    //           .then(res => {
-    //             console.log(res.data)
-    //             this.$message({
-    //               type: 'success',
-    //               message: '删除成功!'
-    //             })
-    //             this.getList()
-    //           })
-    //       })
-    //       .catch(() => {
-    //         this.$message({
-    //           type: 'info',
-    //           message: '已取消删除'
-    //         })
-    //       })
-    //   }
-    // },
     delUser (row) {
       //alert(row)
       // console.log("row"+qs.stringify(row));

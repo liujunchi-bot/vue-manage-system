@@ -95,7 +95,7 @@ export default {
         {
           prop: "file_type",
           label: "文档类型",
-          width: 160
+          width: 120
         },
         {
           prop: "file_property",
@@ -105,12 +105,12 @@ export default {
         {
           prop: "file_id",
           label: "文档编号",
-          width: 200
+          width: 150
         },
         {
           prop: "file_version",
           label: "文档版本",
-          width: 200
+          width: 100
         },
         {
           prop: "file_project",
@@ -120,12 +120,12 @@ export default {
         {
           prop: "file_uploaddate",
           label: "上传日期",
-          width: 220
+          width: 150
         },
         {
           prop: "file_updatedate",
           label: "更新日期",
-          width: 220
+          width: 150
         },
         {
           prop: "file_url",
@@ -136,19 +136,19 @@ export default {
         {
           prop: "if_submit",
           label: "提交状态",
-          width: 150,
+          width: 100,
           type: "status"
         },
         {
           prop: "if_issued",
           label: "审核状态",
-          width: 150,
+          width: 100,
           type: "status"
         },
         {
           prop: "checker",
           label: "审核人",
-          width: 150,
+          width: 100,
           type: "name"
         },
       ],

@@ -97,12 +97,12 @@ export default {
         {
           prop: "file_id",
           label: "文档编号",
-          width: 200
+          width: 150
         },
         {
           prop: "file_version",
           label: "文档版本",
-          width: 200
+          width: 150
         },
         {
           prop: "file_project",
@@ -112,12 +112,12 @@ export default {
         {
           prop: "file_uploaddate",
           label: "上传日期",
-          width: 220
+          width: 150
         },
         {
           prop: "file_updatedate",
           label: "更新日期",
-          width: 220
+          width: 150
         },
         {
           prop: "file_url",
@@ -128,13 +128,13 @@ export default {
         {
           prop: "if_issued",
           label: "审核状态",
-          width: 150,
+          width: 100,
           type: "status"
         },
         {
           prop: "operatorname",
           label: "经办人",
-          width: 150,
+          width: 100,
           type: "name"
         },
       ],

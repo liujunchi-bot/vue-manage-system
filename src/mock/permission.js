@@ -15,7 +15,20 @@ export default {
           code: 20000,
           data: {
             menu: [
-
+              {
+                path: '/project',
+                name: 'project',
+                label: '项目管理',
+                icon: 'user',
+                url: 'ProjectManage/ProjectManage'
+              },
+              {
+                path: "/file",
+                name: "文档管理",
+                label: "文档管理",
+                icon: "location",
+                url: "FileManage/FileManage"
+              },
               {
                 path: '/contractmanage',
                 name: 'contract',
@@ -24,79 +37,11 @@ export default {
                 url: 'ContractManage/ContractManage'
               },
               {
-                path: '/project',
-                name: 'project',
-                label: '项目列表',
-                icon: 'user',
-                url: 'ProjectManage/ProjectManage'
-              },
-              {
-                label: '文档管理',
-                icon: 'location',
-                children: [
-                  {
-                    path: "/file",
-                    name: "所有文档",
-                    label: "所有文档",
-                    icon: "setting",
-                    url: "FileManage/FileManage"
-                  },
-                ]
-              },
-              {
-                label: '前台管理',
-                icon: 'user',
-                children: [
-                  {
-                    path: "/banner",
-                    name: "轮播图维护",
-                    label: '轮播图维护',
-                    icon: 'setting',
-                    url: 'Front/Banner'
-                  },
-                  {
-                    path: "/bussiness-scope",
-                    name: "业务范围维护",
-                    label: '业务范围维护',
-                    icon: 'setting',
-                    url: 'Front/BussinessScope'
-                  },
-                  {
-                    path: "/case",
-                    name: "经典案例维护",
-                    label: '经典案例维护',
-                    icon: 'setting',
-                    url: 'Front/Case'
-                  },
-                  {
-                    path: "/case-processing",
-                    name: "处理案例维护",
-                    label: '处理案例维护',
-                    icon: 'setting',
-                    url: 'Front/CaseProcessing'
-                  },
-                  {
-                    path: "/people",
-                    name: "会计师维护",
-                    label: '会计师维护',
-                    icon: 'setting',
-                    url: 'Front/People'
-                  },
-                  {
-                    path: "/information",
-                    name: "联系信息维护",
-                    label: '联系信息维护',
-                    icon: 'setting',
-                    url: 'Front/Information'
-                  },
-                  {
-                    path: "/knowledge",
-                    name: "问答系统维护",
-                    label: '问答系统维护',
-                    icon: 'setting',
-                    url: 'Front/Knowledge'
-                  }
-                ]
+                path: "/knowledge",
+                name: "问答维护",
+                label: '问答维护',
+                icon: 'setting',
+                url: 'Front/Knowledge'
               }
             ],
             token: Mock.Random.guid(),
@@ -109,7 +54,20 @@ export default {
           code: 20000,
           data: {
             menu: [
-
+              {
+                path: '/check',
+                name: 'check',
+                label: '项目管理',
+                icon: 'user',
+                url: 'CheckManage/CheckManage'
+              },
+              {
+                path: "/auditfile",
+                name: "文档管理",
+                label: "文档管理",
+                icon: "location",
+                url: "FileManage/AuditFileManage"
+              },
               {
                 path: '/contractmanage',
                 name: 'contract',
@@ -118,51 +76,11 @@ export default {
                 url: 'ContractManage/ContractManage'
               },
               {
-                path: '/check',
-                name: 'check',
-                label: '项目列表',
-                icon: 'user',
-                url: 'CheckManage/CheckManage'
-              },
-              {
-                label: '文档管理',
-                icon: 'location',
-                children: [
-                  {
-                    path: "/auditfile",
-                    name: "所有文档",
-                    label: "所有文档",
-                    icon: "setting",
-                    url: "FileManage/AuditFileManage"
-                  },
-                ]
-              },
-              {
-                label: '前台管理',
-                icon: 'user',
-                children: [
-                  {
-                    path: "/case",
-                    name: "案例维护",
-                    label: '案例维护',
-                    icon: 'setting',
-                    url: 'Front/Case'
-                  },
-                  {
-                    path: "/knowledge",
-                    name: "问答维护",
-                    label: '问答维护',
-                    icon: 'setting',
-                    url: 'Front/Knowledge'
-                  },
-                  {
-                    path: "/information",
-                    name: "信息维护",
-                    label: '信息维护',
-                    icon: 'setting',
-                    url: 'Front/Information'
-                  }
-                ]
+                path: "/knowledge",
+                name: "问答维护",
+                label: '问答维护',
+                icon: 'setting',
+                url: 'Front/Knowledge'
               }
             ],
             token: Mock.Random.guid(),

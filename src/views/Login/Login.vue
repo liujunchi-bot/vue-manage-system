@@ -24,8 +24,7 @@
     </vue-particles>
     <div class="pane">
       <h2 class="title">
-        <i class="el-icon-data-analysis" style="color: #505458"></i
-        >湖南华晟会计师事务所管理系统
+        <i class="el-icon-data-analysis" style="color: #505458"></i>湖南华晟会计师事务所（普通合伙）信息管理系统
       </h2>
       <el-tabs type="border-card">
         <el-tab-pane label="账号登录">
@@ -226,7 +225,8 @@ export default {
 .title {
   font-size: 24px;
   margin: 0 auto;
-  width: 400px;
+  width: 600px;
   left: 50px;
+  align: center;
 }
 </style>
