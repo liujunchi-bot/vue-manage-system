@@ -286,7 +286,7 @@ export default {
         //const Qs=require('qs')
         console.log("开始发送请求");
         this.$axios.post(
-          "/staff/update",
+          "http://8.129.86.121:8080/staff/update",
           qs.stringify(params)
         )
           .then(successResponse => {

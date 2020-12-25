@@ -126,7 +126,7 @@
         >
           <i class="el-icon-edit el-input__icon" slot="suffix"> </i>
           <template slot-scope="{ item }">
-            <div class="name items-container">{{ item.client_name }}</div>
+            <div class="name items-container">{{ item.name }}</div>
             <!-- <span class="addr">{{ item.address }}</span> -->
           </template>
         </el-autocomplete>
@@ -167,6 +167,7 @@
             @click="handleClickChange(scope.row)"
             >编辑</el-button
           >
+          <el-button @click="view" type="text" size="small">查看</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -180,16 +181,6 @@ export default {
     return {
       state: "",
       tableData: [
-        /* {
-          client_no: "914301007700936299",
-          client_name: "长沙市国有资产置业有限公司",
-          client_address: "长沙市开福区浏阳河路412号",
-          legal_representative: "张阳",
-          registered_capital: "20,000.00万元",
-          client_type: "有限责任公司(非自然人投资或控股的法人独资)",
-          client_range:
-          "经中国移动通信集团公司授权，按照经营许可证载明的内容经营基础电信业务、增值电信业务；移动通信、IP电话和互联网等网络的建设和投资（不得从事吸收存款、集资收款、受托贷款、发行票据、发放贷款等国家金融监管及财政信用业务）；移动通信、IP电话和互联网等网络工程勘察、设计、安装、工程施工和维修；经营与移动通信、IP电话和互联网业务相关的系统集成、漫游结算清算、技术开发、技术服务、设备销售等；出售、出租移动电话终端设备、IP电话设备、互联网设备及其备件，并提供售后服务；广告设计、制作及户外广告、自有媒体广告的发布，代理电视、广播、报刊及印刷品、礼品广告。（依法须经批准的项目，经相关部门批准后方可开展经营活动)"
-        }, */
       ],
       multipleSelection: [],
       dialogFormVisible: false,
@@ -204,9 +195,18 @@ export default {
     this.loadData();
   },
   methods: {
+    view: function () {
+      this.$router.push({
+        path: "/view",
+        name: "view",
+        params: {
+          staff_id: this.showObject.Id,
+        },
+      });
+    },
     loadData () {
       let params = {};
-      let url = "/stuff/delete/load";
+      let url = "http://8.129.86.121:8080/stuff/delete/load";
       this.$axios
         .post(url, qs.stringify(params))
         .then((successResponse) => {
@@ -221,12 +221,10 @@ export default {
       this.tableData.forEach((item, index) => {
         if (item.Id == rowInfo.Id) {
           if (confirm("确定删除吗？")) {
-            /* this.tableData.splice(index, 1);
-            this.$message.success("删除成功"); */
             let params = {
               Id: item.Id,
             };
-            let url = "/stuff/delete";
+            let url = "http://8.129.86.121:8080/stuff/delete";
             this.$axios
               .post(url, qs.stringify(params))
               .then((successResponse) => {
@@ -266,7 +264,7 @@ export default {
               salary: item.salary,
               weight: item.weight,
             };
-            let url = "/stuff/update";
+            let url = "http://8.129.86.121:8080/stuff/update";
             this.$axios
               .post(url, qs.stringify(params))
               .then((successResponse) => {
@@ -284,17 +282,17 @@ export default {
       if (confirm("确定新增吗？")) {
         this.tableData.push(this.newObject);
         let params = {
-          Id: item.Id,
-          name: item.name,
-          sex: item.sex,
-          number: item.number,
-          job: item.job,
-          point: item.point,
-          score: item.score,
-          salary: item.salary,
-          weight: item.weight,
+          Id: this.newObject.Id,
+          name: this.newObject.name,
+          sex: this.newObject.sex,
+          number: this.newObject.number,
+          job: this.newObject.job,
+          point: this.newObject.point,
+          score: this.newObject.score,
+          salary: this.newObject.salary,
+          weight: this.newObject.weight,
         };
-        let url = "/stuff/add";
+        let url = "http://8.129.86.121:8080/stuff/add";
         this.$axios
           .post(url, qs.stringify(params))
           .then((successResponse) => {

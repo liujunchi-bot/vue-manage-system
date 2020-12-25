@@ -21,7 +21,8 @@
         :width="item.width ? item.width : 125"
       >
         <template slot-scope="scope">
-          <span style="margin-left: 10px"  v-if="!item.type">{{ scope.row[item.prop] }}</span>
+          <span style="margin-left: 10px"  v-if="!item.type && scope.row[item.prop] != 'null'">{{ scope.row[item.prop] }}</span>
+          <span style="margin-left: 10px"  v-if="!item.type && scope.row[item.prop] == 'null'">-</span>
           <span
             style="margin-left: 10px"
             v-if="item.prop === 'staff_names' && scope.row['shen_he_ren'] != 0"

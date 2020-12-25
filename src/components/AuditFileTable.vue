@@ -11,9 +11,8 @@
 
       <el-table-column show-overflow-tooltip v-for="item in tableLabel" :key="item.prop" :label="item.label" :width="item.width ? item.width : 100">
         <template slot-scope="scope">
-          <span style="margin-left: 10px" v-if="!item.type">
-            {{ scope.row[item.prop] }}
-          </span>
+          <span style="margin-left: 10px"  v-if="!item.type && scope.row[item.prop] != 'null'">{{ scope.row[item.prop] }}</span>
+          <span style="margin-left: 10px"  v-if="!item.type && scope.row[item.prop] == 'null'">-</span>
 
           <span style="margin-left: 10px" v-if="item.prop === 'operatorname'">
             {{ scope.row[item.prop] }}
