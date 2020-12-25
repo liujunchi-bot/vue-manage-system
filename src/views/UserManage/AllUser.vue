@@ -167,6 +167,7 @@
             @click="handleClickChange(scope.row)"
             >编辑</el-button
           >
+          <el-button @click="view" type="text" size="small">查看</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -321,6 +322,15 @@ export default {
       this.showObject = item;
       console.log(this.showObject);
       this.dialogFormVisibleShow = true;
+    },
+    view: function () {
+      this.$router.push({
+        path: "/view",
+        name: "view",
+        params: {
+          staff_id: Id,
+        },
+      });
     },
   },
 };
