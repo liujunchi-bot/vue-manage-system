@@ -160,7 +160,30 @@
                     {
                         model: "file_type",
                         label: "文档类型",
-                        width: 160
+                        width: 160,
+                        type: 'select',
+                        opts: [
+                            {
+                            label: 'contractFile',
+                            value: '合同文档'
+                            },
+                            {
+                            label: 'designFile',
+                            value: '设计文档'
+                            },
+                            {
+                            label: 'auditFile',
+                            value: '审计文档'
+                            },
+                            {
+                            label: 'administrativeFile',
+                            value: '行政文档'
+                            },
+                            {
+                            label: 'archiveFile',
+                            value: '档案文档'
+                            }
+                        ]
                     },
                     {
                         model: "file_property",
@@ -184,7 +207,7 @@
                         { min: 4, max: 255, message: '文档名称长度需要在 4 到 255 个字符', trigger: 'blur' }
                     ],
                     file_type: [
-                        { type: "enum", enum: ['设计文档', '审计文档', '行政文档','档案文档'], required: true, message: '请输入文档类型：设计文档，审计文档，行政文档或档案文档', trigger: 'blur' }
+                        { type: "enum", enum: ['合同文档','设计文档', '审计文档', '行政文档','档案文档'], required: true, message: '请选择文档类型：设计文档，审计文档，行政文档或档案文档', trigger: 'blur' }
                     ],
                     file_property: [
                         { message: '请输入文档说明', trigger: 'blur' },
@@ -277,7 +300,7 @@
             getList (name = '') {
                 this.config.loading = true
                 name ? (this.config.page = 1) : ''
-                axios._get("http://8.131.96.2:8080/file/GetAllFile").then(res => {
+                axios._get("http://8.131.96.2:8080/file/getChecker").then(res => {
                     this.$message.success("获取项目列表成功！")
                     this.tableData = res;
                     for (var i=0;i<this.tableData.length;i++)
@@ -385,15 +408,26 @@
                         }
 
                         axios._post('http://8.131.96.2:8080/file/checkpass', formdata).then(res => {
-                            this.$message({
-                                type: "success",
-                                message: "审核结果保存成功!"
-                            });
+                            if (res.code == "250")
+                            {
+                                this.$message({
+                                    type: "error",
+                                    message: "已有审核人处理此文档！"
+                                });
+                            }
+                            else
+                            {
+                                this.$message({
+                                    type: "success",
+                                    message: "审核结果保存成功!"
+                                });
+                            }
+
                             this.getList();
                         }, err => {
                             this.$message({
                                 type: "error",
-                                message: "审核结果保存失败"
+                                message: "审核结果保存失败！"
                             });
                             this.getList();
                         })
@@ -420,10 +454,20 @@
                         }
 
                         axios._post('http://8.131.96.2:8080/file/checknotpass', formdata).then(res => {
-                            this.$message({
-                                type: "success",
-                                message: "审核结果保存成功!"
-                            });
+                            if (res.code == "250")
+                            {
+                                this.$message({
+                                    type: "error",
+                                    message: "已有审核人处理此文档！"
+                                });
+                            }
+                            else
+                            {
+                                this.$message({
+                                    type: "success",
+                                    message: "审核结果保存成功!"
+                                });
+                            }
                             this.getList();
                         }, err => {
                             this.$message({
@@ -480,9 +524,7 @@
                         for (var j=0;j<this.tableLabel.length;j++)
                         {
                             var keyStr = this.tableLabel[j]["prop"];
-                            console.log(keyStr);
-                            console.log(this.tableData[i][keyStr]);
-                            if (this.tableData[i][keyStr].toString().indexOf(keyword) != -1&&keyStr != "file_url")
+                            if (this.tableData[i][keyStr] != null &&this.tableData[i][keyStr].toString().indexOf(keyword) != -1&&keyStr != "file_url")
                             {
                                 dataList.push(this.tableData[i]);
                                 break;

@@ -170,7 +170,30 @@
                     {
                         model: "file_type",
                         label: "文档类型",
-                        width: 160
+                        width: 160,
+                        type: 'select',
+                        opts: [
+                            {
+                            label: '合同文档',
+                            value: '合同文档'
+                            },
+                            {
+                            label: '设计文档',
+                            value: '设计文档'
+                            },
+                            {
+                            label: '审计文档',
+                            value: '审计文档'
+                            },
+                            {
+                            label: '行政文档',
+                            value: '行政文档'
+                            },
+                            {
+                            label: '档案文档',
+                            value: '档案文档'
+                            }
+                        ]
                     },
                     {
                         model: "file_property",
@@ -194,7 +217,7 @@
                         { min: 4, max: 255, message: '文档名称长度需要在 4 到 255 个字符', trigger: 'blur' }
                     ],
                     file_type: [
-                        { type: "enum", enum: ['设计文档', '审计文档', '行政文档','档案文档'], required: true, message: '请输入文档类型：设计文档，审计文档，行政文档或档案文档', trigger: 'blur' }
+                        { type: "enum", enum: ['合同文档','设计文档', '审计文档', '行政文档','档案文档'], required: true, message: '请选择文档类型：设计文档，审计文档，行政文档或档案文档', trigger: 'blur' }
                     ],
                     file_property: [
                         { message: '请输入文档说明', trigger: 'blur' },
@@ -287,7 +310,7 @@
             getList (name = '') {
                 this.config.loading = true
                 name ? (this.config.page = 1) : ''
-                axios._get("http://8.131.96.2:8080/file/GetAllFile").then(res => {
+                axios._get("http://8.131.96.2:8080/file/getOperator").then(res => {
                     this.$message.success("获取项目列表成功！")
                     this.tableData = res;
                     for (var i=0;i<this.tableData.length;i++)
@@ -479,7 +502,7 @@
                             var keyStr = this.tableLabel[j]["prop"];
                             console.log(keyStr);
                             console.log(this.tableData[i][keyStr]);
-                            if (this.tableData[i][keyStr].toString().indexOf(keyword) != -1&&keyStr != "file_url")
+                            if (this.tableData[i][keyStr] != null &&this.tableData[i][keyStr].toString().indexOf(keyword) != -1&&keyStr != "file_url")
                             {
                                 dataList.push(this.tableData[i]);
                                 break;
