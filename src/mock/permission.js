@@ -69,11 +69,11 @@ export default {
                 url: "FileManage/AuditFileManage"
               },
               {
-                path: '/contractmanage',
+                path: '/auditcontractmanage',
                 name: 'contract',
                 label: '合同管理',
                 icon: 'video-play',
-                url: 'ContractManage/ContractManage'
+                url: 'ContractManage/AuditContractManage'
               },
               {
                 path: "/knowledge",

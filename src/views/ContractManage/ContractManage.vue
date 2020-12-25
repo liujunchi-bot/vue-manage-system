@@ -1,100 +1,155 @@
 <template>
-  <div class="contractmanage">
+  <div class="manage">
     <el-dialog
-      :title="operateType === 'add' ? '上传合同' : '编辑合同'"
+      :title="operateType === 'add' ? '新增合同' : '更新合同'"
       :visible.sync="isShow"
     >
-      <common-form :formLabel="operateFormLabel" :form="operateForm" ref="form">
-      </common-form>
+      <file-form
+        :formLabel="operateFormLabel"
+        :form="operateForm"
+        :rules="rules"
+        ref="form"
+      ></file-form>
+      <!-- action表示文件要上传到的后台API地址 -->
       <el-upload
         class="upload-demo"
-        action="https://jsonplaceholder.typicode.com/posts/"
+        :action="uploadApiUrl"
+        accept="image/jpeg,image/png,image/jpg,image/gif,application/pdf,application/doc,application/docx,.zip,.rar.7z"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :before-remove="beforeRemove"
+        :before-upload="onBeforeUpload"
         multiple
         :limit="1"
         :on-exceed="handleExceed"
+        :on-change="handleChange"
         :file-list="fileList"
+        :auto-upload="false"
+        :http-request="uploadFile"
+        :show-file-list="true"
       >
-        <el-button size="small" type="primary">上传文件</el-button>
-        <div slot="tip" class="el-upload__tip">上传的文件不超过500kb</div>
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">
+          请上传格式为jpeg,png,gif,jpg,pdf,doc,docx,zip.rar,7z的文件
+        </div>
       </el-upload>
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="isShow = false">取 消</el-button>
         <el-button type="primary" @click="confirm">确 定</el-button>
       </div>
     </el-dialog>
     <div class="manage-header">
-      <el-row :gutter="20">
-        <el-col :span="30">
-          <div>
-            <el-button type="primary" @click="addUser">上传</el-button>
-            <el-button type="primary" @click="delUser">删除</el-button>
-            <el-button type="primary" @click="delUser">导出</el-button>
-          </div>
-        </el-col>
-      </el-row>
+      <div>
+        <el-button type="primary" @click="addRow">新增</el-button>
+        <el-button type="primary" @click="delRow">删除</el-button>
+        <el-button type="primary" @click="exportRow">导出</el-button>
+      </div>
+
       <common-form inline :formLabel="formLabel" :form="searchFrom">
-        <el-button type="primary" @click="getList(searchFrom.keyword)"
+        <el-button type="primary" @click="searchKey(searchFrom.keyword)"
           >搜索</el-button
         >
       </common-form>
     </div>
-    <contract-table
+    <file-table
       :tableData="tableData"
       :tableLabel="tableLabel"
       :config="config"
       @changePage="getList()"
-      @edit="editUser"
-      @del="delUser"
-    ></contract-table>
+      @edit="editRow"
+      @del="delRow"
+      @submit="submitRow"
+      id="out-table"
+    ></file-table>
   </div>
 </template>
 
 <script>
-import CommonForm from '../../components/CommonForm'
-import ContractTable from '../../components/ContractTable'
+import CommonForm from "../../components/CommonForm";
+import FileTable from "../../components/FileTable";
+import FileForm from "../../components/FileForm";
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
+import axios from '../../axios/ajax'
+import qs from 'qs'
 export default {
   components: {
     CommonForm,
-    ContractTable
+    FileTable,
+    FileForm
   },
   data () {
     return {
-      fileList: [],
-      operateType: 'add',
+      if_submit: '',
+      if_issued: '',
+      operateType: "add",
       isShow: false,
+      updateFile: false,
       tableData: [],
       tableLabel: [
         {
-          prop: 'contract',
-          label: '合同名称',
+          prop: "file_code",
+          label: "合同编号",
+          width: 150
+        },
+        {
+          prop: "file_name",
+          label: "合同名称",
+          width: 160
+        },
+        {
+          prop: "file_type",
+          label: "合同类型",
+          width: 120
+        },
+        {
+          prop: "file_property",
+          label: "合同说明",
           width: 200
         },
         {
-          prop: 'id',
-          label: '合同编号',
-          width: 320
-        },
-        {
-          prop: 'name',
-          label: '客户名称'
-        },
-        {
-          prop: 'birth',
-          label: '上传日期',
-          width: 200
-        },
-        {
-          prop: 'cname',
-          label: '上传人',
+          prop: "file_version",
+          label: "合同版本",
           width: 100
         },
         {
-          prop: 'state',
-          label: '合同状态'
-        }
+          prop: "file_project",
+          label: "所属项目",
+          width: 180
+        },
+        {
+          prop: "file_uploaddate",
+          label: "上传日期",
+          width: 150
+        },
+        {
+          prop: "file_updatedate",
+          label: "更新日期",
+          width: 150
+        },
+        {
+          prop: "file_url",
+          label: "下载链接",
+          width: 150,
+          type: "link"
+        },
+        {
+          prop: 'submit_state',
+          label: '提交状态',
+          width: 100
+        },
+        {
+          prop: 'issue_state',
+          label: '审核状态',
+          width: 100
+        },
+        {
+          prop: "checker",
+          label: "审核人",
+          width: 100,
+          type: "name"
+        },
       ],
       config: {
         page: 1,
@@ -102,49 +157,92 @@ export default {
         loading: false
       },
       operateForm: {
-        name: '',
-        addr: '',
-        age: '',
-        birth: '',
-        sex: ''
+        file_code: "",
+        file_name: "",
+        file_type: "",
+        file_property: "",
+        file_version: "",
+        file_project: ""
       },
       operateFormLabel: [
         {
-          model: 'contract',
-          label: '合同名称'
+          model: "file_code",
+          label: "合同编号",
+          width: 160
         },
         {
-          model: 'age',
-          label: '合同编号'
+          model: "file_name",
+          label: "合同名称",
+          width: 160
         },
         {
-          model: 'sex',
-          label: '客户名称'
+          model: "file_type",
+          label: "类型",
+          width: 160,
+          type: 'select',
+          opts: [
+            {
+              label: '合同',
+              value: '合同'
+            }
+          ]
         },
         {
-          model: 'birth',
-          label: '上传日期',
-          type: 'date'
+          model: "file_property",
+          label: "合同说明",
+          width: 200
         },
         {
-          model: 'addr',
-          label: '上传人'
+          model: "file_version",
+          label: "合同版本",
+          width: 100
         },
         {
-          model: 'state',
-          label: '合同状态'
+          model: "file_project",
+          label: "所属项目名称",
+          width: 180
         }
       ],
+      rules: {
+        file_code: [
+          { required: true, message: '请输入合同编号', trigger: 'blur' },
+          { min: 10, max: 20, message: '合同名称长度需要在 10 到 20 个字符', trigger: 'blur' }
+        ],
+        file_name: [
+          { required: true, message: '请输入合同名称', trigger: 'blur' },
+          { min: 4, max: 255, message: '合同名称长度需要在 4 到 255 个字符', trigger: 'blur' }
+        ],
+        file_property: [
+          { message: '请输入合同说明', trigger: 'blur' },
+          { max: 255, message: '合同名称长度最多 255 个字符', trigger: 'blur' }
+        ],
+        file_type: [
+          { type: "enum", enum: ['合同'], required: true, message: '请选择类型', trigger: 'blur' }
+        ],
+        file_version: [
+          { required: true, message: '请输入合同版本', trigger: 'blur' },
+          { max: 255, message: '合同版本长度最多 255 个字符', trigger: 'blur' }
+        ],
+        file_project: [
+          { message: '请输入合同相关项目', trigger: 'blur' },
+          { max: 255, message: '合同相关项目长度最多 255 个字符', trigger: 'blur' }
+        ]
+      },
       searchFrom: {
-        keyword: ''
+        keyword: ""
       },
       formLabel: [
         {
-          model: 'keyword',
-          label: ''
+          model: "keyword",
+          label: ""
         }
-      ]
-    }
+      ],
+      fileList: [
+
+      ],
+      formData: "",
+      uploadApiUrl: "http://8.131.96.2:8080/file/upload",
+    };
   },
   methods: {
     handleRemove (file, fileList) {
@@ -154,91 +252,274 @@ export default {
       console.log(file);
     },
     handleExceed (files, fileList) {
-      this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+      this.$message.warning(
+        `当前限制选择 1 个文件，本次选择了 ${files.length
+        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+      );
     },
     beforeRemove (file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`);
     },
+    handleChange (file, fileList) {
+      this.fileList = fileList;
+    },
+    uploadFile (file) {
+      this.formData.append("file", file.file);
+    },
+    onBeforeUpload (file) {
+      var result = true;
+      for (var key in this.operateForm) {
+        if (key === "file_url" && this.operateForm[key] != "NULL") {
+          result = false;
+          break;
+        }
+      }
+      if (result === false) {
+        result = this.$confirm("已经上传的旧文件将会被覆盖，请问确定要上传新的文件吗？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+      }
+      if (result === false) {
+        return false;
+      }
+
+      const isIMAGE = file.type === "image/jpeg" || "image/png" || "image/gif" || "image/jpg";
+      const isDOCUMENT = file.type === "application/pdf" || "application/doc" || "application/docx"
+      const isZip = file.type === "application/zip" || "application/rar" || "application/7z";
+      const isLt100M = file.size / 1024 / 1024 < 100;
+
+      if (!isIMAGE || !isDOCUMENT || !isZip) {
+        this.$message.error('上传文件格式只能为jpeg,png,gif,jpg,pdf,doc,docx,zip.rar,7z');
+      }
+
+      if (!isLt100M) {
+        this.$message.error('上传文件大小不得大于100MB');
+      }
+      return (isIMAGE || isDOCUMENT || isZip) && isLt100M;
+    },
     getList (name = '') {
       this.config.loading = true
-      // 搜索时，页码需要设置为1，才能正确返回数据，因为数据是从第一页开始返回的
       name ? (this.config.page = 1) : ''
-      this.$http
-        .get('/api/user/getUser', {
-          params: {
-            page: this.config.page,
-            name
+      axios._get("http://8.131.96.2:8080/file/GetAllContract").then(res => {
+        this.$message.success("获取合同列表成功！")
+        this.tableData = res;
+        
+        for (var i = 0; i < this.tableData.length; i++) {
+          if (this.tableData[i]["file_url"] == null) {
+            this.tableData[i]["file_url"] = "NULL";
           }
-        })
-        .then(res => {
-          this.tableData = res.data.list.map(item => {
-            item.sexLabel = item.sex === 0 ? '女' : '男'
-            return item
-          })
-          this.config.total = res.data.count
-          this.config.loading = false
-        })
+          else {
+            this.tableData[i]["file_url"] = window.encodeURI(this.tableData[i]["file_url"]);
+          }
+
+          this.if_submit = this.tableData[i].if_submit;
+          this.if_issued = this.tableData[i].if_issued;
+
+          if (this.if_submit == '0')
+          {
+            this.tableData[i]["submit_state"] = '待提交';
+            this.tableData[i]["issue_state"] = '-';
+          }
+          else 
+          {
+            this.tableData[i]["submit_state"] = '已提交';
+            if (this.if_issued == '0')
+            {
+              this.tableData[i]["issue_state"] = '待审核';
+            }
+            else if (this.if_issued == '1')
+            {
+              this.tableData[i]["issue_state"] = '被驳回';
+            }
+            else
+            {
+              this.tableData[i]["issue_state"] = '已通过';
+            }
+          }
+        }
+        
+        this.config.loading = false;
+      }, err => {
+        alert("error!!!");
+      })
     },
-    addUser () {
-      this.operateForm = {}
-      this.operateType = 'add'
-      this.isShow = true
+
+    addRow () {
+      this.operateForm = {};
+      this.operateType = "add";
+      this.isShow = true;
     },
-    editUser (row) {
-      this.operateType = 'edit'
-      this.isShow = true
-      this.operateForm = row
+    editRow (row) {
+      this.operateType = "edit";
+      this.isShow = true;
+      this.operateForm = row;
     },
     confirm () {
-      if (this.operateType === 'edit') {
-        this.$http.post('/api/user/edit', this.operateForm).then(res => {
-          console.log(res.data)
-          this.isShow = false
+      if (this.operateType === "edit") {
+        let formdata = new FormData();
+        for (var key in this.operateForm) {
+          formdata.append(key, this.operateForm[key])
+        }
+
+        if (this.fileList.length != 0) {
+          formdata.append("file", this.fileList[0].raw)
+          this.fileList.splice(0, 1);
+        }
+
+        axios._post('http://8.129.86.121:8080/file/update', formdata).then(res => {
+          this.$message.success("更新合同成功！");
+          this.isShow = false;
+          console.log("Inserted " + res);//res是返回插入数据的id
           this.getList()
+        }, err => {
+          alert("error!!!");
+          console.log(JSON.stringify(formdata));
+          console.log(formdata);
         })
-      } else {
-        this.$http.post('/api/user/add', this.operateForm).then(res => {
-          console.log(res.data)
-          this.isShow = false
+      } else if (this.operateType === "add") {
+        let formdata = new FormData();
+        for (var key2 in this.operateForm) {
+          formdata.append(key2, this.operateForm[key2])
+        }
+        if (this.fileList.length != 0) {
+          formdata.append("file", this.fileList[0].raw)
+          this.fileList.splice(0, 1);
+        }
+
+        axios._post('http://8.129.86.121:8080/file/upload', formdata).then(res => {
+          this.$message.success("添加合同成功！");
+          this.isShow = false;
+          console.log("Inserted " + res);//res是返回插入数据的id
           this.getList()
+        }, err => {
+          alert("error!!!");
+          console.log(JSON.stringify(formdata));
+          console.log(formdata);
         })
       }
     },
-    delUser (row) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+    delRow (row) {
+      this.$confirm("此操作将永久删除该合同信息及文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
         .then(() => {
-          let id = row.id
-          this.$http
-            .get('/api/user/del', {
-              params: {
-                id
-              }
-            })
-            .then(res => {
-              console.log(res.data)
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
-              })
-              this.getList()
-            })
+          this.operateForm = row;
+          let formdata = new FormData();
+          for (var key3 in this.operateForm) {
+            formdata.append(key3, this.operateForm[key3])
+          }
+
+          axios._post('http://8.129.86.121:8080/file/deletefile', formdata).then(res => {
+            this.$message({
+              type: "success",
+              message: "删除成功!"
+            });
+            this.getList();
+          }, err => {
+            this.$message({
+              type: "error",
+              message: "删除失败"
+            });
+            this.getList();
+          })
         })
         .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    submitRow (row) {
+      this.$confirm("此操作将提交合同信息及文件至审核人, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.operateForm = row;
+          let formdata = new FormData();
+          for (var key4 in this.operateForm) {
+            formdata.append(key4, this.operateForm[key4])
+          }
+
+          axios._post('http://8.129.86.121:8080/file/submitfile', formdata).then(res => {
+            this.$message({
+              type: "success",
+              message: "提交成功!"
+            });
+            this.getList();
+          }, err => {
+            this.$message({
+              type: "error",
+              message: "提交失败"
+            });
+            this.getList();
           })
         })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消提交"
+          });
+        });
+    },
+    //定义导出Excel表格事件
+    exportRow () {
+      /* 从表生成工作簿对象 */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+      /* 获取二进制字符串作为输出 */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          //Blob 对象表示一个不可变、原始数据的类文件对象。
+          //Blob 表示的不一定是JavaScript原生格式的数据。
+          //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+          //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+          new Blob([wbout], { type: "application/octet-stream" }),
+          //设置导出文件名称
+          "导出文档.xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
+    searchKey (keyword) {
+      if (keyword == "" || keyword == undefined || keyword == null) {
+        this.getList();
+      }
+      else {
+        this.config.loading = true;
+        var dataList = [];
+
+        for (var i = 0; i < this.tableData.length; i++) {
+          for (var j = 0; j < this.tableLabel.length; j++) {
+            var keyStr = this.tableLabel[j]["prop"];
+
+            if (this.tableData[i][keyStr] != null && this.tableData[i][keyStr].toString().indexOf(keyword) != -1 && keyStr != "file_url") {
+              dataList.push(this.tableData[i]);
+              break;
+            }
+          }
+        }
+        this.tableData = dataList;
+        this.config.loading = false;
+      }
     }
   },
   created () {
-    this.getList()
+    this.getList();
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

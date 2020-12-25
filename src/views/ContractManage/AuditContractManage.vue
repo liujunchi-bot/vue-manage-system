@@ -1,6 +1,6 @@
 <template>
   <div class="manage">
-    <el-dialog title="更新文档" :visible.sync="isShow">
+    <el-dialog title="更新合同" :visible.sync="isShow">
       <file-form
         :formLabel="operateFormLabel"
         :form="operateForm"
@@ -83,32 +83,32 @@ export default {
       tableLabel: [
         {
           prop: "file_code",
-          label: "文档编号",
+          label: "合同编号",
           width: 150
         },
         {
           prop: "file_name",
-          label: "文档名称",
+          label: "合同名称",
           width: 160
         },
         {
           prop: "file_type",
-          label: "文档类型",
+          label: "类型",
           width: 160
         },
         {
           prop: "file_property",
-          label: "文档说明",
+          label: "合同说明",
           width: 200
         },
         {
           prop: "file_id",
-          label: "文档编号",
+          label: "合同编号",
           width: 150
         },
         {
           prop: "file_version",
-          label: "文档版本",
+          label: "合同版本",
           width: 150
         },
         {
@@ -166,46 +166,34 @@ export default {
       operateFormLabel: [
         {
           model: "file_code",
-          label: "文档编号",
+          label: "合同编号",
           width: 160
         },
         {
           model: "file_name",
-          label: "文档名称",
+          label: "合同名称",
           width: 160
         },
         {
           model: "file_type",
-          label: "文档类型",
+          label: "类型",
           width: 160,
           type: 'select',
           opts: [
             {
-              label: '设计文档',
-              value: '设计文档'
-            },
-            {
-              label: '审计文档',
-              value: '审计文档'
-            },
-            {
-              label: '行政文档',
-              value: '行政文档'
-            },
-            {
-              label: '档案文档',
-              value: '档案文档'
+              label: '合同',
+              value: '合同'
             }
           ]
         },
         {
           model: "file_property",
-          label: "文档说明",
+          label: "合同说明",
           width: 200
         },
         {
           model: "file_version",
-          label: "设计文档版本",
+          label: "合同版本",
           width: 100
         },
         {
@@ -215,28 +203,28 @@ export default {
         }
       ],
       rules: {
-        project_code: [
-          { required: true, message: '请输入文档编号', trigger: 'blur' },
-          { min: 10, max: 20, message: '项目名称长度需要在 10 到 20 个字符', trigger: 'blur' }
+        file_code: [
+          { required: true, message: '请输入合同编号', trigger: 'blur' },
+          { min: 10, max: 20, message: '合同名称长度需要在 10 到 20 个字符', trigger: 'blur' }
         ],
         file_name: [
-          { required: true, message: '请输入文档名称', trigger: 'blur' },
-          { min: 4, max: 255, message: '文档名称长度需要在 4 到 255 个字符', trigger: 'blur' }
-        ],
-        file_type: [
-          { type: "enum", enum: ['设计文档', '审计文档', '行政文档', '档案文档'], required: true, message: '请选择文档类型：设计文档，审计文档，行政文档或档案文档', trigger: 'blur' }
+          { required: true, message: '请输入合同名称', trigger: 'blur' },
+          { min: 4, max: 255, message: '合同名称长度需要在 4 到 255 个字符', trigger: 'blur' }
         ],
         file_property: [
-          { message: '请输入文档说明', trigger: 'blur' },
-          { max: 255, message: '文档名称长度最多 255 个字符', trigger: 'blur' }
+          { message: '请输入合同说明', trigger: 'blur' },
+          { max: 255, message: '合同名称长度最多 255 个字符', trigger: 'blur' }
+        ],
+        file_type: [
+          { type: "enum", enum: ['合同'], required: true, message: '请选择类型', trigger: 'blur' }
         ],
         file_version: [
-          { required: true, message: '请输入文档版本', trigger: 'blur' },
-          { max: 255, message: '文档版本长度最多 255 个字符', trigger: 'blur' }
+          { required: true, message: '请输入合同版本', trigger: 'blur' },
+          { max: 255, message: '合同版本长度最多 255 个字符', trigger: 'blur' }
         ],
         file_project: [
-          { message: '请输入文档相关项目', trigger: 'blur' },
-          { max: 255, message: '文档相关项目长度最多 255 个字符', trigger: 'blur' }
+          { message: '请输入合同相关项目', trigger: 'blur' },
+          { max: 255, message: '合同相关项目长度最多 255 个字符', trigger: 'blur' }
         ]
       },
       searchFrom: {
@@ -252,7 +240,7 @@ export default {
         }
       ],
       formData: "",
-      uploadApiUrl: "/file/upload",
+      uploadApiUrl: "http://8.131.96.2:8080/file/upload",
     };
   },
   methods: {
@@ -313,8 +301,8 @@ export default {
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
-      axios._get("http://8.129.86.121:8080/file/getChecker").then(res => {
-        this.$message.success("获取文档列表成功！")
+      axios._get("http://8.129.86.121:8080/file/GetAllContract").then(res => {
+        this.$message.success("获取合同列表成功！")
         this.tableData = res;
 
         for (var i = 0; i < this.tableData.length; i++) {
@@ -380,7 +368,7 @@ export default {
         }
 
         axios._post('http://8.129.86.121:8080/file/update', formdata).then(res => {
-          this.$message.success("更新文档成功！");
+          this.$message.success("更新合同成功！");
           this.isShow = false;
           this.getList()
         }, err => {
@@ -391,7 +379,7 @@ export default {
       }
     },
     delRow (row) {
-      this.$confirm("此操作将不再显示该文档信息, 是否继续?", "提示", {
+      this.$confirm("此操作将不再显示该合同信息, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
@@ -425,7 +413,7 @@ export default {
         });
     },
     passRow (row) {
-      this.$confirm("此操作将审核通过该文档, 是否继续?", "提示", {
+      this.$confirm("此操作将审核通过该合同, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
@@ -441,7 +429,7 @@ export default {
             if (res.code == "250") {
               this.$message({
                 type: "error",
-                message: "已有审核人处理此文档！"
+                message: "已有审核人处理此合同！"
               });
             }
             else {
@@ -468,7 +456,7 @@ export default {
         });
     },
     rejectRow (row) {
-      this.$confirm("此操作将驳回该文档, 是否继续?", "提示", {
+      this.$confirm("此操作将驳回该合同, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"

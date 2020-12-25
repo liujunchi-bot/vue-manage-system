@@ -315,7 +315,7 @@ export default {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
       axios._get("http://8.129.86.121:8080/file/getOperator").then(res => {
-        this.$message.success("获取项目列表成功！")
+        this.$message.success("获取文档列表成功！")
         this.tableData = res;
         
         for (var i = 0; i < this.tableData.length; i++) {
