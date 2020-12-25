@@ -3,7 +3,7 @@
     <el-dialog title="编辑" :visible.sync="dialogFormVisible">
       <el-form>
         <el-form-item label="员工编号">
-          <el-input v-model="editObject.Id" disabled></el-input>
+          <el-input v-model="editObject.Id" ></el-input>
         </el-form-item>
         <el-form-item label="员工姓名">
           <el-input v-model="editObject.name"></el-input>
