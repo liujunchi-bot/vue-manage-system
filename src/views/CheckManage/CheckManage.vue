@@ -8,7 +8,7 @@
         :formLabel="operateFormLabel"
         :form="operateForm"
         :rules="rules"
-        ref="form"
+        ref="commonForm"
       ></common-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="isShow = false">取 消</el-button>
@@ -518,27 +518,39 @@ export default {
       }
     },
     confirm () {
-      if (this.operateType === 'edit') {
-        
-          let formdata = new FormData();
-          for (var key in this.operateForm) {
-            if (key != "issue_state" && key != "submit_state")
+      //console.log(this.$refs.commonForm.$children[0]);
+      this.$refs.commonForm.$children[0].validate((valid) => {
+          if (valid) 
+          {
+            if (this.operateType === 'edit')
             {
-              formdata.append(key, this.operateForm[key])
-            }
-          }
+              let formdata = new FormData();
+              for (var key in this.operateForm) {
+                if (key != "issue_state" && key != "submit_state")
+                {
+                  formdata.append(key, this.operateForm[key])
+                }
+              }
 
-        axios._post('http://8.129.86.121:8080/project/update', formdata).then(res => {
-          this.$message.success("更新项目成功！");
-          this.isShow = false;
-          // console.log("Inserted " + res);//res是返回插入数据的id
-          this.getList()
-        }, err => {
-          alert("error!!!");
-          console.log(JSON.stringify(this.formdata));
-          console.log(this.formdata);
-        })
-      }
+              axios._post('http://8.129.86.121:8080/project/update', formdata).then(res => {
+                this.$message.success("更新项目成功！");
+                this.isShow = false;
+                // console.log("Inserted " + res);//res是返回插入数据的id
+                this.getList()
+              }, err => {
+                alert("error!!!");
+                console.log(JSON.stringify(this.formdata));
+                console.log(this.formdata);
+              })
+            }
+          } else {
+            this.$message({
+              type: "error",
+              message: "表单填写不合法，请检查必填项！"
+            });
+            return false;
+          }
+        });
     },
   },
   created () {

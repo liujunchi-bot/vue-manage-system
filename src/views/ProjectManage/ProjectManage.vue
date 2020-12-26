@@ -8,7 +8,7 @@
         :formLabel="operateFormLabel"
         :form="operateForm"
         :rules="rules"
-        ref="form"
+        ref="commonForm"
       ></common-form>
       <div slot="footer" class="dialog-footer">
         <el-button  @click="isShow = false">取 消</el-button>
@@ -423,37 +423,52 @@ export default {
         });
     },
     confirm () {
-      if (this.operateType === 'edit') {
-        let formdata = new FormData();
-        for (var key2 in this.operateForm) {
-          if (key2 != "issue_state" && key2 != "submit_state")
+      //console.log(this.$refs.commonForm.$children[0]);
+      this.$refs.commonForm.$children[0].validate((valid) => {
+          if (valid) 
           {
-            formdata.append(key2, this.operateForm[key2])
-          }
-        }
+            if (this.operateType === 'edit') 
+            {
+              let formdata = new FormData();
+              for (var key2 in this.operateForm) {
+                if (key2 != "issue_state" && key2 != "submit_state")
+                {
+                  formdata.append(key2, this.operateForm[key2])
+                }
+              }
 
-        axios._post('http://8.129.86.121:8080/project/update', formdata).then(res => {
-          console.log(res.data)
-          this.isShow = false
-          this.getList()
-        })
-      } else if (this.operateType === 'add') {
-        let formdata = new FormData();
-        for (var key3 in this.operateForm) {
-          if (key3 != "issue_state" && key3 != "submit_state")
-          {
-            formdata.append(key3, this.operateForm[key3])
+              axios._post('http://8.129.86.121:8080/project/update', formdata).then(res => {
+                console.log(res.data)
+                this.isShow = false
+                this.getList()
+              })
+            } 
+            else if (this.operateType === 'add') 
+            {
+              let formdata = new FormData();
+              for (var key3 in this.operateForm) {
+                if (key3 != "issue_state" && key3 != "submit_state")
+                {
+                  formdata.append(key3, this.operateForm[key3])
+                }
+              }
+              
+              axios._post('http://8.129.86.121:8080/project/insert', formdata).then(res => {
+                this.$message.success("新建项目成功！");
+                this.isShow = false
+                this.getList()
+              }, err => {
+                alert("add error!!!");
+              })
+            }
+          } else {
+            this.$message({
+              type: "error",
+              message: "表单填写不合法，请检查必填项！"
+            });
+            return false;
           }
-        }
-        
-        axios._post('http://8.129.86.121:8080/project/insert', formdata).then(res => {
-          this.$message.success("新建项目成功！");
-          this.isShow = false
-          this.getList()
-        }, err => {
-          alert("add error!!!");
-        })
-      }
+        });
     },
     delRow (row) {
       this.$confirm('此操作将永久删除该项目信息, 是否继续?', '提示', {

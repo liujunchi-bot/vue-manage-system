@@ -5,10 +5,11 @@
       :visible.sync="isShow"
     >
       <file-form
+        :inline = "false"
         :formLabel="operateFormLabel"
-        :form="operateForm"
+        :fileForm="operateForm"
         :rules="rules"
-        ref="form"
+        ref="fileForm"
       ></file-form>
       <!-- action表示文件要上传到的后台API地址 -->
       <el-upload
@@ -357,48 +358,63 @@ export default {
       this.operateForm = row;
     },
     confirm () {
-      if (this.operateType === "edit") {
-        let formdata = new FormData();
-        for (var key in this.operateForm) {
-          formdata.append(key, this.operateForm[key])
-        }
+      //console.log(this.$refs.fileForm.$children[0]);
+      this.$refs.fileForm.$children[0].validate((valid) => {
+          if (valid) 
+          {
+            if (this.operateType === "edit")
+            {
+              let formdata = new FormData();
+              for (var key in this.operateForm) {
+                formdata.append(key, this.operateForm[key])
+              }
 
-        if (this.fileList.length != 0) {
-          formdata.append("file", this.fileList[0].raw)
-          this.fileList.splice(0, 1);
-        }
+              if (this.fileList.length != 0) {
+                formdata.append("file", this.fileList[0].raw)
+                this.fileList.splice(0, 1);
+              }
 
-        axios._post('http://8.129.86.121:8080/file/update', formdata).then(res => {
-          this.$message.success("更新合同成功！");
-          this.isShow = false;
-          console.log("Inserted " + res);//res是返回插入数据的id
-          this.getList()
-        }, err => {
-          alert("error!!!");
-          console.log(JSON.stringify(formdata));
-          console.log(formdata);
-        })
-      } else if (this.operateType === "add") {
-        let formdata = new FormData();
-        for (var key2 in this.operateForm) {
-          formdata.append(key2, this.operateForm[key2])
-        }
-        if (this.fileList.length != 0) {
-          formdata.append("file", this.fileList[0].raw)
-          this.fileList.splice(0, 1);
-        }
+              axios._post('http://8.129.86.121:8080/file/update', formdata).then(res => {
+                this.$message.success("更新合同成功！");
+                this.isShow = false;
+                console.log("Inserted " + res);//res是返回插入数据的id
+                this.getList()
+              }, err => {
+                alert("error!!!");
+                console.log(JSON.stringify(formdata));
+                console.log(formdata);
+              })
+            }
+            else if (this.operateType === "add")
+            {
+              let formdata = new FormData();
+              for (var key2 in this.operateForm) {
+                formdata.append(key2, this.operateForm[key2])
+              }
+              if (this.fileList.length != 0) {
+                formdata.append("file", this.fileList[0].raw)
+                this.fileList.splice(0, 1);
+              }
 
-        axios._post('http://8.129.86.121:8080/file/upload', formdata).then(res => {
-          this.$message.success("添加合同成功！");
-          this.isShow = false;
-          console.log("Inserted " + res);//res是返回插入数据的id
-          this.getList()
-        }, err => {
-          alert("error!!!");
-          console.log(JSON.stringify(formdata));
-          console.log(formdata);
-        })
-      }
+              axios._post('http://8.129.86.121:8080/file/upload', formdata).then(res => {
+                this.$message.success("添加合同成功！");
+                this.isShow = false;
+                console.log("Inserted " + res);//res是返回插入数据的id
+                this.getList()
+              }, err => {
+                alert("error!!!");
+                console.log(JSON.stringify(formdata));
+                console.log(formdata);
+              })
+            }
+          } else {
+            this.$message({
+              type: "error",
+              message: "表单填写不合法，请检查必填项！"
+            });
+            return false;
+          }
+        });
     },
     delRow (row) {
       this.$confirm("此操作将永久删除该合同信息及文件, 是否继续?", "提示", {

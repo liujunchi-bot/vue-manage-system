@@ -1,5 +1,5 @@
 <template>
-  <el-form :inline="inline" :model="form" ref="form" :rules="rules" label-width="130px" class="demo-ruleForm">
+  <el-form :inline="inline" :model="fileForm" :rules="rules" label-width="130px" class="demo-ruleForm">
     <el-form-item
       v-for="item in formLabel"
       :prop="item.model"
@@ -7,12 +7,12 @@
       :label="item.label"
     >
       <el-input
-        v-model="form[item.model]"
+        v-model="fileForm[item.model]"
         :placeholder="'请输入' + item.label"
         v-if="!item.type"
       ></el-input>
       <el-select
-        v-model="form[item.model]"
+        v-model="fileForm[item.model]"
         placeholder="请选择"
         v-if="item.type === 'select'"
       >
@@ -24,11 +24,11 @@
         ></el-option>
       </el-select>
       <el-switch
-        v-model="form[item.model]"
+        v-model="fileForm[item.model]"
         v-if="item.type === 'switch'"
       ></el-switch>
       <el-date-picker
-        v-model="form[item.model]"
+        v-model="fileForm[item.model]"
         type="date"
         placeholder="选择日期"
         v-if="item.type === 'date'"
@@ -44,7 +44,7 @@
 export default {
   props: {
     inline: Boolean,
-    form: Object,
+    fileForm: Object,
     formLabel: Array,
     rules: Object,
   }
