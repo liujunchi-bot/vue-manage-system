@@ -1,7 +1,7 @@
 module.exports = {
   lintOnSave: false,
-  assetsDir: 'static',
-  publicPath: './',
+  assetsDir: "./static",
+  publicPath: "./",
   devServer: {
     port: 3333,
     open: true,

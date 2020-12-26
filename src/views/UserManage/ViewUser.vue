@@ -132,30 +132,34 @@ export default {
       this.staff_id
     )
       .then(res => {
-        this.photo = res.data.staff_photo,
-          this.name = res.data.staff_name,
-          this.gender = res.data.staff_sex,
-          this.num = res.data.staff_id,
-          this.account = res.data.staff_account,
-          this.password = res.data.staff_password,
-          this.birth = res.data.staff_birthday,
-          this.nation = res.data.staff_nation,
-          this.nativePlace = res.data.staff_native_place,
-          this.birthPlace = res.data.staff_birth_place,
-          this.politicsStatus = res.data.staff_politic,
-          this.phone = res.data.staff_phone,
-          this.email = res.data.staff_email,
-          this.position = res.data.staff_job,
-          this.state = res.data.staff_status,
-          this.type = res.data.staff_type,
-          this.dateOnBroad = res.data.staff_in_date,
-          this.dateOfDeparture = res.data.staff_out_date,
-          this.department = res.data.staff_department,
+        console.log(res)
+        if(res.staff.staff_photo==null){
+          this.photo = '1'
+        }
+        else this.photo = res.staff.staff_photo,
+          this.name = res.staff.staff_name,
+          this.gender = res.staff.staff_sex,
+          this.num = res.staff.staff_id,
+          this.account = res.staff.staff_account,
+          this.password = res.staff.staff_password,
+          this.birth = res.staff.staff_birthday,
+          this.nation = res.staff.staff_nation,
+          this.nativePlace = res.staff.staff_native_place,
+          this.birthPlace = res.staff.staff_birth_place,
+          this.politicsStatus = res.staff.staff_politic,
+          this.phone = res.staff.staff_phone,
+          this.email = res.staff.staff_email,
+          this.position = res.staff.staff_job,
+          this.state = res.staff.staff_status,
+          this.type = res.staff.staff_type,
+          this.dateOnBroad = res.staff.staff_in_date,
+          this.dateOfDeparture = res.staff.staff_out_date,
+          this.department = res.staff.staff_department,
           //this.performance = res.data.performance,
           //this.checkIn = res.data.checkIn,
-          this.salary = res.data.staff_wage,
-          this.holiday = res.data.staff_annual_leave,
-          this.authority = res.data.staff_permission
+          this.salary = res.staff.staff_wage,
+          this.holiday = res.staff.staff_annual_leave,
+          this.authority = res.staff.staff_permission
       })
       .catch(err => {
         this.$notify({ title: '错误', message: err, type: 'warning' })
@@ -165,7 +169,6 @@ export default {
   methods: {
 
     ToModify: function () {
-      console.log(this.gender)
       this.$router.push({
         path: "/Modification",
         name: "Modification",

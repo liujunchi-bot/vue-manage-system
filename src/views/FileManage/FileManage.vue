@@ -372,7 +372,11 @@ export default {
       if (this.operateType === "edit") {
         let formdata = new FormData();
         for (var key in this.operateForm) {
-          formdata.append(key, this.operateForm[key])
+          if (key != "issue_state" && key != "submit_state")
+          {
+            formdata.append(key, this.operateForm[key])
+          }
+          
         }
 
         if (this.fileList.length != 0) {
@@ -393,7 +397,10 @@ export default {
       } else if (this.operateType === "add") {
         let formdata = new FormData();
         for (var key2 in this.operateForm) {
-          formdata.append(key2, this.operateForm[key2])
+          if (key2 != "issue_state" && key2 != "submit_state")
+          {
+            formdata.append(key2, this.operateForm[key2])
+          }
         }
         if (this.fileList.length != 0) {
           formdata.append("file", this.fileList[0].raw)
@@ -422,7 +429,10 @@ export default {
           this.operateForm = row;
           let formdata = new FormData();
           for (var key3 in this.operateForm) {
-            formdata.append(key3, this.operateForm[key3])
+            if (key3 != "issue_state" && key3 != "submit_state")
+            {
+              formdata.append(key3, this.operateForm[key3])
+            }
           }
 
           axios._post('http://8.129.86.121:8080/file/deletefile', formdata).then(res => {
@@ -456,7 +466,10 @@ export default {
           this.operateForm = row;
           let formdata = new FormData();
           for (var key4 in this.operateForm) {
-            formdata.append(key4, this.operateForm[key4])
+            if (key4 != "issue_state" && key4 != "submit_state")
+            {
+              formdata.append(key4, this.operateForm[key4])
+            }
           }
 
           axios._post('http://8.129.86.121:8080/file/submitfile', formdata).then(res => {
