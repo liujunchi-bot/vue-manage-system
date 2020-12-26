@@ -119,13 +119,6 @@ export default {
                     icon: 'setting',
                     url: 'UserManage/AllUser'
                   },
-                  // {
-                  //   path: "/thisaccount",
-                  //   name: "当前用户",
-                  //   label: '当前用户',
-                  //   icon: 'setting',
-                  //   url: 'UserManage/ThisAccount'
-                  // },
                   {
                     path: "/modification",
                     name: "修改用户",

@@ -240,7 +240,7 @@ export default {
         }
       ],
       formData: "",
-      uploadApiUrl: "http://8.131.96.2:8080/file/upload",
+      uploadApiUrl: "http://8.129.86.121:8080/file/upload",
     };
   },
   methods: {

@@ -241,7 +241,7 @@ export default {
 
       ],
       formData: "",
-      uploadApiUrl: "http://8.131.96.2:8080/file/upload",
+      uploadApiUrl: "http://8.129.86.121:8080/file/upload",
     };
   },
   methods: {
@@ -302,7 +302,7 @@ export default {
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
-      axios._get("http://8.131.96.2:8080/file/GetAllContract").then(res => {
+      axios._get("http://8.129.86.121:8080/file/GetAllContract").then(res => {
         this.$message.success("获取合同列表成功！")
         this.tableData = res;
         

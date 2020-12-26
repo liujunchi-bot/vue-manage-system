@@ -167,7 +167,7 @@
             @click="handleClickChange(scope.row)"
             >编辑</el-button
           >
-          <el-button @click="view" type="text" size="small">查看</el-button>
+          <el-button @click="view(scope.row)" type="text" size="small">查看</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -195,27 +195,28 @@ export default {
     this.loadData();
   },
   methods: {
-    view: function () {
-      this.$router.push({
-        path: "/view",
-        name: "view",
-        params: {
-          staff_id: this.showObject.Id,
-        },
-      });
-    },
+    
     loadData () {
       let params = {};
       let url = "http://8.129.86.121:8080/stuff/delete/load";
       this.$axios
         .post(url, qs.stringify(params))
         .then((successResponse) => {
-          alert("请求成功");
           this.tableData = successResponse.data;
         })
         .catch((failResponse) => {
           alert("请求失败");
         });
+    },
+    view: function (rowInfo) {
+      this.$router.push({
+        path: "/view",
+        query:{
+            params: JSON.stringify({
+            staff_id: rowInfo.Id,
+          }),
+        }
+      });
     },
     handleDelete (rowInfo) {
       this.tableData.forEach((item, index) => {
