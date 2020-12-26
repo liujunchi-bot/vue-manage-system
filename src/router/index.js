@@ -1,3 +1,4 @@
+import { resolve } from 'core-js/fn/promise'
 import Vue from 'vue'
 import Router from 'vue-router'
 
@@ -9,24 +10,24 @@ export default new Router({
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/Login/Login')
+      component: () => import('@/views/Login/Login', resolve)
     },
     {
       path: '/view',
       name: 'view',
-      component:()=>import("@/views/UserManage/ViewUser")
+      component:()=>import("@/views/UserManage/ViewUser", resolve)
     },
 
     {
       path:"/Modification",
       name:"Modification",
-      component:()=>import("@/views/UserManage/Modification")
+      component:()=>import("@/views/UserManage/Modification", resolve)
     },
 
     {
       path:"/AllUser",
       name:"AllUser",
-      component:()=>import("@/views/UserManage/AllUser")
+      component:()=>import("@/views/UserManage/AllUser", resolve)
     }
   ]
 })
