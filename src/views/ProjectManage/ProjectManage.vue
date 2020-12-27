@@ -441,9 +441,9 @@ export default {
                 console.log(res.data)
                 this.isShow = false
                 this.getList()
-              }).err => {
+              },err => {
                 alert("Update Error!")
-              }
+              })
             } 
             else if (this.operateType === 'add') 
             {
