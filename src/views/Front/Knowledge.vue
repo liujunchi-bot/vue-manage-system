@@ -141,7 +141,7 @@ export default {
     this.config.loading = true;
     name ? (this.config.page = 1) : "";
     axios
-      .get("http://192.168.43.233:8080/backend/")
+      .get("http://8.129.86.121:8080/QandA/getProblem")
       .then((response) => {
         alert(response);
         for(var i in response){
@@ -184,7 +184,7 @@ export default {
       myFormData.append("q_word", this.ruleForm.answer);
 
       axios
-        .post("", myFormData)
+        .post("http://8.129.86.121:8080/QandA/insert", myFormData)
         .then((response) => {
           alert("发送成功");
         })
@@ -234,7 +234,7 @@ export default {
       myFormData.append("q_word", this.editForm.answer);
 
       axios
-        .post("", myFormData)
+        .post("http://8.129.86.121:8080/QandA/update", myFormData)
         .then((response) => {
           alert("发送成功");
         })
@@ -263,7 +263,7 @@ export default {
           myFormData.append("id", de_index);
 
           axios
-            .post("", myFormData)
+            .post("http://8.129.86.121:8080/QandA/delete", myFormData)
             .then((response) => {
               alert("发送成功");
             })

@@ -325,6 +325,15 @@ export default {
         project_endtime: [
           { required: true, message: '请输入项目结束时间', trigger: 'blur' },
         ],
+        project_assets:[
+          { type: Number, message: '资产总额需输入数字', trigger: 'blur'}
+        ],
+        project_audit:[
+          { type: Number, message: '审定金额需输入数字', trigger: 'blur'}
+        ],
+        project_reduction:[
+          { type: Number, message: '审减金额需输入数字', trigger: 'blur'}
+        ],
       },
       searchFrom: {
         keyword: ''
