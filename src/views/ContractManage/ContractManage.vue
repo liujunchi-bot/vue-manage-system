@@ -14,20 +14,18 @@
       <!-- action表示文件要上传到的后台API地址 -->
       <el-upload
         class="upload-demo"
-        :action="uploadApiUrl"
         accept="image/jpeg,image/png,image/jpg,image/gif,application/pdf,application/doc,application/docx,.zip,.rar.7z"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :before-remove="beforeRemove"
-        :before-upload="onBeforeUpload"
         multiple
         :limit="1"
         :on-exceed="handleExceed"
         :on-change="handleChange"
         :file-list="fileList"
         :auto-upload="false"
-        :http-request="uploadFile"
         :show-file-list="true"
+        :on-progress="uploadOnProgress"
       >
         <el-button size="small" type="primary">点击上传</el-button>
         <div slot="tip" class="el-upload__tip">
@@ -82,6 +80,8 @@ export default {
   },
   data () {
     return {
+      loadProgress: 0, // 动态显示进度条
+      progressFlag: false, // 关闭进度条
       if_submit: '',
       if_issued: '',
       operateType: "add",
@@ -242,7 +242,6 @@ export default {
 
       ],
       formData: "",
-      uploadApiUrl: "http://8.129.86.121:8080/file/upload",
     };
   },
   methods: {
@@ -264,9 +263,6 @@ export default {
     handleChange (file, fileList) {
       this.fileList = fileList;
     },
-    uploadFile (file) {
-      this.formData.append("file", file.file);
-    },
     onBeforeUpload (file) {
       var result = true;
       for (var key in this.operateForm) {
@@ -286,9 +282,9 @@ export default {
         return false;
       }
 
-      const isIMAGE = file.type === "image/jpeg" || "image/png" || "image/gif" || "image/jpg";
-      const isDOCUMENT = file.type === "application/pdf" || "application/doc" || "application/docx"
-      const isZip = file.type === "application/zip" || "application/rar" || "application/7z";
+      const isIMAGE = (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/gif" || file.type === "image/jpg");
+      const isDOCUMENT = (file.type === "application/pdf" || file.type === "application/doc" || file.type === "application/docx" || file.type === "application/xls" || file.type === "application/xlsx");
+      const isZip = (file.type === "application/zip" || file.type ==="application/rar" ||  file.type === "application/7z");
       const isLt100M = file.size / 1024 / 1024 < 100;
 
       if (!isIMAGE || !isDOCUMENT || !isZip) {
@@ -362,6 +358,12 @@ export default {
       this.$refs.fileForm.$children[0].validate((valid) => {
           if (valid) 
           {
+            if (!this.onBeforeUpload(this.fileList[0]))
+            {
+              this.fileList.splice(0, 1);
+              return false;
+            }
+
             if (this.operateType === "edit")
             {
               let formdata = new FormData();

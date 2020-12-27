@@ -11,23 +11,22 @@
       <el-upload
         class="upload-demo"
         :action="uploadApiUrl"
-        accept="image/jpeg,image/png,image/jpg,image/gif,application/pdf,application/doc,application/docx,.zip,.rar.7z"
+        accept="image/jpeg,image/png,image/jpg,image/gif,application/pdf,application/doc,application/xls,application/xlsx,application/docx,.zip,.rar.7z"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :before-remove="beforeRemove"
-        :before-upload="onBeforeUpload"
         multiple
         :limit="1"
         :on-exceed="handleExceed"
         :on-change="handleChange"
         :file-list="fileList"
         :auto-upload="false"
-        :http-request="uploadFile"
         :show-file-list="true"
+        :on-progress="uploadOnProgress"
       >
         <el-button size="small" type="primary">点击上传</el-button>
         <div slot="tip" class="el-upload__tip">
-          请上传格式为jpeg,png,gif,jpg,pdf,doc,docx,zip.rar,7z的文件
+          请上传格式为jpeg,png,gif,jpg,pdf,doc,docx,xls,xlsx,zip.rar,7z的文件
         </div>
       </el-upload>
 
@@ -74,6 +73,8 @@ export default {
   },
   data () {
     return {
+      loadProgress: 0, // 动态显示进度条
+      progressFlag: false, // 关闭进度条
       if_submit: '',
       if_issued: '',
       operateType: "edit",
@@ -252,7 +253,6 @@ export default {
         }
       ],
       formData: "",
-      uploadApiUrl: "/file/upload",
     };
   },
   methods: {
@@ -271,11 +271,16 @@ export default {
     beforeRemove (file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`);
     },
+    uploadOnProgress(event,file,fileList){
+      this.progressFlag = true; // 显示进度条
+      this.loadProgress = parseInt(event.percent); // 动态获取文件上传进度
+      if (this.loadProgress >= 100) {
+          this.loadProgress = 100
+          setTimeout( () => {this.progressFlag = false}, 1000) // 一秒后关闭进度条
+      }
+    },
     handleChange (file, fileList) {
       this.fileList = fileList;
-    },
-    uploadFile (file) {
-      this.formData.append("file", file.file);
     },
     onBeforeUpload (file) {
       var result = true;
@@ -296,9 +301,9 @@ export default {
         return false;
       }
 
-      const isIMAGE = file.type === "image/jpeg" || "image/png" || "image/gif" || "image/jpg";
-      const isDOCUMENT = file.type === "application/pdf" || "application/doc" || "application/docx"
-      const isZip = file.type === "application/zip" || "application/rar" || "application/7z";
+      const isIMAGE = (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/gif" || file.type === "image/jpg");
+      const isDOCUMENT = (file.type === "application/pdf" || file.type === "application/doc" || file.type === "application/docx" || file.type === "application/xls" || file.type === "application/xlsx");
+      const isZip = (file.type === "application/zip" || file.type ==="application/rar" ||  file.type === "application/7z");
       const isLt100M = file.size / 1024 / 1024 < 100;
 
       if (!isIMAGE || !isDOCUMENT || !isZip) {
@@ -308,6 +313,7 @@ export default {
       if (!isLt100M) {
         this.$message.error('上传文件大小不得大于100MB');
       }
+
       return (isIMAGE || isDOCUMENT || isZip) && isLt100M;
     },
     getList (name = '') {
@@ -372,6 +378,12 @@ export default {
       this.$refs.fileForm.$children[0].validate((valid) => {
           if (valid) 
           {
+            if (!this.onBeforeUpload(this.fileList[0]))
+            {
+              this.fileList.splice(0, 1);
+              return false;
+            }
+
             if (this.operateType === "edit") {
               let formdata = new FormData();
               for (var key in this.operateForm) {
