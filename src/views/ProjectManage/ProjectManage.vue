@@ -441,7 +441,9 @@ export default {
                 console.log(res.data)
                 this.isShow = false
                 this.getList()
-              })
+              }).err => {
+                alert("Update Error!")
+              }
             } 
             else if (this.operateType === 'add') 
             {
@@ -458,7 +460,7 @@ export default {
                 this.isShow = false
                 this.getList()
               }, err => {
-                alert("add error!!!");
+                alert("Add Error!");
               })
             }
           } else {

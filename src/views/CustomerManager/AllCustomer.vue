@@ -1,33 +1,35 @@
 <template>
   <div>
     <el-dialog title="编辑" :visible.sync="dialogFormVisible">
-      <el-form>
-        <el-form-item label="客户编号">
-          <el-input v-model="editObject.client_id"></el-input>
+      <el-form :rules="rules">
+        <el-form-item label="客户编号" prop="client_id" >
+          <el-input v-model="editObject.client_id" ></el-input>
         </el-form-item>
-        <el-form-item label="客户名称">
+        <el-form-item label="客户名称" prop="client_name" > 
           <el-input v-model="editObject.client_name"></el-input>
         </el-form-item>
-        <el-form-item label="客户地址">
+        <el-form-item label="客户地址" prop="client_work_address">
           <el-input v-model="editObject.client_work_address"></el-input>
         </el-form-item>
-        <el-form-item label="法定代表人">
+        <el-form-item label="法定代表人" prop="client_representative">
           <el-input v-model="editObject.client_representative"></el-input>
         </el-form-item>
-        <el-form-item label="注册资本">
+        <el-form-item label="注册资本" prop="client_registered_capital">
           <el-input v-model="editObject.client_registered_capital"></el-input>
         </el-form-item>
-        <el-form-item label="公司类型">
+        <el-form-item label="公司类型" prop="client_type">
           <el-input v-model="editObject.client_type"></el-input>
         </el-form-item>
-        <el-form-item label="经营范围">
+        <el-form-item label="经营范围" prop="client_business">
           <el-input v-model="editObject.client_business"></el-input>
         </el-form-item>
-        <el-form-item label="联系人姓名">
+        <el-form-item label="联系人姓名" prop="client_person_name">
           <el-input v-model="editObject.client_person_name"></el-input>
         </el-form-item>
-        <el-form-item label="联系人电话">
-          <el-input v-model="editObject.client_person_phone"></el-input>
+        <el-form-item label="联系人电话" prop="client_person_phone" >
+          <el-input v-model="editObject.client_person_phone"
+          onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="11"></el-input>
+           
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -37,33 +39,34 @@
     </el-dialog>
 
     <el-dialog title="新增" :visible.sync="dialogFormAddVisable">
-      <el-form>
-        <el-form-item label="客户编号">
+      <el-form :rules="rules">
+        <el-form-item label="客户编号" prop="client_id">
           <el-input v-model="newObject.client_id"></el-input>
         </el-form-item>
-        <el-form-item label="客户名称">
+        <el-form-item label="客户名称" prop="client_name"> 
           <el-input v-model="newObject.client_name"></el-input>
         </el-form-item>
-        <el-form-item label="客户地址">
+        <el-form-item label="客户地址" prop="client_work_address">
           <el-input v-model="newObject.client_work_address"></el-input>
         </el-form-item>
-        <el-form-item label="法定代表人">
+        <el-form-item label="法定代表人" prop="client_representative">
           <el-input v-model="newObject.client_representative"></el-input>
         </el-form-item>
-        <el-form-item label="注册资本">
+        <el-form-item label="注册资本" prop="client_registered_capital">
           <el-input v-model="newObject.client_registered_capital"></el-input>
         </el-form-item>
-        <el-form-item label="公司类型">
+        <el-form-item label="公司类型" prop="client_type">
           <el-input v-model="newObject.client_type"></el-input>
         </el-form-item>
-        <el-form-item label="经营范围">
+        <el-form-item label="经营范围" prop="client_business">
           <el-input v-model="newObject.client_business"></el-input>
         </el-form-item>
-        <el-form-item label="联系人姓名">
+        <el-form-item label="联系人姓名" prop="client_person_name">
           <el-input v-model="newObject.client_person_name"></el-input>
         </el-form-item>
-        <el-form-item label="联系人电话">
-          <el-input v-model="newObject.client_person_phone"></el-input>
+        <el-form-item label="联系人电话" prop="client_person_phone">
+          <el-input v-model="newObject.client_person_phone"
+          onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="11"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -137,62 +140,65 @@
       :data="tableData"
       tooltip-effect="dark"
       style="width: 100%"
+      max-height="500"
     >
       <!-- @selection-change="handleSelectionChange" -->
       <!-- <el-table-column type="selection" width="150"> </el-table-column> -->
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="公司类型">
+              <span>{{props.row.client_type}}</span>
+            </el-form-item>
+            <el-form-item label="法定代表人">
+              <span>{{props.row.client_representative}}</span>
+            </el-form-item>
+            <el-form-item label="经营范围">
+              <span>{{props.row.client_business}}</span>
+            </el-form-item> 
+          </el-form>
+        </template>
+      </el-table-column>
+
       <el-table-column
         prop="client_id"
         label="客户编号"
-        :rules="rules"
         width="220"
       >
       </el-table-column>
       <el-table-column
         prop="client_name"
         label="客户名称"
-        :rules="rules"
         width="180"
       >
       </el-table-column>
       <el-table-column
         prop="client_work_address"
         label="客户地址"
-        :rules="rules"
-        width="180"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="client_representative"
-        label="法定代表人"
-        :rules="rules"
         width="180"
       >
       </el-table-column>
       <el-table-column
         prop="client_registered_capital"
         label="注册资本"
-        :rules="rules"
         width="180"
       >
       </el-table-column>
       <el-table-column
         prop="client_type"
         label="公司类型"
-        :rules="rules"
         width="180"
       >
       </el-table-column>
       <el-table-column
         prop="client_person_name"
         label="联系人姓名"
-        :rules="rules"
         width="180"
       >
       </el-table-column>
       <el-table-column
         prop="client_person_phone"
         label="联系人电话"
-        :rules="rules"
         width="180"
       >
       </el-table-column>
@@ -223,10 +229,31 @@ export default {
       ],
       rules: {
         client_id: [
-          { required: true, message: '客户编号不能为空', trigger: 'blur' },
+          { required: true, message: '请输入客户编号', trigger: 'blur' },
+          { min: 6, message: '最少6个字符', trigger: 'blur' }
         ],
         client_name: [
-          { retuqired: true, message: '客户名称不能为空', trigger: 'blur' },
+          { required: true, message: '请输入客户名称', trigger: 'blur' },
+          { max: 255, message: '客户名称最长255个字符', trigger: 'blur' }
+        ],
+        client_work_address:[
+          { required: true, message: '请输入客户地址', trigger: 'blur' },
+        ],
+        client_representative:[
+          { required: true, message: '请输入法定代表人姓名', trigger: 'blur' },
+        ],
+        client_person_name:[
+          { required: true, message: '请输入联系人姓名', trigger: 'blur' },
+        ], 
+        client_person_phone:[
+          { required: true, message: '请输入联系人电话', trigger: 'blur' },
+          /* { validator:function(rule,value,callback){
+              if(/^1[34578]\d{9}$/.test(value)==false){
+                callback(new Error("请输入正确的手机号"));
+              }else{
+                callback();
+              }
+            },trigger: 'blur'} */
         ]
       },
       multipleSelection: [],
@@ -268,8 +295,9 @@ export default {
             this.$axios
               .post(url, qs.stringify(params))
               .then(successResponse => {
-                this.tableData.splice(index, 1);
+               /*  this.tableData.splice(index, 1); */
                 this.$message.success("删除成功");
+                this.loadData();
               }).catch(() => {
                 this.$message.success("删除失败");
               })
@@ -306,8 +334,9 @@ export default {
             this.$axios
               .post(url, qs.stringify(params))
               .then(successResponse => {
-                item = this.editObject;
+                /*item = this.editObject;*/
                 alert('修改成功')
+                this.loadData();
               })
               .catch(failResponse => {
                 alert('修改失败')
@@ -334,8 +363,8 @@ export default {
         this.$axios
           .post(url, qs.stringify(params))
           .then(successResponse => {
-            this.tableData.push(this.newObject);
             alert('新增成功')
+            this.loadData(); 
           })
           .catch(failResponse => {
             alert('新增失败')

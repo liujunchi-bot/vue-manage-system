@@ -18,6 +18,7 @@
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :before-remove="beforeRemove"
+        :before-upload="onBeforeUpload"
         multiple
         :limit="1"
         :on-exceed="handleExceed"
@@ -26,13 +27,15 @@
         :auto-upload="false"
         :show-file-list="true"
         :on-progress="uploadOnProgress"
+        ref="uploadComponent"
       >
-        <el-button size="small" type="primary">点击上传</el-button>
+      </el-upload>
+      <div>
+        <el-button size="small" type="primary" @click="uploadCheck">点击上传</el-button>
         <div slot="tip" class="el-upload__tip">
           请上传格式为jpeg,png,gif,jpg,pdf,doc,docx,zip.rar,7z的文件
         </div>
-      </el-upload>
-
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="isShow = false">取 消</el-button>
         <el-button type="primary" @click="confirm">确 定</el-button>
@@ -263,7 +266,7 @@ export default {
     handleChange (file, fileList) {
       this.fileList = fileList;
     },
-    onBeforeUpload (file) {
+    uploadCheck(){
       var result = true;
       for (var key in this.operateForm) {
         if (key === "file_url" && this.operateForm[key] != "NULL") {
@@ -271,23 +274,37 @@ export default {
           break;
         }
       }
-      if (result === false) {
-        result = this.$confirm("已经上传的旧文件将会被覆盖，请问确定要上传新的文件吗？", "提示", {
+      if (!result) {
+        this.$confirm("已经上传的旧文件将会被覆盖，请问确定要上传新的文件吗？", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
+        }).then(() => {
+          console.log(this.$refs['uploadComponent'].$refs['upload-inner']);
+          this.$refs['uploadComponent'].$refs['upload-inner'].handleClick()
         })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消上传文件"
+          });
+        });
       }
-      if (result === false) {
-        return false;
-      }
+    },
+    onBeforeUpload (file) {
+      //console.log(file)
 
       const isIMAGE = (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/gif" || file.type === "image/jpg");
       const isDOCUMENT = (file.type === "application/pdf" || file.type === "application/doc" || file.type === "application/docx" || file.type === "application/xls" || file.type === "application/xlsx");
       const isZip = (file.type === "application/zip" || file.type ==="application/rar" ||  file.type === "application/7z");
       const isLt100M = file.size / 1024 / 1024 < 100;
 
-      if (!isIMAGE || !isDOCUMENT || !isZip) {
+      // console.log("isIMAGE",isIMAGE);
+      // console.log("isDOCUMENT",isDOCUMENT);
+      // console.log("isZip",isZip);
+      // console.log("isLt100M",isLt100M);
+
+      if (!isIMAGE && !isDOCUMENT && !isZip) {
         this.$message.error('上传文件格式只能为jpeg,png,gif,jpg,pdf,doc,docx,zip.rar,7z');
       }
 
@@ -342,7 +359,6 @@ export default {
         alert("error!!!");
       })
     },
-
     addRow () {
       this.operateForm = {};
       this.operateType = "add";
@@ -358,7 +374,7 @@ export default {
       this.$refs.fileForm.$children[0].validate((valid) => {
           if (valid) 
           {
-            if (!this.onBeforeUpload(this.fileList[0]))
+            if (this.fileList.length != 0 && !this.onBeforeUpload(this.fileList[0].raw))
             {
               this.fileList.splice(0, 1);
               return false;
