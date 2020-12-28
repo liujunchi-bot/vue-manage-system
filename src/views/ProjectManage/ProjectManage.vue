@@ -273,15 +273,15 @@ export default {
         },
         {
           model: 'project_assets',
-          label: '资产总额'
+          label: '资产总额（万元）'
         },
         {
           model: 'project_audit',
-          label: '审定金额'
+          label: '审定金额（万元）'
         },
         {
           model: 'project_reduction',
-          label: '审减金额'
+          label: '审减金额（万元）'
         }
       ],
       rules: {
@@ -323,13 +323,13 @@ export default {
           { required: true, message: '请输入项目结束时间', trigger: 'blur' },
         ],
         project_assets:[
-          { type: 'number', message: '资产总额需输入数字', trigger: 'blur'}
+          { type: 'number', message: '资产总额需输入数字（万元）', trigger: 'blur', transform: (value) => Number(value)}
         ],
         project_audit:[
-          { type: 'number', message: '审定金额需输入数字', trigger: 'blur'}
+          { type: 'number', message: '审定金额需输入数字（万元）', trigger: 'blur', transform: (value) => Number(value)}
         ],
         project_reduction:[
-          { type: 'number', message: '审减金额需输入数字', trigger: 'blur'}
+          { type: 'number', message: '审减金额需输入数字（万元）', trigger: 'blur', transform: (value) => Number(value)}
         ],
       },
       searchFrom: {
@@ -369,7 +369,7 @@ export default {
             }
             else if (this.if_issued == '1')
             {
-              this.tableData[i]["issue_state"] = '被驳回';
+              this.tableData[i]["issue_state"] = '被退回';
             }
             else
             {
@@ -447,11 +447,15 @@ export default {
               }
 
               axios._post('http://8.129.86.121:8080/project/update', formdata).then(res => {
-                console.log(res.data)
+                this.$message.success("更新项目成功");
                 this.isShow = false
                 this.getList()
               },err => {
-                alert("Update Error!")
+                alert("Update Error!");
+                this.$message({
+                  message: "更新项目失败",
+                  type: "error"
+                });
               })
             } 
             else if (this.operateType === 'add') 
@@ -470,6 +474,10 @@ export default {
                 this.getList()
               }, err => {
                 alert("Add Error!");
+                this.$message({
+                  message: "新建项目失败",
+                  type: "error"
+                });
               })
             }
           } else {
@@ -500,8 +508,6 @@ export default {
               formdata.append(key4, this.operateForm[key4])
             }
           }
-
-          // ￥￥￥￥￥
           axios
             ._remove('http://8.129.86.121:8080/project/delete', {
               params: {

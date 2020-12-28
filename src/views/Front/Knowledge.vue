@@ -15,11 +15,11 @@
           <el-input v-model="ruleForm.keywords"></el-input>
         </el-form-item>
         <el-form-item label="回答" prop="answer">
-          <el-input v-model="ruleForm.answer"></el-input>
+          <el-input type="textarea" v-model="ruleForm.answer"></el-input>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="submitForm">立即创建</el-button>
+          <el-button type="primary" @click="submitForm">保存</el-button>
           <el-button @click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
       </el-form>
@@ -33,7 +33,7 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55"> </el-table-column>
-      <el-table-column label="问题" width="120">
+      <el-table-column label="问题" width="240">
         <template slot-scope="scope">{{ scope.row.question }}</template>
       </el-table-column>
       <el-table-column prop="keywords" label="关键词" width="200"> </el-table-column>
@@ -67,11 +67,11 @@
           <el-input v-model="editForm.keywords"></el-input>
         </el-form-item>
         <el-form-item label="回答" prop="answer">
-          <el-input v-model="editForm.answer"></el-input>
+          <el-input type="textarea" v-model="editForm.answer"></el-input>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="submitEdit">确认</el-button>
+          <el-button type="primary" @click="submitEdit">保存</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -137,20 +137,23 @@ export default {
   },
 
   mounted: function () {
+    console.log("开始初始化");
     var self = this;
-    this.config.loading = true;
-    name ? (this.config.page = 1) : "";
+    // this.config.loading = true;
+    // name ? (this.config.page = 1) : "";
     axios
-      .get("http://8.129.86.121:8080/QandA/getProblem")
+      ._get("http://8.129.86.121:8080/QandA/getProblem")
       .then((response) => {
-        alert(response);
-        for(var i in response){
-          var newa=new Array();
-          newa["question"]=response[i]["qusetion_pre"];
-          newa["keywords"]=response[i]["qusetion_aft"];
-          newa["answer"]=response[i]["q_word"];
+        for (var i in response) {
+          var newa = new Array();
+          console.log("response", response[i]);
+          newa["question"] = response[i]["question_pre"];
+          newa["keywords"] = response[i]["question_aft"];
+          newa["answer"] = response[i]["q_word"];
           this.tableData.push(newa);
         }
+
+        console.log("tableData", this.tableData);
       })
       .catch(function (error) {
         alert("数据获取失败");
@@ -173,10 +176,6 @@ export default {
     },
     submitForm() {
       var newc = new Array();
-      newc["question"] = this.ruleForm.question;
-      newc["keywords"] = this.ruleForm.keywords;
-      newc["answer"] = this.ruleForm.answer;
-      this.tableData.push(newc);
 
       var myFormData = new FormData();
       myFormData.append("question_pre", this.ruleForm.question);
@@ -184,18 +183,22 @@ export default {
       myFormData.append("q_word", this.ruleForm.answer);
 
       axios
-        .post("http://8.129.86.121:8080/QandA/insert", myFormData)
+        ._post("http://8.129.86.121:8080/QandA/insert", myFormData)
         .then((response) => {
-          alert("发送成功");
+          // alert("发送成功");
+          this.$message({
+            type: "success",
+            message: "添加成功!",
+          });
+
+          newc["question"] = this.ruleForm.question;
+          newc["keywords"] = this.ruleForm.keywords;
+          newc["answer"] = this.ruleForm.answer;
+          this.tableData.push(newc);
         })
         .catch(function (error) {
           alert("发送失败");
         });
-
-      this.$message({
-        type: "success",
-        message: "添加成功!",
-      });
 
       this.isShow1 = false;
     },
@@ -210,7 +213,7 @@ export default {
       this.editForm.keywords = row["keywords"];
       this.editForm.answer = row["answer"];
       this.isShow2 = true;
-      this.editIndex = index;
+      this.editIndex = parseInt(index);
       console.log(this.editForm);
 
       // console.log("qu",row["question"]);
@@ -218,34 +221,44 @@ export default {
     submitEdit() {
       this.isShow2 = false;
 
-      this.tableData[this.editIndex]["question"] = this.editForm.question;
-      this.tableData[this.editIndex]["keywords"] = this.editForm.keywords;
-      this.tableData[this.editIndex]["answer"] = this.editForm.answer;
-      console.log("yd", this.editForm.answer);
-      console.log("ed", this.tableData[this.editIndex]["answer"]);
+      // this.tableData[this.editIndex]["question"] = this.editForm.question;
+      // this.tableData[this.editIndex]["keywords"] = this.editForm.keywords;
+      // this.tableData[this.editIndex]["answer"] = this.editForm.answer;
+      // console.log("yd", this.editForm.answer);
+      // console.log("ed", this.tableData[this.editIndex]["answer"]);
+      // console.log("td", this.tableData);
 
       var myFormData = new FormData();
 
       var edit_index = parseInt(this.editIndex) + 1;
+      console.log("edit_index", edit_index);
 
-      myFormData.append("id", this.edit_Index);
+      myFormData.append("id", edit_index);
       myFormData.append("question_pre", this.editForm.question);
       myFormData.append("question_aft", this.editForm.keywords);
       myFormData.append("q_word", this.editForm.answer);
 
+      for (var value of myFormData.values()) {
+        console.log(value);
+      }
+
       axios
-        .post("http://8.129.86.121:8080/QandA/update", myFormData)
+        ._post("http://8.129.86.121:8080/QandA/update", myFormData)
         .then((response) => {
-          alert("发送成功");
+          // alert("发送成功");
+          this.$message({
+            type: "success",
+            message: "修改成功!",
+          });
+          this.$set(this.tableData, this.editIndex, {
+            question: this.editForm.question,
+            keywords: this.editForm.keywords,
+            answer: this.editForm.answer,
+          });
         })
         .catch(function (error) {
           alert("发送失败");
         });
-
-      this.$message({
-        type: "success",
-        message: "修改成功!",
-      });
     },
 
     contentDelete(index) {
@@ -255,26 +268,24 @@ export default {
         type: "warning",
       })
         .then(() => {
-          this.tableData.splice(index, 1);
-
           var myFormData = new FormData();
 
           var de_index = parseInt(index) + 1;
           myFormData.append("id", de_index);
 
           axios
-            .post("http://8.129.86.121:8080/QandA/delete", myFormData)
+            ._post("http://8.129.86.121:8080/QandA/delete", myFormData)
             .then((response) => {
-              alert("发送成功");
+              // alert("发送成功");
+              this.$message({
+                type: "success",
+                message: "删除成功!",
+              });
+              this.tableData.splice(index, 1);
             })
             .catch(function (error) {
               alert("发送失败");
             });
-
-          this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
         })
         .catch(() => {
           this.$message({

@@ -51,8 +51,8 @@
             <el-button size="mini" type="info" v-else disabled>通过</el-button>
           </div>
           <div>
-            <el-button size="mini" type="danger" @click="handleReject(scope.row)" v-if="scope.row['if_issued'] === '0'">驳回</el-button>
-            <el-button size="mini" type="info" v-else disabled>驳回</el-button>
+            <el-button size="mini" type="danger" @click="handleReject(scope.row)" v-if="scope.row['if_issued'] === '0'">退回</el-button>
+            <el-button size="mini" type="info" v-else disabled>退回</el-button>
           </div>
         </template>
       </el-table-column>

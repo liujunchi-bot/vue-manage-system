@@ -84,13 +84,6 @@
               v-if="scope.row['if_submit'] === '0'"
               >删除</el-button
             >
-            <el-button
-              size="mini"
-              type="danger"
-              @click="handleDelete(scope.row)"
-              v-else-if="scope.row['if_issued'] === '1'"
-              >删除</el-button
-            >
             <el-button size="mini" type="info" v-else disabled>删除</el-button>
           </div>
           <div>

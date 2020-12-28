@@ -106,25 +106,11 @@ export default {
                 icon: 'user',
                 children: [
                   {
-                    path: "/viewuser",
-                    name: "用户信息",
-                    label: '用户信息',
-                    icon: 'setting',
-                    url: 'UserManage/ViewUser'
-                  },
-                  {
                     path: "/alluser",
                     name: "所有用户",
                     label: '所有用户',
                     icon: 'setting',
                     url: 'UserManage/AllUser'
-                  },
-                  {
-                    path: "/modification",
-                    name: "修改用户",
-                    label: '修改用户',
-                    icon: 'setting',
-                    url: 'UserManage/Modification'
                   }
                 ]
               }

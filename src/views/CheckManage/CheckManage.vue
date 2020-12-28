@@ -132,15 +132,15 @@ export default {
         },
         {
           prop: 'project_assets',
-          label: '资产总额',
+          label: '资产总额（万元）',
         },
         {
           prop: 'project_audit',
-          label: '审定金额',
+          label: '审定金额（万元）',
         },
         {
           prop: 'project_reduction',
-          label: '审减金额',
+          label: '审减金额（万元）',
         },
         {
           prop: 'staff_namej',
@@ -326,13 +326,13 @@ export default {
           { required: true, message: '请输入项目结束时间', trigger: 'blur' },
         ],
         project_assets:[
-          { type: 'number', message: '资产总额需输入数字', trigger: 'blur'}
+          { type: 'number', message: '资产总额需输入数字（万元）', trigger: 'blur', transform: (value) => Number(value)}
         ],
         project_audit:[
-          { type: 'number', message: '审定金额需输入数字', trigger: 'blur'}
+          { type: 'number', message: '审定金额需输入数字（万元）', trigger: 'blur', transform: (value) => Number(value)}
         ],
         project_reduction:[
-          { type: 'number', message: '审减金额需输入数字', trigger: 'blur'}
+          { type: 'number', message: '审减金额需输入数字（万元）', trigger: 'blur', transform: (value) => Number(value)}
         ],
       },
       searchFrom: {
@@ -372,7 +372,7 @@ export default {
             }
             else if (this.if_issued == '1')
             {
-              this.tableData[i]["issue_state"] = '被驳回';
+              this.tableData[i]["issue_state"] = '被退回';
             }
             else
             {
@@ -437,7 +437,7 @@ export default {
         });
     },
     refuseProject (row) {
-       this.$confirm("此操作将驳回该项目, 是否继续?", "提示", {
+       this.$confirm("此操作将退回该项目, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
@@ -548,6 +548,10 @@ export default {
                 this.getList()
               }, err => {
                 alert("error!!!");
+                this.$message({
+                  message: "更新项目失败",
+                  type: "error"
+                });
                 console.log(JSON.stringify(this.formdata));
                 console.log(this.formdata);
               })

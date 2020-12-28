@@ -14,7 +14,18 @@
       <!-- action表示文件要上传到的后台API地址 -->
       <el-upload
         class="upload-demo"
-        accept="image/jpeg,image/png,image/jpg,application/pdf,application/doc,application/docx,.zip,.rar.7z"
+        accept="
+        image/jpeg,
+        image/png,
+        image/jpg,
+        application/pdf,
+        application/msword,
+        application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+        application/vnd.ms-excel,
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+        .zip,
+        .rar,
+        .7z"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :before-remove="beforeRemove"
@@ -33,7 +44,7 @@
       <div>
         <el-button size="small" type="primary" @click="uploadCheck">上传合同</el-button>
         <div slot="tip" class="el-upload__tip">
-          请上传格式为jpeg,png,jpg,pdf,doc,docx,zip.rar,7z的文件
+          请上传格式为jpeg,png,jpg,pdf,doc,docx,xls,xlsx,zip.rar,7z的文件
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -44,14 +55,11 @@
     <div class="manage-header">
       <div>
         <el-button type="primary" @click="addRow">新增</el-button>
-        <el-button type="primary" @click="delRow">删除</el-button>
         <el-button type="primary" @click="exportRow">导出</el-button>
       </div>
 
       <common-form inline :formLabel="formLabel" :form="searchFrom">
-        <el-button type="primary" @click="searchKey(searchFrom.keyword)"
-          >搜索</el-button
-        >
+        <el-button type="primary" @click="searchKey(searchFrom.keyword)">搜索</el-button>
       </common-form>
     </div>
     <file-table
@@ -104,7 +112,7 @@ export default {
         },
         {
           prop: "contract_amount",
-          label: "合同金额",
+          label: "合同金额（万元）",
           width: 160
         },
         {
@@ -198,7 +206,7 @@ export default {
         },
         {
           prop: "contract_amount",
-          label: "合同金额",
+          label: "合同金额（万元）",
           width: 160
         },
         {
@@ -229,8 +237,8 @@ export default {
           { type: "enum", enum: ['合同'], required: true, message: '请选择类型', trigger: 'blur' }
         ],
         contract_amount: [
-          {type: 'number', required: true, message: '请输入合同金额',trigger:'blur'},
-          {min: 0, max: Math.pow(2,253),message: '合同金额大小不可为0', trigger: 'blur' }
+          {type: 'number', required: true, message: '请输入合同金额（万元）',trigger:'blur', transform: (value) => Number(value)},
+          {min: 0, max: Math.pow(2,253), message: '合同金额大小不可为0', trigger: 'blur' }
         ],
         file_project: [
           { message: '请输入合同相关项目', trigger: 'blur' },
@@ -254,7 +262,7 @@ export default {
   },
   methods: {
     handleRemove (file, fileList) {
-      console.log(file, fileList);
+      this.$refs['uploadComponent'].clearFiles();
     },
     handlePreview (file) {
       console.log(file);
@@ -304,8 +312,12 @@ export default {
       //console.log(file)
 
       const isIMAGE = (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg");
-      const isDOCUMENT = (file.type === "application/pdf" || file.type === "application/doc" || file.type === "application/docx" || file.type === "application/xls" || file.type === "application/xlsx");
-      const isZip = (file.type === "application/zip" || file.type ==="application/rar" ||  file.type === "application/7z");
+      const isDOCUMENT = (file.type === "application/pdf" ||
+                          file.type === "application/msword" ||
+                          file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                          file.type === "application/vnd.ms-excel" ||
+                          file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      const isZip = (file.type === "application/x-zip-compressed");
       const isLt100M = file.size / 1024 / 1024 < 100;
 
       // console.log("isIMAGE",isIMAGE);
@@ -314,7 +326,7 @@ export default {
       // console.log("isLt100M",isLt100M);
 
       if (!isIMAGE && !isDOCUMENT && !isZip) {
-        this.$message.error('上传文件格式只能为jpeg,png,gif,jpg,pdf,doc,docx,zip.rar,7z');
+        this.$message.error('不支持此格式文件上传！');
       }
 
       if (!isLt100M) {
@@ -354,7 +366,7 @@ export default {
             }
             else if (this.if_issued == '1')
             {
-              this.tableData[i]["issue_state"] = '被驳回';
+              this.tableData[i]["issue_state"] = '被退回';
             }
             else
             {
@@ -408,6 +420,10 @@ export default {
                 this.getList()
               }, err => {
                 alert("error!!!");
+                this.$message({
+                  message: "更新合同失败",
+                  type: "error"
+                });
                 console.log(JSON.stringify(formdata));
                 console.log(formdata);
               })
@@ -423,13 +439,17 @@ export default {
                 this.fileList.splice(0, 1);
               }
 
-              axios._post('http://8.129.86.121:8080/file/upload', formdata).then(res => {
+              axios._post('http://8.129.86.121:80/file/upload', formdata).then(res => {
                 this.$message.success("添加合同成功！");
                 this.isShow = false;
                 console.log("Inserted " + res);//res是返回插入数据的id
                 this.getList()
               }, err => {
                 alert("error!!!");
+                this.$message({
+                  message: "添加合同失败",
+                  type: "error"
+                });
                 console.log(JSON.stringify(formdata));
                 console.log(formdata);
               })
