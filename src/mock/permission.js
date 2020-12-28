@@ -59,7 +59,7 @@ export default {
                 name: 'check',
                 label: '项目管理',
                 icon: 'user',
-                url: 'CheckManage/CheckManage'
+                url: 'ProjectManage/AuditProjectManage'
               },
               {
                 path: "/auditfile",
@@ -102,17 +102,11 @@ export default {
                 url: 'CustomerManager/AllCustomer'
               },
               {
+                path: "/alluser",
+                name: "所有用户",
                 label: '用户管理',
                 icon: 'user',
-                children: [
-                  {
-                    path: "/alluser",
-                    name: "所有用户",
-                    label: '所有用户',
-                    icon: 'setting',
-                    url: 'UserManage/AllUser'
-                  }
-                ]
+                url: 'UserManage/AllUser'
               }
             ],
             token: Mock.Random.guid(),

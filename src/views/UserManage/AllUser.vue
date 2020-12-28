@@ -29,7 +29,7 @@
         <el-form-item label="出生地" prop="birthPlace">
           <el-input v-model="editObject.birthPlace" ></el-input>
         </el-form-item>
-        <el-form-item label="政治面貌" prop="politcs">
+        <el-form-item label="政治面貌" prop="politics">
           <el-input v-model="editObject.politics" ></el-input>
         </el-form-item>
         <el-form-item label="手机" prop="number">
@@ -38,8 +38,8 @@
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="editObject.email" ></el-input>
         </el-form-item>
-        <el-form-item label="岗位" prop="position">
-          <el-input v-model="editObject.position"></el-input>
+        <el-form-item label="岗位" prop="job">
+          <el-input v-model="editObject.job"></el-input>
         </el-form-item>
         <el-form-item label="员工状态" prop="state">
           <el-input v-model="editObject.state" ></el-input>
@@ -53,11 +53,15 @@
         <el-form-item label="部门" prop="department">
           <el-input v-model="editObject.department" ></el-input>
         </el-form-item>
-        <el-form-item label="入职日期" prop="inDate">
-          <el-input v-model="editObject.inDate" ></el-input>
+        <el-form-item label="入职日期" >
+          <el-form-item prop="inDate">
+            <el-date-picker type="date" placeholder="选择日期" v-model="editObject.inDate" ></el-date-picker>
+          </el-form-item>
         </el-form-item>
-        <el-form-item label="离职日期" prop="outDate">
-          <el-input v-model="editObject.outDate" ></el-input>
+        <el-form-item label="离职日期">
+          <el-form-item prop="outDate">
+            <el-date-picker type="date" placeholder="选择日期" v-model="editObject.outDate" ></el-date-picker>
+          </el-form-item>
         </el-form-item>
         <el-form-item label="绩效点数" prop="point">
           <el-input v-model="editObject.point"></el-input>
@@ -378,7 +382,7 @@ export default {
         politics:[],
         number:[{message:'请输入正确的手机号', pattern:/^1[34578]\d{9}$/, trigger:'blur'}],
         email:[{message:'请输入正确的邮箱', pattern:/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/, trigger:'blur'}],
-        position:[],
+        job:[],
         state:[],
         photo:[],
         type:[],
@@ -416,7 +420,7 @@ export default {
       this.$axios
         .post(url, qs.stringify(params))
         .then((successResponse) => {
-          alert("请求成功");
+          
           this.tableData = successResponse.data;
         })
         .catch((failResponse) => {
@@ -435,31 +439,31 @@ export default {
           if(res.staff_photo==null){
             this.photo = '../../assets/images/user-default.png'
           }
-          else {this.photo = res.staff_photo}
+          else {this.photo = res.data.staff_photo}
 
-          this.name = res.staff_name,
-          this.gender = res.staff_sex,
-          this.num = res.staff_id,
-          this.account = res.staff_account,
-          this.password = res.staff_password,
-          this.birth = res.staff_birthday,
-          this.nation = res.staff_nation,
-          this.nativePlace = res.staff_native_place,
-          this.birthPlace = res.staff_birth_place,
-          this.politicsStatus = res.staff_politic,
-          this.phone = res.staff_phone,
-          this.email = res.staff_email,
-          this.position = res.staff_job,
-          this.state = res.staff_status,
-          this.type = res.staff_type,
-          this.dateOnBroad = res.staff_in_date,
-          this.dateOfDeparture = res.staff_out_date,
-          this.department = res.staff_department,
+          this.name = res.data.staff_name,
+          this.gender = res.data.staff_sex,
+          this.num = res.data.staff_id,
+          this.account = res.data.staff_account,
+          this.password = res.data.staff_password,
+          this.birth = res.data.staff_birthday,
+          this.nation = res.data.staff_nation,
+          this.nativePlace = res.data.staff_native_place,
+          this.birthPlace = res.data.staff_birth_place,
+          this.politicsStatus = res.data.staff_politic,
+          this.phone = res.data.staff_phone,
+          this.email = res.data.staff_email,
+          this.position = res.data.staff_job,
+          this.state = res.data.staff_status,
+          this.type = res.data.staff_type,
+          this.dateOnBroad = res.data.staff_in_date,
+          this.dateOfDeparture = res.data.staff_out_date,
+          this.department = res.data.staff_department,
           //this.performance = res.data.performance,
           //this.checkIn = res.data.checkIn,
-          this.salary = res.staff_wage,
-          this.holiday = res.staff_annual_leave,
-          this.authority = res.staff_permission
+          this.salary = res.data.staff_wage,
+          this.holiday = res.data.staff_annual_leave,
+          this.authority = res.data.staff_permission
       })
       .catch(err => {
         this.$notify({ title: '错误', message: err, type: 'warning' })
@@ -511,17 +515,31 @@ export default {
                 if (item.Id == this.editObject.Id) {
                   item = this.editObject;
                   let params = {
-                    Id: item.Id,
-                    name: item.name,
-                    sex: item.sex,
-                    number: item.number,
-                    job: item.job,
-                    point: item.point,
-                    score: item.score,
-                    salary: item.salary,
-                    weight: item.weight,
+                    staff_id: item.Id,
+                    staff_name: item.name,
+                    staff_sex: item.sex,
+                    staff_phone: item.number,
+                    staff_job: item.job,
+                    staff_point: item.point,
+                    staff_score: item.score,
+                    staff_wage: item.salary,
+                    staff_permission: item.weight,
+                    staff_birth: item.birth,
+                    staff_nation: item.nation,
+                    staff_native: item.native,
+                    staff_birthPlace: item.birthPlace,
+                    staff_politic: item.politics,
+                    staff_email: item.email,
+                    staff_job: item.job,
+                    staff_status: item.state,
+                    staff_photo: item.photo,
+                    staff_type:item.type,
+                    department: item.department,
+                    staff_in_date: item.inDate,
+                    staff_out_date: item.outDate,
+                    staff_annual_leave: item.holiday
                   };
-                  let url = "http://8.129.86.121:8080/stuff/update";
+                  let url = "http://8.129.86.121:8080/staff/update";
                   this.$axios
                     .post(url, qs.stringify(params))
                     .then((successResponse) => {

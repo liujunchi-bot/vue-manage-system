@@ -7,7 +7,7 @@
     text-color="#fff"
     active-text-color="#ffd04b"
   >
-    <h3 v-show="isCollapse">小滴</h3>
+    <h3 v-show="isCollapse">华晟</h3>
     <h3 v-show="!isCollapse">湖南省华晟会计师事务所</h3>
     <el-menu-item :index="item.path" v-for="item in noChildren" :key="item.path" @click="clickMenu(item)">
       <i :class="'el-icon-' + item.icon"></i>

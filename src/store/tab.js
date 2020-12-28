@@ -9,7 +9,8 @@ export default {
         path: '/',
         name: 'home',
         label: '首页',
-        icon: 'home'
+        icon: 'home',
+        url: 'Home/Home'
       }
     ]
   },
