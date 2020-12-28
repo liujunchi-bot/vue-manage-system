@@ -11,7 +11,7 @@
         ref="commonForm"
       ></common-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="isShow = false">取 消</el-button>
+        <el-button @click="cancel">取 消</el-button>
         <el-button type="primary" @click="confirm">确 定</el-button>
       </div>
     </el-dialog>
@@ -290,7 +290,7 @@ export default {
       rules: {
         project_code: [
           { required: true, message: '请输入项目编号', trigger: 'blur' },
-          { min: 10, max: 20, message: '项目名称长度需要在 10 到 20 个字符', trigger: 'blur' }
+          { min: 10, max: 255, message: '项目编号长度需要在 10 到 255 个字符', trigger: 'blur' }
         ],
         project_name: [
           { required: true, message: '请输入项目名称', trigger: 'blur' },
@@ -326,13 +326,13 @@ export default {
           { required: true, message: '请输入项目结束时间', trigger: 'blur' },
         ],
         project_assets:[
-          { type: Number, message: '资产总额需输入数字', trigger: 'blur'}
+          { type: 'number', message: '资产总额需输入数字', trigger: 'blur'}
         ],
         project_audit:[
-          { type: Number, message: '审定金额需输入数字', trigger: 'blur'}
+          { type: 'number', message: '审定金额需输入数字', trigger: 'blur'}
         ],
         project_reduction:[
-          { type: Number, message: '审减金额需输入数字', trigger: 'blur'}
+          { type: 'number', message: '审减金额需输入数字', trigger: 'blur'}
         ],
       },
       searchFrom: {
@@ -560,6 +560,10 @@ export default {
             return false;
           }
         });
+    },
+    cancel() {
+      this.isShow = false;
+      this.getList();
     },
   },
   created () {

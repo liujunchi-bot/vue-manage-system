@@ -11,7 +11,7 @@
       <!-- action表示文件要上传到的后台API地址 -->
       <el-upload
         class="upload-demo"
-        accept="image/jpeg,image/png,image/jpg,image/gif,application/pdf,application/doc,application/docx,.zip,.rar.7z"
+        accept="image/jpeg,image/png,image/jpg,application/pdf,application/doc,application/docx,.zip,.rar.7z"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :before-remove="beforeRemove"
@@ -27,14 +27,14 @@
       >
       </el-upload>
       <div>
-        <el-button size="small" type="primary" @click="uploadCheck">点击上传</el-button>
+        <el-button size="small" type="primary" @click="uploadCheck">上传合同</el-button>
         <div slot="tip" class="el-upload__tip">
-          请上传格式为jpeg,png,gif,jpg,pdf,doc,docx,zip.rar,7z的文件
+          请上传格式为jpeg,png,jpg,pdf,doc,docx,zip.rar,7z的文件
         </div>
       </div>
 
       <div slot="footer" class="dialog-footer">
-        <el-button @click="isShow = false">取 消</el-button>
+        <el-button @click="cancel">取 消</el-button>
         <el-button type="primary" @click="confirm">确 定</el-button>
       </div>
     </el-dialog>
@@ -96,8 +96,8 @@ export default {
           width: 160
         },
         {
-          prop: "file_type",
-          label: "类型",
+          prop: "contract_amount",
+          label: "合同金额",
           width: 160
         },
         {
@@ -196,6 +196,11 @@ export default {
           width: 200
         },
         {
+          prop: "contract_amount",
+          label: "合同金额",
+          width: 160
+        },
+        {
           model: "file_version",
           label: "合同版本",
           width: 100
@@ -209,7 +214,7 @@ export default {
       rules: {
         file_code: [
           { required: true, message: '请输入合同编号', trigger: 'blur' },
-          { min: 10, max: 20, message: '合同名称长度需要在 10 到 20 个字符', trigger: 'blur' }
+          { min: 10, max: 255, message: '合同编号长度需要在 10 到 255 个字符', trigger: 'blur' }
         ],
         file_name: [
           { required: true, message: '请输入合同名称', trigger: 'blur' },
@@ -217,14 +222,14 @@ export default {
         ],
         file_property: [
           { message: '请输入合同说明', trigger: 'blur' },
-          { max: 255, message: '合同名称长度最多 255 个字符', trigger: 'blur' }
+          { max: 255, message: '合同说明长度最多 255 个字符', trigger: 'blur' }
         ],
         file_type: [
           { type: "enum", enum: ['合同'], required: true, message: '请选择类型', trigger: 'blur' }
         ],
-        file_version: [
-          { required: true, message: '请输入合同版本', trigger: 'blur' },
-          { max: 255, message: '合同版本长度最多 255 个字符', trigger: 'blur' }
+        contract_amount: [
+          {type: 'number', required: true, message: '请输入合同金额',trigger:'blur'},
+          {min: 0, max: Math.pow(2,253),message: '合同金额大小不可为0', trigger: 'blur' }
         ],
         file_project: [
           { message: '请输入合同相关项目', trigger: 'blur' },
@@ -300,7 +305,7 @@ export default {
     },
     onBeforeUpload (file) {
 
-      const isIMAGE = (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/gif" || file.type === "image/jpg");
+      const isIMAGE = (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg");
       const isDOCUMENT = (file.type === "application/pdf" || file.type === "application/doc" || file.type === "application/docx" || file.type === "application/xls" || file.type === "application/xlsx");
       const isZip = (file.type === "application/zip" || file.type ==="application/rar" ||  file.type === "application/7z");
       const isLt100M = file.size / 1024 / 1024 < 100;
@@ -411,6 +416,10 @@ export default {
             return false;
           }
         });
+    },
+    cancel() {
+      this.isShow = false;
+      this.getList();
     },
     delRow (row) {
       this.$confirm("此操作将不再显示该合同信息, 是否继续?", "提示", {
