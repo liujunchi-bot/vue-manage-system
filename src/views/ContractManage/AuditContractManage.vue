@@ -40,7 +40,7 @@
       <div>
         <el-button size="small" type="primary" @click="uploadCheck">上传合同</el-button>
         <div slot="tip" class="el-upload__tip">
-          请上传格式为jpeg,png,jpg,pdf,doc,docx,xls,xlsx,zip.rar,7z的文件
+          请上传格式为jpeg,png,jpg,pdf,doc,docx,xls,xlsx,zip的文件
         </div>
       </div>
 
@@ -64,10 +64,11 @@
       :tableData="tableData"
       :tableLabel="tableLabel"
       :config="config"
-      @changePage="getList()"
       @pass="passRow"
       @reject="rejectRow"
       @edit="editRow"
+      @changePage="handlePageChange"
+      @changeSize="handleSizeChange"
       id="out-table"
     ></audit-file-table>
   </div>
@@ -166,8 +167,9 @@ export default {
         },
       ],
       config: {
-        page: 1,
-        total: 30,
+        currentPage: 1,
+        total: 0,
+        pageSize: 20,
         loading: false
       },
       operateForm: {
@@ -263,6 +265,14 @@ export default {
     };
   },
   methods: {
+    handleSizeChange: function(size) {
+      this.config.pagesize = size
+      // console.log(this.config.pagesize)// 每页下拉显示数据
+    },
+    handlePageChange: function(currentPage){
+      this.config.currentPage = currentPage
+      // console.log(this.config.currentPage) // 点击第几页
+    },
     handleRemove (file, fileList) {
       this.$refs['uploadComponent'].clearFiles();
     },
@@ -381,6 +391,7 @@ export default {
 
         // this.config.total = res.data.count;
         this.config.loading = false;
+        this.config.total = this.tableData.length;
         //console.log("tabledata: "+JSON.stringify(res));
       }, err => {
         alert("getlist error!!!");

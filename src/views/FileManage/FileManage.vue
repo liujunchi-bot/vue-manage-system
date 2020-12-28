@@ -2,8 +2,7 @@
   <div class="manage">
     <el-dialog
       :title="operateType === 'add' ? '新增文档' : '更新文档'"
-      :visible.sync="isShow"
-    >
+      :visible.sync="isShow">
       <file-form
         :inline = "false"
         :formLabel="operateFormLabel"
@@ -23,9 +22,7 @@
         application/vnd.openxmlformats-officedocument.wordprocessingml.document,
         application/vnd.ms-excel,
         application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
-        .zip,
-        .rar,
-        .7z"
+        .zip"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :before-remove="beforeRemove"
@@ -50,7 +47,7 @@
       <div>
         <el-button size="small" type="primary" @click="uploadCheck">上传文件</el-button>
         <div slot="tip" class="el-upload__tip">
-          请上传格式为jpeg,png,jpg,pdf,doc,docx,xls,xlsx,zip.rar,7z的文件
+          请上传格式为jpeg,png,jpg,pdf,doc,docx,xls,xlsx,zip的文件
         </div>
       </div>
 
@@ -59,6 +56,7 @@
         <el-button type="primary" @click="confirm">确 定</el-button>
       </div>
     </el-dialog>
+
     <div class="manage-header">
       <div>
         <el-button type="primary" @click="addRow">新增</el-button>
@@ -66,19 +64,19 @@
       </div>
 
       <common-form inline :formLabel="formLabel" :form="searchFrom">
-        <el-button type="primary" @click="searchKey(searchFrom.keyword)"
-          >搜索</el-button
-        >
+        <el-button type="primary" @click="searchKey(searchFrom.keyword)">搜索</el-button>
       </common-form>
     </div>
+
     <file-table
       :tableData="tableData"
       :tableLabel="tableLabel"
       :config="config"
-      @changePage="getList()"
       @edit="editRow"
       @del="delRow"
       @submit="submitRow"
+      @changePage="handlePageChange"
+      @changeSize="handleSizeChange"
       id="out-table"
     ></file-table>
   </div>
@@ -173,8 +171,9 @@ export default {
         },
       ],
       config: {
-        page: 1,
-        total: 30,
+        currentPage: 1,
+        total: 0,
+        pageSize: 20,
         loading: false
       },
       operateForm: {
@@ -276,6 +275,14 @@ export default {
     };
   },
   methods: {
+    handleSizeChange: function(size) {
+      this.config.pagesize = size
+      // console.log(this.config.pagesize)// 每页下拉显示数据
+    },
+    handlePageChange: function(currentPage){
+      this.config.currentPage = currentPage
+      // console.log(this.config.currentPage) // 点击第几页
+    },
     handleRemove (file, fileList) {
       this.$refs['uploadComponent'].clearFiles();
     },
@@ -387,7 +394,6 @@ export default {
     },
     getList (name = '') {
       this.config.loading = true
-      name ? (this.config.page = 1) : ''
       axios._get("http://8.129.86.121:8080/file/getOperator/").then(res => {
         this.$message.success("获取文档列表成功！")
         this.tableData = res;
@@ -425,8 +431,8 @@ export default {
             }
           }
         }
-        
         this.config.loading = false;
+        this.config.total = this.tableData.length;
       }, err => {
         alert("error!!!");
       })

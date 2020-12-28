@@ -30,10 +30,11 @@
       :tableData="tableData"
       :tableLabel="tableLabel"
       :config="config"
-      @changePage="getList()"
       @edit="editRow"
       @del="delRow"
       @sub="subProject"
+      @changePage="handlePageChange"
+      @changeSize="handleSizeChange"
       id="out-table"
     ></project-table>
   </div>
@@ -158,8 +159,9 @@ export default {
         }
       ],
       config: {
-        page: 1,
-        total: 30,
+        currentPage: 1,
+        total: 0,
+        pageSize: 20,
         loading: false
       },
       operateForm: {
@@ -344,6 +346,14 @@ export default {
     }
   },
   methods: {
+    handleSizeChange: function(size) {
+      this.config.pagesize = size
+      // console.log(this.config.pagesize)// 每页下拉显示数据
+    },
+    handlePageChange: function(currentPage){
+      this.config.currentPage = currentPage
+      // console.log(this.config.currentPage) // 点击第几页
+    },
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
@@ -379,6 +389,7 @@ export default {
         }
 
         this.config.loading = false;
+        this.config.total = this.tableData.length;
         
       }, err => {
         alert("getlist error!!!");

@@ -670,6 +670,7 @@ export default {
 
 .value {
   position: absolute;
+  height: 20px;
   left: 150px;
   top: 35px;
 }

@@ -16,6 +16,13 @@ export default {
           data: {
             menu: [
               {
+                path: '/',
+                name: 'home',
+                label: '首页',
+                icon: 'home',
+                url: 'Home/Home'
+              },
+              {
                 path: '/project',
                 name: 'project',
                 label: '项目管理',
@@ -54,6 +61,13 @@ export default {
           code: 20000,
           data: {
             menu: [
+              {
+                path: '/',
+                name: 'home',
+                label: '首页',
+                icon: 'home',
+                url: 'Home/Home'
+              },
               {
                 path: '/check',
                 name: 'check',
@@ -94,6 +108,13 @@ export default {
           code: 20000,
           data: {
             menu: [
+              {
+                path: '/',
+                name: 'home',
+                label: '首页',
+                icon: 'home',
+                url: 'Home/Home'
+              },
               {
                 path: "/allcustomer",
                 name: "所有客户",

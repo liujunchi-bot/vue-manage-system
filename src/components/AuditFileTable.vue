@@ -1,6 +1,9 @@
 <template>
   <div class="common-table">
-    <el-table :data="tableData" height="90%" stripe v-loading="config.loading">
+    <el-table 
+    :data="tableData.slice((this.config.currentPage-1)*this.config.pageSize,this.config.currentPage*this.config.pageSize)"
+     height="90%"
+    stripe v-loading="this.config.loading">
       <el-table-column type="selection" width="55" align="center"></el-table-column>
 
       <el-table-column label="序号" width="85">
@@ -58,8 +61,19 @@
       </el-table-column>
       
     </el-table>
-    <el-pagination class="pager" layout="prev, pager, next" :total="config.total" :current-page.sync="config.page" @current-change="changePage" :page-size="20">
-    </el-pagination>
+    <div style="margin-top:10px;">
+      <el-pagination
+        class="pager"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="config.total"
+        :current-page.sync="config.currentPage"
+        @current-change="changePage"
+        @size-change="changeSize"
+        :page-size.sync="config.pageSize"
+        :page-sizes="[5,10,20,40,100]"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -83,8 +97,11 @@ export default {
     handleReject(row) {
       this.$emit('reject',row)
     },
-    changePage(page) {
+    changePage (page) {
       this.$emit('changePage', page)
+    },
+    changeSize(size){
+      this.$emit('changeSize',size)
     }
   }
 }
