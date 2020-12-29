@@ -218,8 +218,9 @@ export default {
   width: 40%;
   height: 40%;
   position: absolute;
-  top: 100px;
-  left: 400px;
+  top: 25%;
+  left: 30%;
+  
   // background-color: cyan;
 }
 .title {

@@ -4,7 +4,7 @@
     :data="tableData.slice((this.config.currentPage-1)*this.config.pageSize,this.config.currentPage*this.config.pageSize)" 
     height="90%"
     stripe v-loading="this.config.loading">
-      <el-table-column
+      <!-- <el-table-column
         type="selection"
         width="55"
         align="center"
@@ -15,7 +15,7 @@
             (config.page - 1) * 20 + scope.$index + 1
           }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         show-overflow-tooltip
         v-for="item in tableLabel"

@@ -180,6 +180,11 @@ export default {
       },
       operateFormLabel: [
         {
+          model: "file_id",
+          label: "序号",
+          width: 80
+        },
+        {
           model: "file_code",
           label: "文档编号",
           width: 160

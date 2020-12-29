@@ -98,6 +98,11 @@ export default {
       tableData: [],
       tableLabel: [
         {
+          model: "file_id",
+          label: "序号",
+          width: 80
+        },
+        {
           prop: "file_code",
           label: "合同编号",
           width: 150
@@ -116,11 +121,6 @@ export default {
           prop: "file_property",
           label: "合同说明",
           width: 200
-        },
-        {
-          prop: "file_id",
-          label: "合同编号",
-          width: 150
         },
         {
           prop: "file_version",

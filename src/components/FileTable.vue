@@ -10,13 +10,13 @@
         align="center"
       ></el-table-column>
 
-      <el-table-column label="序号" width="85">
+      <!-- <el-table-column label="序号" width="85">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{
             (config.page - 1) * 20 + scope.$index + 1
           }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column
         show-overflow-tooltip
