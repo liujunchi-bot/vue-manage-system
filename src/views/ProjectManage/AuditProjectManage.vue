@@ -24,6 +24,7 @@
         <el-button type="primary" @click="searchKey(searchFrom.keyword)"
           >搜索</el-button
         >
+        <el-button type="info" @click="getList()">重置</el-button>
       </common-form>
     </div>
     <project-check-table
@@ -540,6 +541,7 @@ export default {
         }
         this.tableData = dataList;
         this.config.loading = false;
+        this.config.total = this.tableData.length;
       }
     },
     confirm () {
