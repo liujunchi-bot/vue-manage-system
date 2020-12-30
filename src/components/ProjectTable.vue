@@ -5,6 +5,11 @@
     height="90%"
     stripe v-loading="this.config.loading">
       <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+      ></el-table-column>
+      <el-table-column
         show-overflow-tooltip
         v-for="item in tableLabel"
         :key="item.prop"
