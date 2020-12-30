@@ -60,7 +60,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" min-width="80">
+      <el-table-column label="操作" min-width="80" fixed="right">
         <template slot-scope="scope">
           <div>
             <el-button

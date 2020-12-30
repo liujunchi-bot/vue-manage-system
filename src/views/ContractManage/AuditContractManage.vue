@@ -99,7 +99,7 @@ export default {
       tableData: [],
       tableLabel: [
         {
-          model: "file_id",
+          prop: "file_id",
           label: "序号",
           width: 80
         },
@@ -210,9 +210,9 @@ export default {
           width: 200
         },
         {
-          prop: "contract_amount",
+          model: "contract_amount",
           label: "合同金额",
-          width: 160
+          width: 200
         },
         {
           model: "file_version",
@@ -348,7 +348,7 @@ export default {
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
-      axios._get("http://8.129.86.121:80/file/GetAllContract").then(res => {
+      axios._get("http://8.129.86.121:8080/file/GetAllContractChecker").then(res => {
         this.$message.success("获取合同列表成功！")
         this.tableData = res;
 

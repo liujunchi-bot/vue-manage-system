@@ -63,7 +63,7 @@ export default {
       tableData: [],
       tableLabel: [
         {
-          model: "project_id",
+          prop: "project_id",
           label: "序号",
           width: 80
         },
@@ -363,7 +363,7 @@ export default {
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
-      axios._get("http://8.129.86.121:8080/project/getAllProject").then(res => {
+      axios._get("http://8.129.86.121:80/project/getAllProject").then(res => {
         this.$message.success("获取项目列表成功！")
         this.tableData = res;
 

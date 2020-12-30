@@ -29,7 +29,7 @@
           <span style="margin-left: 10px">{{ scope.row[item.prop] }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" min-width="250">
+      <el-table-column label="操作" min-width="250" fixed="right">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.row)">查看</el-button>
           <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>

@@ -109,7 +109,7 @@ export default {
       tableData: [],
       tableLabel: [
         {
-          model: "file_id",
+          prop: "file_id",
           label: "序号",
           width: 80
         },

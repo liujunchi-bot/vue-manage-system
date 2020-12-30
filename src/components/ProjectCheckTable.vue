@@ -34,7 +34,7 @@
 
         </template>
       </el-table-column>
-      <el-table-column label="操作" min-width="80">
+      <el-table-column label="操作" min-width="80" fixed="right">
         <template slot-scope="scope">
           <div>
             <el-button size="mini" type="primary" @click="handleEdit(scope.row)" v-if="scope.row['if_issued'] === '0'">编辑</el-button>

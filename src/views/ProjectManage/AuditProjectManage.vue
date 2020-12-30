@@ -64,7 +64,7 @@ export default {
       tableData: [],
       tableLabel: [
         {
-          model: "project_id",
+          prop: "project_id",
           label: "序号",
           width: 80
         },

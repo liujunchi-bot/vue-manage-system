@@ -97,6 +97,11 @@ export default {
       tableData: [],
       tableLabel: [
         {
+          prop: "file_id",
+          label: "序号",
+          width: 80
+        },
+        {
           prop: "file_code",
           label: "文档编号",
           width: 150
