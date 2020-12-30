@@ -10,6 +10,46 @@
         :rules="rules"
         ref="commonForm"
       ></common-form>
+            <!-- action表示文件要上传到的后台API地址 -->
+      <el-upload
+        class="upload-demo"
+        accept="
+        image/jpeg,
+        image/png,
+        image/jpg,
+        application/pdf,
+        application/msword,
+        application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+        application/vnd.ms-excel,
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+        .zip"
+        :on-preview="handlePreview"
+        :on-remove="handleRemove"
+        :before-remove="beforeRemove"
+        multiple
+        :limit="1"
+        :on-exceed="handleExceed"
+        :on-change="handleChange"
+        :file-list="fileList"
+        :auto-upload="false"
+        :show-file-list="true"
+        :on-progress="uploadOnProgress"
+        ref="uploadComponent"
+      >
+      <!-- <el-progress
+      v-if="progressFlag == true"
+      :text-inside="true"
+      :stroke-width="18"
+      :percentage="progressNum">
+      </el-progress> -->
+      </el-upload>
+
+      <div>
+        <el-button size="small" type="primary" @click="uploadCheck">上传文件</el-button>
+        <div slot="tip" class="el-upload__tip">
+          请上传格式为jpeg,png,jpg,pdf,doc,docx,xls,xlsx,zip的文件
+        </div>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
         <el-button type="primary" @click="confirm">确 定</el-button>
@@ -55,11 +95,14 @@ export default {
   },
   data () {
     return {
+      loadProgress: 0, // 动态显示进度条
+      progressFlag: false, // 关闭进度条
       tempData:[],
       if_submit: '',
       if_issued: '',
       operateType: 'add',
       isShow: false,
+      updateFile: false,
       tableData: [],
       tableLabel: [
         {
@@ -343,6 +386,9 @@ export default {
       searchFrom: {
         keyword: ''
       },
+      fileList: [
+
+      ],
       formLabel: [
         {
           model: 'keyword',
@@ -360,6 +406,115 @@ export default {
       this.config.currentPage = currentPage
       // console.log(this.config.currentPage) // 点击第几页
     },
+    handleRemove (file, fileList) {
+      this.$refs['uploadComponent'].clearFiles();
+    },
+    handlePreview (file) {
+      console.log(file);
+    },
+    handleExceed (files, fileList) {
+      this.$message.warning(
+        `当前限制选择 1 个文件，本次选择了 ${files.length
+        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+      );
+    },
+    beforeRemove (file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`);
+    },
+    uploadOnProgress(event,file,fileList){
+      this.progressFlag = true; // 显示进度条
+      this.loadProgress = parseInt(event.percent); // 动态获取文件上传进度
+      if (this.loadProgress >= 100) {
+          this.loadProgress = 100
+          setTimeout( () => {this.progressFlag = false}, 1000) // 一秒后关闭进度条
+      }
+    },
+    handleChange (file, fileList) {
+      this.fileList = fileList;
+    },
+    uploadCheck(){
+      var result = 0;
+      for (let key in this.operateForm) {
+        if (key === "file_url" && this.operateForm[key] != "NULL") {
+          result = 1;
+          break;
+        }
+      }
+
+      if (this.fileList.length > 0)
+      {
+        result = 2;
+      }
+
+      if (result === 1) {
+        this.$confirm("已经上传的旧文件将会被覆盖，请问确定要上传新的文件吗？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          // console.log(this.$refs['uploadComponent'].$refs['upload-inner']);
+          this.$refs['uploadComponent'].$refs['upload-inner'].handleClick();
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消上传文件"
+          });
+        });
+      }
+      else if (result === 2)
+      {
+        this.$confirm("每次仅能上传一个文件，", "提示", {
+          confirmButtonText: "确定",
+          type: "warning"
+        });
+      }
+      else
+      {
+        this.$refs['uploadComponent'].$refs['upload-inner'].handleClick();
+      }
+    },
+    onBeforeUpload (file) {
+      // if (this.loadProgress != 100)
+      // {
+      //   this.$message({
+      //       type: "error",
+      //       message: "文件上传尚未完成，请等待"
+      //     });
+      //   return false;
+      // }
+      // this.loadProgress = 0;
+      //console.log(file)
+      const isIMAGE = (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg");
+      const isDOCUMENT = (file.type === "application/pdf" ||
+                          file.type === "application/msword" ||
+                          file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                          file.type === "application/vnd.ms-excel" ||
+                          file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      const isZip = (file.type === "application/x-zip-compressed");
+      const isLt100M = file.size / 1024 / 1024 < 100;
+      
+      // console.log("isIMAGE",isIMAGE);
+      // console.log("isDOCUMENT",isDOCUMENT);
+      // console.log("isZip",isZip);
+      // console.log("isLt100M",isLt100M);
+
+      if (!isIMAGE && !isDOCUMENT && !isZip) {
+        this.$message({
+              type: "error",
+              message: "不支持此格式文件上传！"
+            });
+      }
+
+      if (!isLt100M) {
+        this.$message({
+              type: "error",
+              message: "上传文件大小不得大于100MB！"
+            });
+      }
+
+      return (isIMAGE || isDOCUMENT || isZip) && isLt100M;
+    },
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
@@ -368,6 +523,13 @@ export default {
         this.tableData = res;
 
         for (var i = 0; i < this.tableData.length; i++) {
+          if (this.tableData[i]["file_url"] == null) {
+            this.tableData[i]["file_url"] = "NULL";
+          }
+          else {
+            this.tableData[i]["file_url"] = window.encodeURI(this.tableData[i]["file_url"]);
+          }
+
           this.if_submit = this.tableData[i].if_submit;
           this.if_issued = this.tableData[i].if_issued;
 
@@ -456,6 +618,13 @@ export default {
       this.$refs.commonForm.$children[0].validate((valid) => {
           if (valid) 
           {
+            if (this.fileList.length != 0 &&!this.onBeforeUpload(this.fileList[0].raw))
+            {
+              this.fileList.splice(0, 1);
+              return false;
+            }
+
+
             if (this.operateType === 'edit') 
             {
               let formdata = new FormData();
@@ -464,6 +633,11 @@ export default {
                 {
                   formdata.append(key2, this.operateForm[key2])
                 }
+              }
+
+              if (this.fileList.length != 0) {
+                formdata.append("file", this.fileList[0].raw)
+                this.fileList.splice(0, 1);
               }
 
               axios._post('http://8.129.86.121:80/project/update', formdata).then(res => {
@@ -486,6 +660,11 @@ export default {
                 {
                   formdata.append(key3, this.operateForm[key3])
                 }
+              }
+              
+              if (this.fileList.length != 0) {
+                formdata.append("file", this.fileList[0].raw)
+                this.fileList.splice(0, 1);
               }
               
               axios._post('http://8.129.86.121:80/project/insert', formdata).then(res => {

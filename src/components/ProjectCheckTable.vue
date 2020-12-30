@@ -31,7 +31,11 @@
           >
             -
           </span>
+          <a :href="scope.row[item.prop]" v-if="item.type === 'link' && scope.row[item.prop] != 'NULL'">
+            <el-button size="mini" type="primary">文件下载</el-button>
+          </a>
 
+          <el-button size="mini" type="info" v-if="item.type === 'link' && scope.row[item.prop] === 'NULL'" disabled>暂无文件</el-button>
         </template>
       </el-table-column>
       <el-table-column label="操作" min-width="80" fixed="right">
@@ -82,7 +86,6 @@ export default {
       this.$emit('del', row)
     },
     handlePass(row) {
-      
       this.$emit('pass',row)
     },
     handleRefuse(row) {

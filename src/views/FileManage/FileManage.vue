@@ -358,15 +358,6 @@ export default {
       }
     },
     onBeforeUpload (file) {
-      // if (this.loadProgress != 100)
-      // {
-      //   this.$message({
-      //       type: "error",
-      //       message: "文件上传尚未完成，请等待"
-      //     });
-      //   return false;
-      // }
-      // this.loadProgress = 0;
       //console.log(file)
       const isIMAGE = (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg");
       const isDOCUMENT = (file.type === "application/pdf" ||
@@ -377,10 +368,10 @@ export default {
       const isZip = (file.type === "application/x-zip-compressed");
       const isLt100M = file.size / 1024 / 1024 < 100;
       
-      console.log("isIMAGE",isIMAGE);
-      console.log("isDOCUMENT",isDOCUMENT);
-      console.log("isZip",isZip);
-      console.log("isLt100M",isLt100M);
+      // console.log("isIMAGE",isIMAGE);
+      // console.log("isDOCUMENT",isDOCUMENT);
+      // console.log("isZip",isZip);
+      // console.log("isLt100M",isLt100M);
 
       if (!isIMAGE && !isDOCUMENT && !isZip) {
         this.$message({
@@ -494,8 +485,6 @@ export default {
                   message: "更新文档失败",
                   type: "error"
                 });
-                console.log(JSON.stringify(formdata));
-                console.log(formdata);
               })
             } 
             else if (this.operateType === "add")
@@ -515,7 +504,6 @@ export default {
               axios._post('http://8.129.86.121:80/file/upload/', formdata).then(res => {
                 this.$message.success("添加文档成功");
                 this.isShow = false;
-                console.log("Inserted " + res);//res是返回插入数据的id
                 this.getList()
               }, err => {
                 alert("error!!!");
@@ -523,8 +511,6 @@ export default {
                   message: "添加文档失败",
                   type: "error"
                 });
-                console.log(JSON.stringify(formdata));
-                console.log(formdata);
               })
             }
           } else {

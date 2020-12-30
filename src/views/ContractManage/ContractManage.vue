@@ -429,6 +429,10 @@ export default {
         
         this.config.loading = false;
         this.config.total = this.tableData.length;
+        if (this.tableData.length == 0)
+        {
+          this.config.currentPage = 0;
+        }
       }, err => {
         alert("error!!!");
       })

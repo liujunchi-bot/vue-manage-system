@@ -410,6 +410,10 @@ export default {
         // this.config.total = res.data.count;
         this.config.loading = false;
         this.config.total = this.tableData.length;
+        if (this.tableData.length == 0)
+        {
+          this.config.currentPage = 0;
+        }
         //console.log("tabledata: "+JSON.stringify(res));
       }, err => {
         alert("getlist error!!!");

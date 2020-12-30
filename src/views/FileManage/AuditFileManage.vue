@@ -352,7 +352,7 @@ export default {
       }
     },
     onBeforeUpload (file) {
-      console.log(file)
+      // console.log(file)
 
       const isIMAGE = (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg");
       const isDOCUMENT = (file.type === "application/pdf" ||
@@ -363,10 +363,10 @@ export default {
       const isZip = (file.type === "application/x-zip-compressed");
       const isLt100M = file.size / 1024 / 1024 < 100;
       
-      console.log("isIMAGE",isIMAGE);
-      console.log("isDOCUMENT",isDOCUMENT);
-      console.log("isZip",isZip);
-      console.log("isLt100M",isLt100M);
+      // console.log("isIMAGE",isIMAGE);
+      // console.log("isDOCUMENT",isDOCUMENT);
+      // console.log("isZip",isZip);
+      // console.log("isLt100M",isLt100M);
 
       if (!isIMAGE && !isDOCUMENT && !isZip) {
         this.$message.error('不支持此格式文件上传！');
@@ -425,6 +425,10 @@ export default {
         // this.config.total = res.data.count;
         this.config.loading = false;
         this.config.total = this.tableData.length;
+        if (this.tableData.length == 0)
+        {
+          this.config.currentPage = 0;
+        }
         //console.log("tabledata: "+JSON.stringify(res));
       }, err => {
         alert("getlist error!!!");
@@ -448,7 +452,6 @@ export default {
             }
 
             if (this.operateType === "edit") {
-              console.log("pass check!");
               let formdata = new FormData();
               for (var key in this.operateForm) {
                 if (key != "issue_state" && key != "submit_state")
@@ -456,13 +459,12 @@ export default {
                   formdata.append(key, this.operateForm[key])
                 }
               }
-              console.log("pass formdata add!");
+
               if (this.fileList.length != 0) {
                 formdata.append("file", this.fileList[0].raw)
                 this.fileList.splice(0, 1);
               }
               
-              console.log("pass file add!");
               axios._post('http://8.129.86.121:80/file/update/', formdata).then(res => {
                 this.$message.success("更新文档成功！");
                 this.isShow = false;
@@ -473,8 +475,8 @@ export default {
                   message: "更新文档失败",
                   type: "error"
                 });
-                console.log(JSON.stringify(formdata));
-                console.log(formdata);
+                // console.log(JSON.stringify(formdata));
+                // console.log(formdata);
               })
             }
           } else {
