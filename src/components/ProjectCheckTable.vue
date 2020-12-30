@@ -1,6 +1,6 @@
 <template>
   <div class="common-table">
-    <el-table :data="tableData"
+    <el-table :data="tableData.slice((this.config.currentPage-1)*this.config.pageSize,this.config.currentPage*this.config.pageSize)"
     height="90%"
     stripe v-loading="this.config.loading">
       <el-table-column type="selection" width="55" align="center"></el-table-column>

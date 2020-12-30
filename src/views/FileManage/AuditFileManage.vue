@@ -186,11 +186,6 @@ export default {
       },
       operateFormLabel: [
         {
-          model: "file_id",
-          label: "序号",
-          width: 80
-        },
-        {
           model: "file_code",
           label: "文档编号",
           width: 160
@@ -315,21 +310,27 @@ export default {
       this.fileList = fileList;
     },
     uploadCheck(){
-      var result = true;
+      var result = 0;
       for (var key in this.operateForm) {
         if (key === "file_url" && this.operateForm[key] != "NULL") {
-          result = false;
+          result = 1;
           break;
         }
       }
-      if (!result) {
+
+      if (this.fileList.length > 0)
+      {
+        result = 2;
+      }
+
+      if (result === 1) {
         this.$confirm("已经上传的旧文件将会被覆盖，请问确定要上传新的文件吗？", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
-          console.log(this.$refs['uploadComponent'].$refs['upload-inner']);
-          this.$refs['uploadComponent'].$refs['upload-inner'].handleClick()
+          // console.log(this.$refs['uploadComponent'].$refs['upload-inner']);
+          this.$refs['uploadComponent'].$refs['upload-inner'].handleClick();
         })
         .catch(() => {
           this.$message({
@@ -337,6 +338,17 @@ export default {
             message: "已取消上传文件"
           });
         });
+      }
+      else if (result === 2)
+      {
+        this.$confirm("每次仅能上传一个文件，", "提示", {
+          confirmButtonText: "确定",
+          type: "warning"
+        });
+      }
+      else
+      {
+        this.$refs['uploadComponent'].$refs['upload-inner'].handleClick();
       }
     },
     onBeforeUpload (file) {
@@ -363,8 +375,7 @@ export default {
       if (!isLt100M) {
         this.$message.error('上传文件大小不得大于100MB');
       }
-
-      return (isIMAGE && isDOCUMENT && isZip) && isLt100M;
+      return (isIMAGE || isDOCUMENT || isZip) && isLt100M;
     },
     getList (name = '') {
       this.config.loading = true
@@ -429,13 +440,15 @@ export default {
       this.$refs.fileForm.$children[0].validate((valid) => {
           if (valid) 
           {
-            if (this.fileList.length != 0 &&!this.onBeforeUpload(this.fileList[0].raw))
+            if (this.fileList.length != 0 && !this.onBeforeUpload(this.fileList[0].raw))
             {
+              console.log("length",this.fileList.length);
               this.fileList.splice(0, 1);
               return false;
             }
 
             if (this.operateType === "edit") {
+              console.log("pass check!");
               let formdata = new FormData();
               for (var key in this.operateForm) {
                 if (key != "issue_state" && key != "submit_state")
@@ -443,12 +456,13 @@ export default {
                   formdata.append(key, this.operateForm[key])
                 }
               }
-
+              console.log("pass formdata add!");
               if (this.fileList.length != 0) {
                 formdata.append("file", this.fileList[0].raw)
                 this.fileList.splice(0, 1);
               }
-
+              
+              console.log("pass file add!");
               axios._post('http://8.129.86.121:80/file/update/', formdata).then(res => {
                 this.$message.success("更新文档成功！");
                 this.isShow = false;

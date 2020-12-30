@@ -49,7 +49,34 @@ export default {
                 label: '问答维护',
                 icon: 'setting',
                 url: 'Front/Knowledge'
-              }
+              },
+              {
+                label: "投标管理",
+                icon: "position",
+                children: [
+                  {
+                    path: "/BidPublicity",
+                    name: "BidPublicity",
+                    label: "投标公示",
+                    icon: "document",
+                    url: "BidManage/BidPublicity"
+                  },
+                  {
+                    path: "/BidApplication",
+                    name: "BidApplication",
+                    label: "投标申请",
+                    icon: "document",
+                    url: "BidManage/BidApplication"
+                  },
+                  {
+                    path: "/BidExamine",
+                    name: "BidExamine",
+                    label: "投标审核",
+                    icon: "document",
+                    url: "BidManage/BidExamine"
+                  }
+                ]
+              },
             ],
             token: Mock.Random.guid(),
             message: '获取成功'
@@ -95,7 +122,34 @@ export default {
                 label: '问答维护',
                 icon: 'setting',
                 url: 'Front/Knowledge'
-              }
+              },
+              {
+                label: "投标管理",
+                icon: "position",
+                children: [
+                  {
+                    path: "/BidPublicity",
+                    name: "BidPublicity",
+                    label: "投标公示",
+                    icon: "document",
+                    url: "BidManage/BidPublicity"
+                  },
+                  {
+                    path: "/BidApplication",
+                    name: "BidApplication",
+                    label: "投标申请",
+                    icon: "document",
+                    url: "BidManage/BidApplication"
+                  },
+                  {
+                    path: "/BidExamine",
+                    name: "BidExamine",
+                    label: "投标审核",
+                    icon: "document",
+                    url: "BidManage/BidExamine"
+                  }
+                ]
+              },
             ],
             token: Mock.Random.guid(),
             message: '获取成功'

@@ -1,23 +1,7 @@
 <template>
-  <div class="contract-table">
-    <el-table
-      :data="tableData.slice((this.config.currentPage-1)*this.config.pageSize,this.config.currentPage*this.config.pageSize)"
-      height="90%"
-      stripe
-      v-loading="config.loading"
-    >
-      <el-table-column
-        type="selection"
-        width="55"
-        align="center"
-      ></el-table-column>
-      <!-- <el-table-column label="序号" width="85">
-        <template slot-scope="scope">
-          <span style="margin-left: 10px">{{
-            (config.page - 1) * 20 + scope.$index + 1
-          }}</span>
-        </template>
-      </el-table-column> -->
+  <div class="common-table">
+    <el-table :data="tableData" height="90%" stripe v-loading="config.loading">
+      <el-table-column type="selection" width="45"> </el-table-column>
       <el-table-column
         show-overflow-tooltip
         v-for="item in tableLabel"
@@ -29,12 +13,10 @@
           <span style="margin-left: 10px">{{ scope.row[item.prop] }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" min-width="250" fixed="right">
+      <el-table-column label="操作" min-width="180">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.row)">查看</el-button>
           <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row)"
-            >删除</el-button
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button
           >
         </template>
       </el-table-column>
@@ -59,22 +41,22 @@ export default {
     config: Object
   },
   methods: {
-    handleEdit (row) {
-      this.$emit('edit', row)
+    handleEdit(row) {
+      this.$emit("edit", row);
     },
-    handleDelete (row) {
-      this.$emit('del', row)
+    handleDelete(row) {
+      this.$emit("del", row);
     },
-    changePage (page) {
-      this.$emit('changePage', page)
+    changePage(page) {
+      this.$emit("changePage", page);
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
-.contract-table {
-  height: 690px;
+.common-table {
+  height: calc(100% - 62px);
   background-color: #fff;
   position: relative;
   .pager {

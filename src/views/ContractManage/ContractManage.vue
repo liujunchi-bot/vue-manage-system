@@ -319,27 +319,40 @@ export default {
       }
     },
     uploadCheck(){
-      var result = true;
+      var result = 0;
       for (var key in this.operateForm) {
         if (key === "file_url" && this.operateForm[key] != "NULL") {
-          result = false;
+          result = 1;
           break;
         }
       }
-      if (!result) {
+
+      if (this.fileList.length > 0)
+      {
+        result = 2;
+      }
+
+      if (result === 1) {
         this.$confirm("已经上传的旧文件将会被覆盖，请问确定要上传新的文件吗？", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
-          console.log(this.$refs['uploadComponent'].$refs['upload-inner']);
-          this.$refs['uploadComponent'].$refs['upload-inner'].handleClick()
+          // console.log(this.$refs['uploadComponent'].$refs['upload-inner']);
+          this.$refs['uploadComponent'].$refs['upload-inner'].handleClick();
         })
         .catch(() => {
           this.$message({
             type: "info",
             message: "已取消上传文件"
           });
+        });
+      }
+      else if (result === 2)
+      {
+        this.$confirm("每次仅能上传一个文件，", "提示", {
+          confirmButtonText: "确定",
+          type: "warning"
         });
       }
       else
