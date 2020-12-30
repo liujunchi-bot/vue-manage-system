@@ -26,9 +26,8 @@ axios.defaults.baseURL = 'http://localhost:3333'//需要加东西
 Vue.prototype.$axios = axios1
 Vue.prototype.$qs = qs
 Vue.config.productionTip = false
-
-
-// axios.defaults.withCredentials = true
+axios.defaults.withCredentials = true
+axios.defaults.headers.common['token'] = store.state.user.token;
 // axios.defaults.baseURL = "http://localhost:8080"
 // Vue.prototype.$axios = axios
 

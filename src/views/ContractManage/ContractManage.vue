@@ -293,6 +293,14 @@ export default {
     handleChange (file, fileList) {
       this.fileList = fileList;
     },
+    uploadOnProgress(event,file,fileList){
+      this.progressFlag = true; // 显示进度条
+      this.loadProgress = parseInt(event.percent); // 动态获取文件上传进度
+      if (this.loadProgress >= 100) {
+          this.loadProgress = 100
+          setTimeout( () => {this.progressFlag = false}, 1000) // 一秒后关闭进度条
+      }
+    },
     uploadCheck(){
       var result = true;
       for (var key in this.operateForm) {
@@ -351,7 +359,7 @@ export default {
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
-      axios._get("http://8.129.86.121:8080/file/GetAllContract").then(res => {
+      axios._get("http://8.129.86.121:80/file/GetAllContract").then(res => {
         this.$message.success("获取合同列表成功！")
         this.tableData = res;
         
@@ -428,7 +436,7 @@ export default {
                 this.fileList.splice(0, 1);
               }
 
-              axios._post('http://8.129.86.121:8080/file/update', formdata).then(res => {
+              axios._post('http://8.129.86.121:80/file/update', formdata).then(res => {
                 this.$message.success("更新合同成功！");
                 this.isShow = false;
                 console.log("Inserted " + res);//res是返回插入数据的id
@@ -495,7 +503,7 @@ export default {
             formdata.append(key3, this.operateForm[key3])
           }
 
-          axios._post('http://8.129.86.121:8080/file/deletefile', formdata).then(res => {
+          axios._post('http://8.129.86.121:80/file/deletefile', formdata).then(res => {
             this.$message({
               type: "success",
               message: "删除成功!"
@@ -529,7 +537,7 @@ export default {
             formdata.append(key4, this.operateForm[key4])
           }
 
-          axios._post('http://8.129.86.121:8080/file/submitfile', formdata).then(res => {
+          axios._post('http://8.129.86.121:80/file/submitfile', formdata).then(res => {
             this.$message({
               type: "success",
               message: "提交成功!"

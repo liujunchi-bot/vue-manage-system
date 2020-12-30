@@ -131,37 +131,47 @@ export default {
       //   },
       // ],
       tableData: [],
+      id_list: [],
 
       multipleTable: [],
     };
   },
 
   mounted: function () {
-    console.log("开始初始化");
-    var self = this;
-    // this.config.loading = true;
-    // name ? (this.config.page = 1) : "";
-    axios
-      ._get("http://8.129.86.121:8080/QandA/getProblem")
-      .then((response) => {
-        for (var i in response) {
-          var newa = new Array();
-          console.log("response", response[i]);
-          newa["question"] = response[i]["question_pre"];
-          newa["keywords"] = response[i]["question_aft"];
-          newa["answer"] = response[i]["q_word"];
-          this.tableData.push(newa);
-        }
-
-        console.log("tableData", this.tableData);
-      })
-      .catch(function (error) {
-        alert("数据获取失败");
-        console.log(error.response);
-      });
+    this.init();
   },
 
   methods: {
+    init() {
+      console.log("开始初始化");
+      var self = this;
+      // this.config.loading = true;
+      // name ? (this.config.page = 1) : "";
+      axios
+        ._get("http://8.129.86.121:8080/QandA/getProblem")
+        .then((response) => {
+          this.id_list = [];
+          this.tableData = [];
+          for (var i in response) {
+            var newa = new Array();
+            console.log("response", response[i]);
+
+            this.id_list.push(response[i]["id"]);
+            newa["question"] = response[i]["question_pre"];
+            newa["keywords"] = response[i]["question_aft"];
+            newa["answer"] = response[i]["q_word"];
+            this.tableData.push(newa);
+          }
+
+          console.log("id_list", this.id_list);
+          console.log("tableData", this.tableData);
+        })
+        .catch(function (error) {
+          alert("数据获取失败");
+          console.log(error.response);
+        });
+    },
+
     add() {
       this.isShow1 = true;
     },
@@ -175,7 +185,7 @@ export default {
         .catch((_) => {});
     },
     submitForm() {
-      var newc = new Array();
+      // var newc = new Array();
 
       var myFormData = new FormData();
       myFormData.append("question_pre", this.ruleForm.question);
@@ -191,10 +201,11 @@ export default {
             message: "添加成功!",
           });
 
-          newc["question"] = this.ruleForm.question;
-          newc["keywords"] = this.ruleForm.keywords;
-          newc["answer"] = this.ruleForm.answer;
-          this.tableData.push(newc);
+          // newc["question"] = this.ruleForm.question;
+          // newc["keywords"] = this.ruleForm.keywords;
+          // newc["answer"] = this.ruleForm.answer;
+          // this.tableData.push(newc);
+          this.init();
         })
         .catch(function (error) {
           alert("发送失败");
@@ -202,6 +213,7 @@ export default {
 
       this.isShow1 = false;
     },
+
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
@@ -230,7 +242,7 @@ export default {
 
       var myFormData = new FormData();
 
-      var edit_index = parseInt(this.editIndex) + 1;
+      var edit_index = this.id_list[this.editIndex];
       console.log("edit_index", edit_index);
 
       myFormData.append("id", edit_index);
@@ -270,7 +282,8 @@ export default {
         .then(() => {
           var myFormData = new FormData();
 
-          var de_index = parseInt(index) + 1;
+          var t_index = parseInt(index);
+          var de_index = this.id_list[t_index];
           myFormData.append("id", de_index);
 
           axios

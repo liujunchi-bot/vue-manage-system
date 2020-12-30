@@ -364,7 +364,7 @@ export default {
     getList (name = '') {
       this.config.loading = true
       name ? (this.config.page = 1) : ''
-      axios._get("http://8.129.86.121:8080/file/getChecker").then(res => {
+      axios._get("http://8.129.86.121:80/file/getChecker").then(res => {
         this.$message.success("获取文档列表成功！")
         this.tableData = res;
 
@@ -444,7 +444,7 @@ export default {
                 this.fileList.splice(0, 1);
               }
 
-              axios._post('http://8.129.86.121:8080/file/update/', formdata).then(res => {
+              axios._post('http://8.129.86.121:80/file/update/', formdata).then(res => {
                 this.$message.success("更新文档成功！");
                 this.isShow = false;
                 this.getList()
@@ -487,7 +487,7 @@ export default {
             }
           }
 
-          axios._post('http://8.129.86.121:8080/file/checkdelete/', formdata).then(res => {
+          axios._post('http://8.129.86.121:80/file/checkdelete/', formdata).then(res => {
             this.$message({
               type: "success",
               message: "删除成功!"
@@ -524,7 +524,7 @@ export default {
             }
           }
 
-          axios._post('http://8.129.86.121:8080/file/checkpass/', formdata).then(res => {
+          axios._post('http://8.129.86.121:80/file/checkpass/', formdata).then(res => {
             if (res.code == "250") {
               this.$message({
                 type: "error",
@@ -570,7 +570,7 @@ export default {
             }
           }
 
-          axios._post('http://8.129.86.121:8080/file/checknotpass/', formdata).then(res => {
+          axios._post('http://8.129.86.121:80/file/checknotpass/', formdata).then(res => {
             if (res.code == "250") {
               this.$message({
                 type: "error",

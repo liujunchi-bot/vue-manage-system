@@ -1,14 +1,19 @@
-
-
 import axios from 'axios';
+import store from '../store';
+
 
 axios.defaults.timeout = 5000
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+axios.defaults.withCredentials=true
 axios.defaults.params = {}
 
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
+  if(store.state.user.token){
+    config.headers.common['token']=store.state.user.token
+    config.headers.token = store.state.user.token;
+  }
   return config;
 }, function (error) {
   // 对请求错误做些什么

@@ -4,15 +4,7 @@ export default {
     isCollapse: false,
     currentMenu: null,
     menu: [],
-    tabsList: [
-      {
-        path: '/',
-        name: 'home',
-        label: '首页',
-        icon: 'home',
-        url: 'Home/Home'
-      }
-    ]
+    tabsList: []
   },
   mutations: {
     setMenu(state, val) {
@@ -21,7 +13,9 @@ export default {
     },
     clearMenu(state) {
       state.menu = []
+      state.tabsList = []
       Cookie.remove('menu')
+      Cookie.remove('tabsList')
     },
     addMenu(state, router) {
       if (!Cookie.get('menu')) {

@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="body">
     <el-dialog title="编辑" :visible.sync="dialogFormVisible">
-      <el-form :rules="rules">
+      <el-form :model="editObject" :rules="rules" ref="ruleForm">
         <el-form-item label="客户编号" prop="client_id" >
           <el-input v-model="editObject.client_id" ></el-input>
         </el-form-item>
@@ -28,18 +28,17 @@
         </el-form-item>
         <el-form-item label="联系人电话" prop="client_person_phone" >
           <el-input v-model="editObject.client_person_phone"
-          onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="11"></el-input>
-           
+          onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="11"></el-input> 
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button @click="handleClickConfirm">确定</el-button>
+        <el-button type="primary" @click="handleClickConfirm">确定</el-button>
       </div>
     </el-dialog>
 
     <el-dialog title="新增" :visible.sync="dialogFormAddVisable">
-      <el-form :rules="rules">
+      <el-form :model="newObject" :rules="rules" ref="ruleForm">
         <el-form-item label="客户编号" prop="client_id">
           <el-input v-model="newObject.client_id"></el-input>
         </el-form-item>
@@ -71,38 +70,39 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormAddVisable = false">取消</el-button>
-        <el-button @click="handleClickConfirmAdd">确定</el-button>
+        <el-button  type="primary" @click="handleClickConfirmAdd">确定</el-button>
+        
       </div>
     </el-dialog>
 
     <el-dialog :visible.sync="dialogFormVisibleShow">
       <el-form>
         <el-form-item label="客户编号">
-          <el-input v-model="showObject.client_id"></el-input>
+          <el-input v-model="showObject.client_id" disabled></el-input>
         </el-form-item>
         <el-form-item label="客户名称">
-          <el-input v-model="showObject.client_name"></el-input>
+          <el-input v-model="showObject.client_name" disabled></el-input>
         </el-form-item>
         <el-form-item label="客户地址">
-          <el-input v-model="showObject.client_work_address"></el-input>
+          <el-input v-model="showObject.client_work_address" disabled></el-input>
         </el-form-item>
         <el-form-item label="法定代表人">
-          <el-input v-model="showObject.client_representative"></el-input>
+          <el-input v-model="showObject.client_representative" disabled></el-input>
         </el-form-item>
         <el-form-item label="注册资本">
-          <el-input v-model="showObject.client_registered_capital"></el-input>
+          <el-input v-model="showObject.client_registered_capital" disabled></el-input>
         </el-form-item>
         <el-form-item label="公司类型">
-          <el-input v-model="showObject.client_type"></el-input>
+          <el-input v-model="showObject.client_type" disabled></el-input>
         </el-form-item>
         <el-form-item label="经营范围">
-          <el-input v-model="showObject.client_business"></el-input>
+          <el-input v-model="showObject.client_business" disabled></el-input>
         </el-form-item>
         <el-form-item label="联系人姓名">
-          <el-input v-model="showObject.client_person_name"></el-input>
+          <el-input v-model="showObject.client_person_name" disabled></el-input>
         </el-form-item>
         <el-form-item label="联系人电话">
-          <el-input v-model="showObject.client_person_phone"></el-input>
+          <el-input v-model="showObject.client_person_phone" disabled></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -124,7 +124,7 @@
           popper-class="my-autocomplete"
           v-model="state"
           :fetch-suggestions="querySearch"
-          placeholder="请输入内容"
+          placeholder="请输入客户名称进行查询"
           @select="handleSelect"
         >
           <i class="el-icon-edit el-input__icon" slot="suffix"> </i>
@@ -137,7 +137,7 @@
     </el-row>
     <el-table
       ref="multipleTable"
-      :data="tableData"
+      :data="tableData.slice((curPage-1)*pagesize,curPage*pagesize)"
       tooltip-effect="dark"
       style="width: 100%"
       max-height="500"
@@ -147,12 +147,6 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="公司类型">
-              <span>{{props.row.client_type}}</span>
-            </el-form-item>
-            <el-form-item label="法定代表人">
-              <span>{{props.row.client_representative}}</span>
-            </el-form-item>
             <el-form-item label="经营范围">
               <span>{{props.row.client_business}}</span>
             </el-form-item> 
@@ -179,14 +173,20 @@
       >
       </el-table-column>
       <el-table-column
-        prop="client_registered_capital"
-        label="注册资本"
+        prop="client_type"
+        label="公司类型"
         width="180"
       >
       </el-table-column>
       <el-table-column
-        prop="client_type"
-        label="公司类型"
+        prop="client_representative"
+        label="法定代表人"
+        width="180"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="client_registered_capital"
+        label="注册资本"
         width="180"
       >
       </el-table-column>
@@ -216,6 +216,13 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+    :current-page.sync="curPage"
+    :page-size="pagesize"
+    layout="prev, pager, next"
+    :total="tableData.length"
+    class="page">
+    </el-pagination>
   </div>
 </template>
 
@@ -225,8 +232,9 @@ export default {
   data () {
     return {
       state: "",
-      tableData: [
-      ],
+      tableData: [],
+      curPage:1,
+      pagesize:10,
       rules: {
         client_id: [
           { required: true, message: '请输入客户编号', trigger: 'blur' },
@@ -247,6 +255,7 @@ export default {
         ], 
         client_person_phone:[
           { required: true, message: '请输入联系人电话', trigger: 'blur' },
+          {min: 11, max: 11, message:'请输入正确的电话号码', trigger: 'blur'}
           /* { validator:function(rule,value,callback){
               if(/^1[34578]\d{9}$/.test(value)==false){
                 callback(new Error("请输入正确的手机号"));
@@ -315,61 +324,78 @@ export default {
       this.dialogFormVisible = true;
     },
     handleClickConfirm () {
-      this.dialogFormVisible = false;
-      if (confirm("确定修改吗？")) {
-        this.tableData.forEach((item) => {
-          if (item.client_id == this.editObject.client_id) {
-            let params = {
-              client_id: item.client_id,
-              client_name: item.client_name,
-              client_work_address: item.client_work_address,
-              client_representative: item.client_representative,
-              client_registered_capital: item.client_registered_capital,
-              client_type: item.client_type,
-              client_business: item.client_business,
-              client_person_name:item.client_person_name,
-              client_person_phone:item.client_person_phone
-            };
-            let url = "http://8.129.86.121:8080/client/update"
-            this.$axios
-              .post(url, qs.stringify(params))
-              .then(successResponse => {
-                /*item = this.editObject;*/
-                alert('修改成功')
-                this.loadData();
-              })
-              .catch(failResponse => {
-                alert('修改失败')
-              })
+      this.$refs.ruleForm.validate((valid)=>{
+        if(valid){
+          this.dialogFormVisible = false;
+          if (confirm("确定修改吗？")) {
+            this.tableData.forEach((item) => {
+              if (item.client_id == this.editObject.client_id) { 
+                let params = {
+                client_id: item.client_id,
+                client_name: item.client_name,
+                client_work_address: item.client_work_address,
+                client_representative: item.client_representative,
+                client_registered_capital: item.client_registered_capital,
+                client_type: item.client_type,
+                client_business: item.client_business,
+                client_person_name:item.client_person_name,
+                client_person_phone:item.client_person_phone
+                };
+                let url = "http://8.129.86.121:8080/client/update"
+                this.$axios
+                  .post(url, qs.stringify(params))
+                  .then(successResponse => {
+                    //alert('修改成功')
+                    this.$message.success("修改成功");
+                    this.loadData();
+                  })
+                  .catch(failResponse => {
+                    //alert('修改失败')
+                    this.$message.success("修改失败");
+                  })
+              }
+            });
           }
-        });
-      }
+        }else{
+          console.log('表单验证不合法！请检查必填项是否按规则填写');
+          return false;
+        }
+      })
     },
     handleClickConfirmAdd () {
-      this.dialogFormAddVisable = false;
-      if (confirm("确定新增吗？")) {
-        let params = {
-          client_id: this.newObject.client_id,
-          client_name: this.newObject.client_name,
-          client_work_address: this.newObject.client_work_address,
-          client_representative: this.newObject.client_representative,
-          client_registered_capital: this.newObject.client_registered_capital,
-          client_type: this.newObject.client_type,
-          client_business: this.newObject.client_business,
-          client_person_name:this.newObject.client_person_name,
-          client_person_phone:this.newObject.client_person_phone
-        };
-        let url = "http://8.129.86.121:8080/client/add"
-        this.$axios
-          .post(url, qs.stringify(params))
-          .then(successResponse => {
-            alert('新增成功')
-            this.loadData(); 
-          })
-          .catch(failResponse => {
-            alert('新增失败')
-          })
-      }
+      this.$refs.ruleForm.validate((valid)=>{
+        if(valid){
+          this.dialogFormAddVisable = false;
+          if (confirm("确定新增吗？")) {
+            let params = {
+              client_id: this.newObject.client_id,
+              client_name: this.newObject.client_name,
+              client_work_address: this.newObject.client_work_address,
+              client_representative: this.newObject.client_representative,
+              client_registered_capital: this.newObject.client_registered_capital,
+              client_type: this.newObject.client_type,
+              client_business: this.newObject.client_business,
+              client_person_name:this.newObject.client_person_name,
+              client_person_phone:this.newObject.client_person_phone
+            };
+            let url = "http://8.129.86.121:8080/client/add"
+            this.$axios
+            .post(url, qs.stringify(params))
+            .then(successResponse => {
+              //alert('新增成功')
+              this.$message.success("新增成功");
+              this.loadData(); 
+            })
+            .catch(failResponse => {
+              //alert('新增失败')
+              this.$message.success("新增失败");
+            })
+          }
+        }else{
+          console.log('表单验证不合法！请检查必填项是否按规则填写');
+          return false;
+        }  
+      })
     },
     querySearch (queryString, cb) {
       let items = this.tableData;
@@ -398,5 +424,12 @@ export default {
 <style lang="scss" scoped>
 .items-container {
   width: 170px;
+}
+.body{
+  position:relative;
+}
+.page {
+  position:absolute;
+  right:0;
 }
 </style>

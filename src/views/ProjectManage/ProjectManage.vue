@@ -393,10 +393,13 @@ export default {
             }
           }
         }
-
+        
         this.config.loading = false;
         this.config.total = this.tableData.length;
-        
+        if (this.tableData.length == 0)
+        {
+          this.config.currentPage = 0;
+        }
       }, err => {
         alert("getlist error!!!");
       })
@@ -427,7 +430,7 @@ export default {
             }
           }
           
-          axios._post('http://8.129.86.121:8080/project/submit', formdata).then(res => {
+          axios._post('http://8.129.86.121:80/project/submit', formdata).then(res => {
             this.$message({
               type: "success",
               message: "提交成功!"
@@ -463,7 +466,7 @@ export default {
                 }
               }
 
-              axios._post('http://8.129.86.121:8080/project/update', formdata).then(res => {
+              axios._post('http://8.129.86.121:80/project/update', formdata).then(res => {
                 this.$message.success("更新项目成功");
                 this.isShow = false
                 this.getList()
@@ -485,7 +488,7 @@ export default {
                 }
               }
               
-              axios._post('http://8.129.86.121:8080/project/insert', formdata).then(res => {
+              axios._post('http://8.129.86.121:80/project/insert', formdata).then(res => {
                 this.$message.success("新建项目成功！");
                 this.isShow = false
                 this.getList()
@@ -526,7 +529,7 @@ export default {
             }
           }
           axios
-            ._remove('http://8.129.86.121:8080/project/delete', {
+            ._remove('http://8.129.86.121:80/project/delete', {
               params: {
                 project_id: row.project_id
               }

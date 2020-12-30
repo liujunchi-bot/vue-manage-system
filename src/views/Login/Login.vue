@@ -23,11 +23,13 @@
     >
     </vue-particles>
     <div class="pane">
-      <h2 class="title">
-        <i class="el-icon-data-analysis" style="color: #505458"></i>湖南华晟会计师事务所（普通合伙）信息管理系统
-      </h2>
+      <div class="el_title" style="margin: auto">
+        <h2 class="title">
+          湖南华晟会计师事务所（普通合伙）信息管理系统
+        </h2>
+      </div>
       <el-tabs type="border-card">
-        <el-tab-pane label="账号登录">
+        <!-- <el-tab-pane> -->
           <el-form :model="form">
             <el-form-item label="账号">
               <el-input
@@ -48,32 +50,29 @@
                 <el-checkbox v-model="checked" style="color: dodgerblue"
                   >自动登录</el-checkbox
                 >
-                <span
-                  >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span
-                >
-                <el-link type="primary" href="https://org.modao.cc/"
+                <!-- <el-link class="leftHref" type="primary" href="https://org.modao.cc/"
                   >忘记密码？</el-link
+                > -->
+              </div>
+              <br>
+              <div class="loginbtn">
+                <el-button type="primary" @click="login" class="submit_btn" style="margin: auto"
+                  >登录</el-button
                 >
               </div>
-              &nbsp;&nbsp;
-              <el-button type="primary" @click="login" class="submit_btn"
-                >登录</el-button
-              >
-              <div>
+              
+              <!-- <div>
                 <el-link type="primary" href="https://org.modao.cc/"
                   >其它登录方式</el-link
                 >
-                <span
-                  >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span
-                >
-                <el-link type="primary" href="https://org.modao.cc/"
+                <el-link class="leftHref" type="primary" href="https://org.modao.cc/"
                   >注册账户</el-link
                 >
-              </div>
+              </div> -->
             </el-form-item>
           </el-form>
-        </el-tab-pane>
-        <el-tab-pane label="短信快捷登录">
+        <!-- </el-tab-pane> -->
+        <!-- <el-tab-pane label="短信快捷登录">
           <el-form :model="form">
             <el-form-item label="手机号">
               <el-input
@@ -86,12 +85,13 @@
             </el-form-item>
 
             <el-form-item>
-              <el-button type="primary" @click="login" class="submit_btn"
-                >注册</el-button
-              >
+              <div class="loginbtn">
+                <el-button type="primary" @click="login" class="submit_btn" style="margin: auto"
+                >注册</el-button>
+              </div>
             </el-form-item>
           </el-form>
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
     </div>
   </div>
@@ -139,15 +139,18 @@ export default {
     //   })
     // }
     login () {
-      let obj = {
-        account: this.form.username,
-        password: this.form.password
-      }
+      // let obj = {
+      //   account: this.form.username,
+      //   password: this.form.password
+      // }
       var that = this;
       var params = new URLSearchParams();
       params.append("account", this.form.username);           //重点
       params.append("password", this.form.password);           //重点
       axios._post("http://8.129.86.121:8080/staff/login", params).then((response) => {
+        console.log(response.token);
+        
+        this.$store.commit('setToken', response.token)
         if (response.status === 'success') {
           that.$message({
             message: 'success',
@@ -171,7 +174,6 @@ export default {
             if (res.code === 20000) {
               this.$store.commit('clearMenu')
               this.$store.commit('setMenu', res.data.menu)
-              this.$store.commit('setToken', res.data.token)
               this.$store.commit('addMenu', this.$router)
               // this.$router.push({ name: 'home' })
               if (res.type == '管理员') {
@@ -201,13 +203,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.el_title{
+  margin: auto;
+  align-content: center;
+  text-align: center;
+}
 .el-form {
   width: 80%;
   margin: auto;
-  padding: 45px;
+  padding: 0px;
   height: 350px;
   // background-color: #fff;
   // color: dodgerblue;
+}
+.loginbtn{
+  display: flex;
+}
+.leftHref{
+  float: right;
+  margin-right: 0;
 }
 .submit_btn {
   width: 80%;
@@ -218,16 +232,19 @@ export default {
   width: 40%;
   height: 40%;
   position: absolute;
-  top: 25%;
+  top: 100px;
   left: 30%;
-  
   // background-color: cyan;
 }
 .title {
   font-size: 24px;
-  margin: 0 auto;
+  margin: auto;
   width: 600px;
   left: 50px;
   align: center;
+}
+.page{
+  background-image: url('/assets/images/banner3.jpg');
+  background-size: cover;
 }
 </style>

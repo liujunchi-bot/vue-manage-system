@@ -400,7 +400,7 @@ export default {
     },
     getList (name = '') {
       this.config.loading = true
-      axios._get("http://8.129.86.121:8080/file/getOperator/").then(res => {
+      axios._get("http://8.129.86.121:80/file/getOperator/").then(res => {
         this.$message.success("获取文档列表成功！")
         this.tableData = res;
         
@@ -439,6 +439,10 @@ export default {
         }
         this.config.loading = false;
         this.config.total = this.tableData.length;
+        if (this.tableData.length == 0)
+        {
+          this.config.currentPage = 0;
+        }
       }, err => {
         alert("error!!!");
       })
@@ -552,7 +556,7 @@ export default {
             }
           }
 
-          axios._post('http://8.129.86.121:8080/file/deletefile/', formdata).then(res => {
+          axios._post('http://8.129.86.121:80/file/deletefile/', formdata).then(res => {
             this.$message({
               type: "success",
               message: "删除成功!"
@@ -589,7 +593,7 @@ export default {
             }
           }
 
-          axios._post('http://8.129.86.121:8080/file/submitfile/', formdata).then(res => {
+          axios._post('http://8.129.86.121:80/file/submitfile/', formdata).then(res => {
             this.$message({
               type: "success",
               message: "提交成功!"

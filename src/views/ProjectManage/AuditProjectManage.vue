@@ -367,7 +367,7 @@ export default {
     },
     getList (name = '') {
       this.config.loading = true
-      axios._get("http://8.129.86.121:8080/project/getCheckProject").then(res => {
+      axios._get("http://8.129.86.121:80/project/getCheckProject").then(res => {
         this.$message.success("获取项目列表成功！")
         this.tableData = res;
         
@@ -423,7 +423,7 @@ export default {
             }
           }
 
-          axios._post('http://8.129.86.121:8080/project/pass', formdata).then(res => {
+          axios._post('http://8.129.86.121:80/project/pass', formdata).then(res => {
             if (res.code == "250") {
               this.$message({
                 type: "error",
@@ -467,7 +467,7 @@ export default {
               formdata.append(key3, this.operateForm[key3])
             }
           }
-          axios._post('http://8.129.86.121:8080/project/refuse', formdata).then(res => {
+          axios._post('http://8.129.86.121:80/project/refuse', formdata).then(res => {
             if (res.code == "250") {
               this.$message({
                 type: "error",
@@ -559,7 +559,7 @@ export default {
                 }
               }
 
-              axios._post('http://8.129.86.121:8080/project/update', formdata).then(res => {
+              axios._post('http://8.129.86.121:80/project/update', formdata).then(res => {
                 this.$message.success("更新项目成功！");
                 this.isShow = false;
                 // console.log("Inserted " + res);//res是返回插入数据的id
