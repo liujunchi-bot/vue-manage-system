@@ -148,7 +148,7 @@ export default {
       params.append("account", this.form.username);           //重点
       params.append("password", this.form.password);           //重点
       axios._post("http://8.129.86.121:8080/staff/login", params).then((response) => {
-        console.log(response.token);
+        // console.log(response.token);
         
         this.$store.commit('setToken', response.token)
         if (response.status === 'success') {
@@ -244,7 +244,6 @@ export default {
   align: center;
 }
 .page{
-  background-image: url('/assets/images/banner3.jpg');
   background-size: cover;
 }
 </style>

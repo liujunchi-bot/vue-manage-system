@@ -115,7 +115,7 @@ export default {
         },
         {
           prop: "contract_amount",
-          label: "合同金额（万元）",
+          label: "合同金额(万元)",
           width: 160
         },
         {

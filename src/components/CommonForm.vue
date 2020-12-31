@@ -1,5 +1,5 @@
 <template>
-  <el-form :inline="inline" :model="form" ref="form" :rules="rules" label-width="120px" class="demo-ruleForm">
+  <el-form :inline="inline" :model="form" ref="form" :rules="rules" label-width="145px" class="demo-ruleForm">
     <el-form-item
       v-for="item in formLabel"
       :prop="item.model"

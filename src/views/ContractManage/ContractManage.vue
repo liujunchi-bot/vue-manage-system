@@ -135,7 +135,7 @@ export default {
         },
         {
           prop: "contract_amount",
-          label: "合同金额（万元）",
+          label: "合同金额(万元)",
           width: 160
         },
         {
@@ -261,7 +261,7 @@ export default {
           { type: "enum", enum: ['合同'], required: true, message: '请选择类型', trigger: 'blur' }
         ],
         contract_amount: [
-          {required: true, message: '请输入合同金额（万元）',trigger:'blur',},
+          { required: true, message: '请输入合同金额（万元）',trigger:'blur',},
           { validator: isPriceValidator, message: '合同金额只能输入数字', trigger: 'blur' }
         ],
         file_project: [

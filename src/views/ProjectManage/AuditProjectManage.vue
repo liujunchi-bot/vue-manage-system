@@ -90,6 +90,23 @@ export default {
     ProjectCheckTable
   },
   data () {
+      let isPriceValidator = (rule, value, callback) => {
+      if (!value)
+      {
+        callback();
+      } else
+      {
+        var reg = /^-?\d{1,252}(?:\.\d{1,3})?$/; //小数点左边最高4位，小数点右边最多4位
+        if (reg.test(value))
+        {
+          callback();
+        }
+        else
+        {
+          callback(new Error("输入正确的数字,小数点后可1到3位"));
+        }
+      }
+    };
     return {
       loadProgress: 0, // 动态显示进度条
       progressFlag: false, // 关闭进度条
@@ -178,15 +195,24 @@ export default {
         },
         {
           prop: 'project_assets',
-          label: '资产总额（万元）',
+          label: '资产总额(万元)',
+          width: 160
         },
         {
           prop: 'project_audit',
-          label: '审定金额（万元）',
+          label: '审定金额(万元)',
+          width: 160
         },
         {
           prop: 'project_reduction',
-          label: '审减金额（万元）',
+          label: '审减金额(万元)',
+          width: 160
+        },
+        {
+          prop: "file_url",
+          label: "下载链接",
+          width: 150,
+          type: "link"
         },
         {
           prop: 'staff_namej',
@@ -373,13 +399,13 @@ export default {
           { required: true, message: '请输入项目结束时间', trigger: 'blur' },
         ],
         project_assets:[
-          { type: 'number', message: '资产总额需输入数字（万元）', trigger: 'blur', transform: (value) => Number(value)}
+          { validator: isPriceValidator, message: '资产总额需输入数字(万元)', trigger: 'blur', transform: (value) => Number(value)}
         ],
         project_audit:[
-          { type: 'number', message: '审定金额需输入数字（万元）', trigger: 'blur', transform: (value) => Number(value)}
+          { validator: isPriceValidator, message: '审定金额需输入数字(万元)', trigger: 'blur', transform: (value) => Number(value)}
         ],
         project_reduction:[
-          { type: 'number', message: '审减金额需输入数字（万元）', trigger: 'blur', transform: (value) => Number(value)}
+          { validator: isPriceValidator, message: '审减金额需输入数字(万元)', trigger: 'blur', transform: (value) => Number(value)}
         ],
       },
       searchForm: {
