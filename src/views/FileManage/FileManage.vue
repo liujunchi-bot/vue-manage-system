@@ -63,8 +63,8 @@
         <el-button type="primary" @click="exportRow">导出</el-button>
       </div>
 
-      <common-form inline :formLabel="formLabel" :form="searchFrom">
-        <el-button type="primary" @click="searchKey(searchFrom.keyword)">搜索</el-button>
+      <common-form inline :formLabel="formLabel" :form="searchForm">
+        <el-button type="primary" @click="searchKey(searchForm.keyword)">搜索</el-button>
         <el-button type="info" @click="getList()">重置</el-button>
       </common-form>
     </div>
@@ -265,7 +265,7 @@ export default {
           { max: 255, message: '文档相关项目长度最多 255 个字符', trigger: 'blur' }
         ]
       },
-      searchFrom: {
+      searchForm: {
         keyword: ""
       },
       formLabel: [

@@ -35,11 +35,12 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" label="选择" align="center" width="55">
-        <template slot-scope="scope">
+        <!-- <template slot-scope="scope">
           <span style="margin-left: 10px">{{
             (config.page - 1) * 20 + scope.$index + 1
           }}</span>
-        </template></el-table-column
+        </template> -->
+        </el-table-column
       >
       <el-table-column prop="id" label="投标编号" width="120">
       </el-table-column>
@@ -133,20 +134,22 @@ export default {
     Back(rowInfo) {
       this.tableData.forEach((item, index) => {
         if (item.id == rowInfo.id) {
-          let params = {
-            id: item.id,
-          };
-          let url = "/tender/examine/noissue/";
-          this.$axios
-            .post(url, qs.stringify(params))
-            .then((successResponse) => {
-              this.tableData.splice(index, 1);
-              this.$message.success("已退回");
-            })
-            .catch((failResponse) => {
-              this.$message.success("未退回");
-            });
           this.tableData.splice(index, 1);
+          this.$message.success("已退回");
+          // let params = {
+          //   id: item.id,
+          // };
+          // let url = "/tender/examine/noissue/";
+          // this.$axios
+          //   .post(url, qs.stringify(params))
+          //   .then((successResponse) => {
+          //     this.tableData.splice(index, 1);
+          //     this.$message.success("已退回");
+          //   })
+          //   .catch((failResponse) => {
+          //     this.$message.success("未退回");
+          //   });
+          // this.tableData.splice(index, 1);
         }
       });
     },
@@ -163,19 +166,21 @@ export default {
     Pass(rowInfo) {
       this.tableData.forEach((item, index) => {
         if (item.id == rowInfo.id) {
-          let params = {
-            id: item.id,
-          };
-          let url = "/tender/examine/issue/";
-          this.$axios
-            .post(url, qs.stringify(params))
-            .then((successResponse) => {
-              this.tableData.splice(index, 1);
-              this.$message.success("已通过");
-            })
-            .catch((failResponse) => {
-              this.$message.success("未通过");
-            });
+          this.tableData.splice(index, 1);
+          this.$message.success("已通过");
+          // let params = {
+          //   id: item.id,
+          // };
+          // let url = "/tender/examine/issue/";
+          // this.$axios
+          //   .post(url, qs.stringify(params))
+          //   .then((successResponse) => {
+          //     this.tableData.splice(index, 1);
+          //     this.$message.success("已通过");
+          //   })
+          //   .catch((failResponse) => {
+          //     this.$message.success("未通过");
+          //   });
         }
       });
     },
@@ -184,19 +189,21 @@ export default {
       this.tableData.forEach((item, index) => {
         if (item.id == rowInfo.id) {
           if (confirm("确定通过吗？")) {
-            let params = {
-              id: item.id,
-            };
-            let url = "/tender/examine/issue/";
-            this.$axios
-              .post(url, qs.stringify(params))
-              .then((successResponse) => {
-                this.tableData.splice(index, 1);
-                this.$message.success("已通过");
-              })
-              .catch((failResponse) => {
-                this.$message.success("未通过");
-              });
+            this.tableData.splice(index, 1);
+            this.$message.success("已通过");
+            // let params = {
+            //   id: item.id,
+            // };
+            // let url = "/tender/examine/issue/";
+            // this.$axios
+            //   .post(url, qs.stringify(params))
+            //   .then((successResponse) => {
+            //     this.tableData.splice(index, 1);
+            //     this.$message.success("已通过");
+            //   })
+            //   .catch((failResponse) => {
+            //     this.$message.success("未通过");
+            //   });
           }
         }
       });
@@ -205,19 +212,21 @@ export default {
       this.tableData.forEach((item, index) => {
         if (item.id == rowInfo.id) {
           if (confirm("确定退回吗？")) {
-            let params = {
-              id: item.id,
-            };
-            let url = "/tender/examine/noissue/";
-            this.$axios
-              .post(url, qs.stringify(params))
-              .then((successResponse) => {
-                this.tableData.splice(index, 1);
-                this.$message.success("已退回");
-              })
-              .catch((failResponse) => {
-                this.$message.success("未退回");
-              });
+            this.tableData.splice(index, 1);
+            this.$message.success("已退回");
+            // let params = {
+            //   id: item.id,
+            // };
+            // let url = "/tender/examine/noissue/";
+            // this.$axios
+            //   .post(url, qs.stringify(params))
+            //   .then((successResponse) => {
+            //     this.tableData.splice(index, 1);
+            //     this.$message.success("已退回");
+            //   })
+            //   .catch((failResponse) => {
+            //     this.$message.success("未退回");
+            //   });
           }
         }
       });
@@ -258,19 +267,53 @@ export default {
       this.current_role = "null";
     },
     getList: function () {
-      let params = {
-        current_role: current_role,
+      var current_role = this.current_role;
+      var data1 = {
+        id: "20180409002",
+        tender_date: "2018-09-04",
+        project_name: "湖南移动2018-2021年审计委托服务项目2",
+        audit_type: "竣工决算审计",
+        tender_block: "标段1",
+        tender_block_sum: "1300.00",
+        tender_offer: "800元/人/天",
+        tender_share: "",
+        tender_flag: "否",
+        tender_ceiling: "",
+        tender_discount: "",
+        jing_ban_ren: current_role,
+        shen_he_ren: "100",
       };
-      let url = "/tender/examine/";
-      this.$axios
-        .post(url, qs.stringify(params))
-        .then((successResponse) => {
-          alert("请求成功");
-          this.tableData = successResponse.data;
-        })
-        .catch((failResponse) => {
-          alert("请求失败");
-        });
+      var data2 = {
+        id: "20180630002",
+        tender_date: "2018-06-30",
+        project_name:
+          "福建移动2018-2021年度建设项目竣工决算委托审计服务公开比选集中采购项目（第一轮）",
+        audit_type: "竣工决算审计",
+        tender_block: "标段1",
+        tender_block_sum: "2521.42",
+        tender_offer: "68%",
+        tender_share: "15%",
+        tender_flag: "是",
+        tender_ceiling: "2571848.4",
+        tender_discount: "68%",
+        jing_ban_ren: current_role,
+        shen_he_ren: "100",
+      };
+      this.tableData.push(data1);
+      this.tableData.push(data2);
+      // let params = {
+      //   current_role: current_role,
+      // };
+      // let url = "/tender/examine/";
+      // this.$axios
+      //   .post(url, qs.stringify(params))
+      //   .then((successResponse) => {
+      //     alert("请求成功");
+      //     this.tableData = successResponse.data;
+      //   })
+      //   .catch((failResponse) => {
+      //     alert("请求失败");
+      //   });
     },
   },
   mounted: function () {

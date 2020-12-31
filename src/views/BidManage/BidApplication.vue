@@ -45,12 +45,12 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" label="选择" align="center" width="55">
-        <template slot-scope="scope">
+        <!-- <template slot-scope="scope">
           <span style="margin-left: 10px">{{
             (config.page - 1) * 20 + scope.$index + 1
           }}</span>
-        </template></el-table-column
-      >
+        </template> -->
+      </el-table-column>
       <el-table-column prop="id" label="投标编号" width="120">
       </el-table-column>
       <el-table-column prop="tender_date" label="投标时间" width="120">
@@ -112,7 +112,7 @@
 <script>
 import AddForm from "./addForm";
 import EditForm from "./editForm";
-import qs from "qs";
+// import qs from "qs";
 export default {
   components: {
     AddForm,
@@ -148,19 +148,21 @@ export default {
     Delete(rowInfo) {
       this.tableData.forEach((item, index) => {
         if (item.id == rowInfo.id) {
-          let params = {
-            id: item.id,
-          };
-          let url = "/tender/application/delete/";
-          this.$axios
-            .post(url, qs.stringify(params))
-            .then((successResponse) => {
-              this.tableData.splice(index, 1);
-              this.$message.success("删除成功");
-            })
-            .catch(() => {
-              this.$message.success("删除失败");
-            });
+          this.tableData.splice(index, 1);
+          this.$message.success("删除成功");
+          //   let params = {
+          //     id: item.id,
+          //   };
+          //   let url = "/tender/application/delete/";
+          //   this.$axios
+          //     .post(url, qs.stringify(params))
+          //     .then((successResponse) => {
+          //       this.tableData.splice(index, 1);
+          //       this.$message.success("删除成功");
+          //     })
+          //     .catch(() => {
+          //       this.$message.success("删除失败");
+          //     });
         }
       });
     },
@@ -177,19 +179,21 @@ export default {
     Submit(rowInfo) {
       this.tableData.forEach((item, index) => {
         if (item.id == rowInfo.id) {
-          let params = {
-            id: item.id,
-          };
-          let url = "/tender/application/submit/";
-          this.$axios
-            .post(url, qs.stringify(params))
-            .then((successResponse) => {
-              this.tableData.splice(index, 1);
-              this.$message.success("提交成功");
-            })
-            .catch((failResponse) => {
-              this.$message.success("提交失败");
-            });
+          this.tableData.splice(index, 1);
+          this.$message.success("提交成功");
+          // let params = {
+          //   id: item.id,
+          // };
+          // let url = "/tender/application/submit/";
+          // this.$axios
+          //   .post(url, qs.stringify(params))
+          //   .then((successResponse) => {
+          //     this.tableData.splice(index, 1);
+          //     this.$message.success("提交成功");
+          //   })
+          //   .catch((failResponse) => {
+          //     this.$message.success("提交失败");
+          //   });
         }
       });
     },
@@ -198,19 +202,21 @@ export default {
       this.tableData.forEach((item, index) => {
         if (item.id == rowInfo.id) {
           if (confirm("确定删除吗？")) {
-            let params = {
-              id: item.id,
-            };
-            let url = "/tender/application/delete/";
-            this.$axios
-              .post(url, qs.stringify(params))
-              .then((successResponse) => {
-                this.tableData.splice(index, 1);
-                this.$message.success("删除成功");
-              })
-              .catch(() => {
-                this.$message.success("删除失败");
-              });
+            this.tableData.splice(index, 1);
+            this.$message.success("删除成功");
+            //   let params = {
+            //     id: item.id,
+            //   };
+            //   let url = "/tender/application/delete/";
+            //   this.$axios
+            //     .post(url, qs.stringify(params))
+            //     .then((successResponse) => {
+            //       this.tableData.splice(index, 1);
+            //       this.$message.success("删除成功");
+            //     })
+            //     .catch(() => {
+            //       this.$message.success("删除失败");
+            //     });
           }
         }
       });
@@ -219,19 +225,23 @@ export default {
       this.tableData.forEach((item, index) => {
         if (item.id == rowInfo.id) {
           if (confirm("确定提交吗？")) {
-            let params = {
-              id: item.id,
-            };
-            let url = "/tender/application/submit/";
-            this.$axios
-              .post(url, qs.stringify(params))
-              .then((successResponse) => {
-                this.tableData.splice(index, 1);
-                this.$message.success("提交成功");
-              })
-              .catch((failResponse) => {
-                this.$message.success("提交失败");
-              });
+            this.dialogFormAddVisable = false;
+            this.dialogFormEditVisible = false;
+            this.tableData.splice(index, 1);
+            this.$message.success("提交成功");
+            //   let params = {
+            //     id: item.id,
+            //   };
+            //   let url = "/tender/application/submit/";
+            //   this.$axios
+            //     .post(url, qs.stringify(params))
+            //     .then((successResponse) => {
+            //       this.tableData.splice(index, 1);
+            //       this.$message.success("提交成功");
+            //     })
+            //     .catch((failResponse) => {
+            //       this.$message.success("提交失败");
+            //     });
           }
         }
       });
@@ -242,89 +252,94 @@ export default {
       this.dialogFormEditVisible = true;
     },
     handleClickConfirm(editData) {
-      
       this.tableData.forEach((item, index) => {
         if (item.id == editData.id) {
-          let params = {
-            id: editData.id,
-            tender_date: editData.tender_date,
-            project_name: editData.project_name,
-            audit_type: editData.audit_type,
-            tender_block: editData.tender_block,
-            tender_offer: editData.tender_offer,
-            tender_block_sum: editData.tender_block_sum,
-            tender_share: editData.tender_share,
-            tender_flag: editData.tender_flag,
-            tender_ceiling: editData.tender_ceiling,
-            tender_discount: editData.tender_discount,
-            jing_ban_ren: editData.jing_ban_ren,
-            shen_he_ren: editData.shen_he_ren,
-            tender_contact: editData.tender_contact,
-            tender_contact_phone: editData.tender_contact_phone,
-            tender_agency_contact: editData.tender_agency_contact,
-            tender_agency_contact_phone: editData.tender_agency_contact_phone,
-            tender_specific_type: editData.tender_specific_type,
-            tender_account: editData.tender_account,
-            bank_deposit: editData.bank_deposit,
-          };
-          let url = "/tender/application/update/";
-          this.$axios
-            .post(url, qs.stringify(params))
-            .then((successResponse) => {
-              this.dialogFormEditVisible = false;
-              this.$set(this.tableData, index, editData);
-              alert("修改成功");
-            })
-            .catch((failResponse) => {
-              alert("修改失败");
-            });
-          
+          if (confirm("确定保存吗？")) {
+            this.dialogFormEditVisible = false;
+            this.$set(this.tableData, index, editData);
+            this.$message.success("修改成功");
+          }
+          // let params = {
+          //   id: editData.id,
+          //   tender_date: editData.tender_date,
+          //   project_name: editData.project_name,
+          //   audit_type: editData.audit_type,
+          //   tender_block: editData.tender_block,
+          //   tender_offer: editData.tender_offer,
+          //   tender_block_sum: editData.tender_block_sum,
+          //   tender_share: editData.tender_share,
+          //   tender_flag: editData.tender_flag,
+          //   tender_ceiling: editData.tender_ceiling,
+          //   tender_discount: editData.tender_discount,
+          //   jing_ban_ren: editData.jing_ban_ren,
+          //   shen_he_ren: editData.shen_he_ren,
+          //   tender_contact: editData.tender_contact,
+          //   tender_contact_phone: editData.tender_contact_phone,
+          //   tender_agency_contact: editData.tender_agency_contact,
+          //   tender_agency_contact_phone: editData.tender_agency_contact_phone,
+          //   tender_specific_type: editData.tender_specific_type,
+          //   tender_account: editData.tender_account,
+          //   bank_deposit: editData.bank_deposit,
+          // };
+          // let url = "/tender/application/update/";
+          // this.$axios
+          //   .post(url, qs.stringify(params))
+          //   .then((successResponse) => {
+          //     this.dialogFormEditVisible = false;
+          //     this.$set(this.tableData, index, editData);
+          //     alert("修改成功");
+          //   })
+          //   .catch((failResponse) => {
+          //     alert("修改失败");
+          //   });
         }
       });
     },
     handleAdddata(addData) {
-      
-      let params = {
-        tender_date: addData.tender_date,
-        project_name: addData.project_name,
-        audit_type: addData.audit_type,
-        tender_block: addData.tender_block,
-        tender_offer: addData.tender_offer,
-        tender_block_sum: addData.tender_block_sum,
-        tender_share: addData.tender_share,
-        tender_flag: addData.tender_flag,
-        tender_ceiling: addData.tender_ceiling,
-        tender_discount: addData.tender_discount,
-        jing_ban_ren: addData.jing_ban_ren,
-        shen_he_ren: addData.shen_he_ren,
-        tender_contact: addData.tender_contact,
-        tender_contact_phone: addData.tender_contact_phone,
-        tender_agency_contact: addData.tender_agency_contact,
-        tender_agency_contact_phone: addData.tender_agency_contact_phone,
-        tender_specific_type: addData.tender_specific_type,
-        tender_account: addData.tender_account,
-        bank_deposit: addData.bank_deposit,
-      };
-      let url = "/tender/application/add/";
-      this.$axios
-        .post(url, qs.stringify(params))
-        .then((successResponse) => {
-          this.dialogFormAddVisable = false;
-          addData.id = successResponse.data.id;
-          this.tableData.push(adddata);
-          alert("新增成功");
-        })
-        .catch((failResponse) => {
-          
-          //失败原因？
-          if(failResponse.message == "员工编号出错"){
-            alert("员工编号出错");
-          }
-          else{
-            alert("新增失败");
-          }
-        });
-      
+      this.dialogFormAddVisable = false;
+      this.tableData.push(addData);
+      alert("新增成功");
+
+      // let params = {
+      //   tender_date: addData.tender_date,
+      //   project_name: addData.project_name,
+      //   audit_type: addData.audit_type,
+      //   tender_block: addData.tender_block,
+      //   tender_offer: addData.tender_offer,
+      //   tender_block_sum: addData.tender_block_sum,
+      //   tender_share: addData.tender_share,
+      //   tender_flag: addData.tender_flag,
+      //   tender_ceiling: addData.tender_ceiling,
+      //   tender_discount: addData.tender_discount,
+      //   jing_ban_ren: addData.jing_ban_ren,
+      //   shen_he_ren: addData.shen_he_ren,
+      //   tender_contact: addData.tender_contact,
+      //   tender_contact_phone: addData.tender_contact_phone,
+      //   tender_agency_contact: addData.tender_agency_contact,
+      //   tender_agency_contact_phone: addData.tender_agency_contact_phone,
+      //   tender_specific_type: addData.tender_specific_type,
+      //   tender_account: addData.tender_account,
+      //   bank_deposit: addData.bank_deposit,
+      // };
+      // let url = "/tender/application/add/";
+      // this.$axios
+      //   .post(url, qs.stringify(params))
+      //   .then((successResponse) => {
+      //     this.dialogFormAddVisable = false;
+      //     addData.id = successResponse.data.id;
+      //     this.tableData.push(addData);
+      //     alert("新增成功");
+      //   })
+      //   .catch((failResponse) => {
+
+      //     //失败原因？
+      //     if(failResponse.message == "员工编号出错"){
+      //       alert("员工编号出错");
+      //     }
+      //     else{
+      //       alert("新增失败");
+      //     }
+      //   });
     },
     handleSubmitData(submitdata) {
       // console.log('新增表单提交', '已触发');
@@ -359,24 +374,58 @@ export default {
     },
     getList: function () {
       var current_role = this.current_role;
-      let params = {
-        current_role: current_role,
+      var data1 = {
+        id: "20180409002",
+        tender_date: "2018-09-04",
+        project_name: "湖南移动2018-2021年审计委托服务项目2",
+        audit_type: "竣工决算审计",
+        tender_block: "标段1",
+        tender_block_sum: "1300.00",
+        tender_offer: "800元/人/天",
+        tender_share: "",
+        tender_flag: "否",
+        tender_ceiling: "",
+        tender_discount: "",
+        jing_ban_ren: current_role,
+        shen_he_ren: "100",
       };
-      let url = "/tender/application/";
-      this.$axios
-        .post(url, qs.stringify(params))
-        .then((successResponse) => {
-          alert("请求成功");
-          this.tableData = successResponse.data;
-        })
-        .catch((failResponse) => {
-          alert("请求失败");
-        });
+      var data2 = {
+        id: "20180630002",
+        tender_date: "2018-06-30",
+        project_name:
+          "福建移动2018-2021年度建设项目竣工决算委托审计服务公开比选集中采购项目（第一轮）",
+        audit_type: "竣工决算审计",
+        tender_block: "标段1",
+        tender_block_sum: "2521.42",
+        tender_offer: "68%",
+        tender_share: "15%",
+        tender_flag: "是",
+        tender_ceiling: "2571848.4",
+        tender_discount: "68%",
+        jing_ban_ren: current_role,
+        shen_he_ren: "100",
+      };
+      this.tableData.push(data1);
+      this.tableData.push(data2);
+      // let params = {
+      //   current_role: current_role,
+      // };
+      // let url = "/tender/application/";
+      // this.$axios
+      //   .post(url, qs.stringify(params))
+      //   .then((successResponse) => {
+      //     alert("请求成功");
+      //     this.tableData = successResponse.data;
+      //   })
+      //   .catch((failResponse) => {
+      //     alert("请求失败");
+      //   });
     },
   },
   mounted: function () {
     this.getCurrentRole();
     this.getList();
+    console.log("tableData", this.tableData);
   },
 };
 </script>

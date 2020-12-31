@@ -118,17 +118,51 @@ export default {
       this.handleClickChange(item) 
     },
     getList: function(){
-      let params={};
-      let url='/tender/publicity'
-      this.$axios
-      .post(url,qs.stringify(params))
-      .then(successResponse=>{
-        alert('请求成功')
-        this.tableData=successResponse.data
-      })
-      .catch(failResponse=>{
-        alert('请求失败')
-      })
+      var current_role = this.current_role;
+      var data1 = {
+        id: "20180409002",
+        tender_date: "2018-09-04",
+        project_name: "湖南移动2018-2021年审计委托服务项目2",
+        audit_type: "竣工决算审计",
+        tender_block: "标段1",
+        tender_block_sum: "1300.00",
+        tender_offer: "800元/人/天",
+        tender_share: "",
+        tender_flag: "否",
+        tender_ceiling: "",
+        tender_discount: "",
+        jing_ban_ren: "151515",
+        shen_he_ren: "100",
+      };
+      var data2 = {
+        id: "20180630002",
+        tender_date: "2018-06-30",
+        project_name:
+          "福建移动2018-2021年度建设项目竣工决算委托审计服务公开比选集中采购项目（第一轮）",
+        audit_type: "竣工决算审计",
+        tender_block: "标段1",
+        tender_block_sum: "2521.42",
+        tender_offer: "68%",
+        tender_share: "15%",
+        tender_flag: "是",
+        tender_ceiling: "2571848.4",
+        tender_discount: "68%",
+        jing_ban_ren: "4515",
+        shen_he_ren: "100",
+      };
+      this.tableData.push(data1);
+      this.tableData.push(data2);
+      // let params={};
+      // let url='/tender/publicity'
+      // this.$axios
+      // .post(url,qs.stringify(params))
+      // .then(successResponse=>{
+      //   alert('请求成功')
+      //   this.tableData=successResponse.data
+      // })
+      // .catch(failResponse=>{
+      //   alert('请求失败')
+      // })
     },
   },
   mounted: function() {

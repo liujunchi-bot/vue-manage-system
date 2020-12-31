@@ -60,8 +60,8 @@
         <el-button type="primary" @click="addRow">新增</el-button>
         <el-button type="primary" @click="exportRow">导出</el-button>
       </div>
-      <common-form inline :formLabel="formLabel" :form="searchFrom">
-        <el-button type="primary" @click="searchKey(searchFrom.keyword)"
+      <common-form inline :formLabel="formLabel" :form="searchForm">
+        <el-button type="primary" @click="searchKey(searchForm.keyword)"
           >搜索</el-button
         >
         <el-button type="info" @click="getList()">重置</el-button>
@@ -383,7 +383,7 @@ export default {
           { type: 'number', message: '审减金额需输入数字（万元）', trigger: 'blur', transform: (value) => Number(value)}
         ],
       },
-      searchFrom: {
+      searchForm: {
         keyword: ''
       },
       fileList: [

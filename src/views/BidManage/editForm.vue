@@ -255,7 +255,7 @@ export default {
   inheritAttrs: false,
   components: {},
   props: {
-    editdata: Object,
+    editData: Object,
     reflash: Function,
     Submit: Function,
   },
@@ -365,7 +365,7 @@ export default {
   mounted() {},
   methods: {
     onOpen() {
-      this.formData = this.editdata;
+      this.formData = this.editData;
       // console.log('form', this.formData)
       // console.log('index', this.index)
     },
@@ -378,37 +378,35 @@ export default {
     handelConfirm() {
       this.$refs["ApplicationForm"].validate((valid) => {
         if (!valid) return;
-        if (confirm("确定保存吗？")) {
-          let data = {
-            id: undefined,
-            tender_date: undefined,
-            project_name: undefined,
-            audit_type: undefined,
-            tender_block: undefined,
-            tender_offer: undefined,
-            tender_block_sum: undefined,
-            tender_share: undefined,
-            tender_flag: undefined,
-            tender_ceiling: undefined,
-            tender_discount: undefined,
-            jing_ban_ren: undefined,
-            shen_he_ren: undefined,
+        let data = {
+          id: undefined,
+          tender_date: undefined,
+          project_name: undefined,
+          audit_type: undefined,
+          tender_block: undefined,
+          tender_offer: undefined,
+          tender_block_sum: undefined,
+          tender_share: undefined,
+          tender_flag: undefined,
+          tender_ceiling: undefined,
+          tender_discount: undefined,
+          jing_ban_ren: undefined,
+          shen_he_ren: undefined,
 
-            tender_contact: undefined,
-            tender_contact_phone: undefined,
-            tender_agency_contact: undefined,
-            tender_agency_contact_phone: undefined,
-            tender_specific_type: undefined,
-            tender_account: undefined,
-            bank_deposit: undefined,
-          };
-          for (var key in this.formData) {
-            data[key] = this.formData[key];
-          }
-          // console.log('editData',data)
-          this.reflash(data);
-          // this.$message.success("修改成功");
+          tender_contact: undefined,
+          tender_contact_phone: undefined,
+          tender_agency_contact: undefined,
+          tender_agency_contact_phone: undefined,
+          tender_specific_type: undefined,
+          tender_account: undefined,
+          bank_deposit: undefined,
+        };
+        for (var key in this.formData) {
+          data[key] = this.formData[key];
         }
+        // console.log('editData',data)
+        this.reflash(data);
+        // this.$message.success("修改成功");
       });
     },
     handelSubmit() {
