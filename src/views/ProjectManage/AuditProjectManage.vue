@@ -160,14 +160,12 @@ export default {
           label: '项目负责人',
         },
         {
-          model: 'project_starttime',
+          prop: 'project_starttime',
           label: '项目开始时间',
-          type: 'date'
         },
         {
-          model: 'project_endtime',
+          prop: 'project_endtime',
           label: '项目结束时间',
-          type: 'date'
         },
         {
           prop: 'project_members',
@@ -349,15 +347,15 @@ export default {
         },
         {
           model: 'project_assets',
-          label: '资产总额'
+          label: '资产总额(万元)'
         },
         {
           model: 'project_audit',
-          label: '审计金额'
+          label: '审计金额(万元)'
         },
         {
           model: 'project_reduction',
-          label: '审减金额'
+          label: '审减金额(万元)'
         }
       ],
       rules: {
@@ -501,7 +499,7 @@ export default {
       }
     },
     onBeforeUpload (file) {
-      // console.log(file)
+      console.log(file)
 
       const isIMAGE = (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg");
       const isDOCUMENT = (file.type === "application/pdf" ||
@@ -512,10 +510,10 @@ export default {
       const isZip = (file.type === "application/x-zip-compressed");
       const isLt100M = file.size / 1024 / 1024 < 100;
       
-      // console.log("isIMAGE",isIMAGE);
-      // console.log("isDOCUMENT",isDOCUMENT);
-      // console.log("isZip",isZip);
-      // console.log("isLt100M",isLt100M);
+      console.log("isIMAGE",isIMAGE);
+      console.log("isDOCUMENT",isDOCUMENT);
+      console.log("isZip",isZip);
+      console.log("isLt100M",isLt100M);
 
       if (!isIMAGE && !isDOCUMENT && !isZip) {
         this.$message.error('不支持此格式文件上传！');
@@ -723,7 +721,6 @@ export default {
           {
             if (this.fileList.length != 0 && !this.onBeforeUpload(this.fileList[0].raw))
             {
-              console.log("length",this.fileList.length);
               this.fileList.splice(0, 1);
               return false;
             }
@@ -746,7 +743,6 @@ export default {
               axios._post('http://8.129.86.121:80/project/update', formdata).then(res => {
                 this.$message.success("更新项目成功！");
                 this.isShow = false;
-                // console.log("Inserted " + res);//res是返回插入数据的id
                 this.getList()
               }, err => {
                 alert("error!!!");

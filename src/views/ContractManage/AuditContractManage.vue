@@ -88,6 +88,23 @@ export default {
     AuditFileTable,
   },
   data () {
+      let isPriceValidator = (rule, value, callback) => {
+      if (!value)
+      {
+        callback();
+      } else
+      {
+        var reg = /^-?\d{1,252}(?:\.\d{1,3})?$/; //小数点左边最高4位，小数点右边最多4位
+        if (reg.test(value))
+        {
+          callback();
+        }
+        else
+        {
+          callback(new Error("输入正确的数字,小数点后可1到3位"));
+        }
+      }
+    };
     return {
       loadProgress: 0, // 动态显示进度条
       progressFlag: false, // 关闭进度条
@@ -242,8 +259,8 @@ export default {
           { type: "enum", enum: ['合同'], required: true, message: '请选择类型', trigger: 'blur' }
         ],
         contract_amount: [
-          {type: 'number', required: true, message: '请输入合同金额',trigger:'blur', transform: (value) => Number(value)},
-          {min: 0, max: Math.pow(2,253),message: '合同金额大小不可为0', trigger: 'blur' }
+          { required: true, message: '请输入合同金额（万元）',trigger:'blur',},
+          { validator: isPriceValidator, message: '合同金额只能输入数字', trigger: 'blur' }
         ],
         file_project: [
           { message: '请输入合同相关项目', trigger: 'blur' },
@@ -438,7 +455,10 @@ export default {
             if (this.operateType === "edit") {
               let formdata = new FormData();
               for (var key in this.operateForm) {
-                formdata.append(key, this.operateForm[key])
+                if (key != "issue_state" && key != "submit_state")
+                {
+                  formdata.append(key, this.operateForm[key])
+                }
               }
 
               if (this.fileList.length != 0) {
@@ -456,8 +476,6 @@ export default {
                   message: "更新合同失败",
                   type: "error"
                 });
-                console.log(JSON.stringify(formdata));
-                console.log(formdata);
               })
             }
           } else {
