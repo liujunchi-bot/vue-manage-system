@@ -51,31 +51,11 @@ export default {
                 url: 'Front/Knowledge'
               },
               {
+                path: "/tender",
+                name: "投标管理",
                 label: "投标管理",
                 icon: "position",
-                children: [
-                  {
-                    path: "/BidPublicity",
-                    name: "BidPublicity",
-                    label: "投标公示",
-                    icon: "document",
-                    url: "BidManage/BidPublicity"
-                  },
-                  {
-                    path: "/BidApplication",
-                    name: "BidApplication",
-                    label: "投标申请",
-                    icon: "document",
-                    url: "BidManage/BidApplication"
-                  },
-                  {
-                    path: "/BidExamine",
-                    name: "BidExamine",
-                    label: "投标审核",
-                    icon: "document",
-                    url: "BidManage/BidExamine"
-                  }
-                ]
+                url: 'TenderManage/TenderManage'
               },
             ],
             token: Mock.Random.guid(),
@@ -124,31 +104,11 @@ export default {
                 url: 'Front/Knowledge'
               },
               {
+                path: "/tender",
+                name: "投标管理",
                 label: "投标管理",
                 icon: "position",
-                children: [
-                  {
-                    path: "/BidPublicity",
-                    name: "BidPublicity",
-                    label: "投标公示",
-                    icon: "document",
-                    url: "BidManage/BidPublicity"
-                  },
-                  {
-                    path: "/BidApplication",
-                    name: "BidApplication",
-                    label: "投标申请",
-                    icon: "document",
-                    url: "BidManage/BidApplication"
-                  },
-                  {
-                    path: "/BidExamine",
-                    name: "BidExamine",
-                    label: "投标审核",
-                    icon: "document",
-                    url: "BidManage/BidExamine"
-                  }
-                ]
+                url: 'TenderManage/AuditTenderManage'
               },
             ],
             token: Mock.Random.guid(),
