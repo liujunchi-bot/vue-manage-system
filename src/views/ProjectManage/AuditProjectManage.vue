@@ -499,7 +499,7 @@ export default {
       }
     },
     onBeforeUpload (file) {
-      console.log(file)
+      // console.log(file)
 
       const isIMAGE = (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg");
       const isDOCUMENT = (file.type === "application/pdf" ||
@@ -510,10 +510,10 @@ export default {
       const isZip = (file.type === "application/x-zip-compressed");
       const isLt100M = file.size / 1024 / 1024 < 100;
       
-      console.log("isIMAGE",isIMAGE);
-      console.log("isDOCUMENT",isDOCUMENT);
-      console.log("isZip",isZip);
-      console.log("isLt100M",isLt100M);
+      // console.log("isIMAGE",isIMAGE);
+      // console.log("isDOCUMENT",isDOCUMENT);
+      // console.log("isZip",isZip);
+      // console.log("isLt100M",isLt100M);
 
       if (!isIMAGE && !isDOCUMENT && !isZip) {
         this.$message.error('不支持此格式文件上传！');
@@ -712,6 +712,10 @@ export default {
         this.tableData = dataList;
         this.config.loading = false;
         this.config.total = this.tableData.length;
+        if (this.tableData.length == 0)
+        {
+          this.config.currentPage = 0;
+        }
       }
     },
     confirm () {

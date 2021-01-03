@@ -501,16 +501,7 @@ export default {
       }
     },
     onBeforeUpload (file) {
-      // if (this.loadProgress != 100)
-      // {
-      //   this.$message({
-      //       type: "error",
-      //       message: "文件上传尚未完成，请等待"
-      //     });
-      //   return false;
-      // }
-      // this.loadProgress = 0;
-      console.log(file)
+      // console.log(file)
       const isIMAGE = (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg");
       const isDOCUMENT = (file.type === "application/pdf" ||
                           file.type === "application/msword" ||
@@ -520,10 +511,10 @@ export default {
       const isZip = (file.type === "application/x-zip-compressed");
       const isLt100M = file.size / 1024 / 1024 < 100;
       
-      console.log("isIMAGE",isIMAGE);
-      console.log("isDOCUMENT",isDOCUMENT);
-      console.log("isZip",isZip);
-      console.log("isLt100M",isLt100M);
+      // console.log("isIMAGE",isIMAGE);
+      // console.log("isDOCUMENT",isDOCUMENT);
+      // console.log("isZip",isZip);
+      // console.log("isLt100M",isLt100M);
 
       if (!isIMAGE && !isDOCUMENT && !isZip) {
         this.$message({
@@ -797,6 +788,10 @@ export default {
         this.tableData = dataList;
         this.config.loading = false;
         this.config.total = this.tableData.length;
+        if (this.tableData.length == 0)
+        {
+          this.config.currentPage = 0;
+        }
       }
     }
   },
