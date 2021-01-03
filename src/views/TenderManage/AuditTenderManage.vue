@@ -61,7 +61,7 @@
         <el-button type="info" @click="getList()">重置</el-button>
       </common-form>
     </div>
-    <audit-tender-table
+    <audit-file-table
       :tableData="tableData"
       :tableLabel="tableLabel"
       :config="config"
@@ -71,13 +71,13 @@
       @changePage="handlePageChange"
       @changeSize="handleSizeChange"
       id="out-table"
-    ></audit-tender-table>
+    ></audit-file-table>
   </div>
 </template>
 
 <script>
 import CommonForm from "../../components/CommonForm";
-import AuditTenderTable from "../../components/AuditTenderTable";
+import AuditFileTable from "../../components/AuditFileTable";
 import FileForm from "../../components/FileForm";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
@@ -86,7 +86,7 @@ import qs from "qs";
 export default {
   components: {
     CommonForm,
-    AuditTenderTable,
+    AuditFileTable,
     FileForm,
   },
   data() {

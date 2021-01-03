@@ -74,7 +74,7 @@
       </common-form>
     </div>
 
-    <tender-table
+    <file-table
       :tableData="tableData"
       :tableLabel="tableLabel"
       :config="config"
@@ -84,13 +84,13 @@
       @changePage="handlePageChange"
       @changeSize="handleSizeChange"
       id="out-table"
-    ></tender-table>
+    ></file-table>
   </div>
 </template>
 
 <script>
 import CommonForm from "../../components/CommonForm";
-import TenderTable from "../../components/TenderTable";
+import FileTable from "../../components/FileTable";
 import FileForm from "../../components/FileForm";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
@@ -99,7 +99,7 @@ import qs from "qs";
 export default {
   components: {
     CommonForm,
-    TenderTable,
+    FileTable,
     FileForm,
   },
   data() {
@@ -490,8 +490,8 @@ export default {
     getList(name = "") {
       this.config.loading = true;
       name ? (this.config.page = 1) : "";
-      // axios._get("http://8.129.86.121:80/tender/getAllTender").then(
-      axios._get("").then(
+      axios._get("http://8.129.86.121:80/tender/getAllTender").then(
+      // axios._get("").then(
         (res) => {
           this.$message.success("获取投标列表成功！");
           this.tableData = res;
