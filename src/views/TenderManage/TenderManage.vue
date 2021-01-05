@@ -4,13 +4,13 @@
       :title="operateType === 'add' ? '新增投标' : '更新投标信息'"
       :visible.sync="isShow"
     >
-      <file-form
+      <tender-form
         :inline="false"
         :formLabel="operateFormLabel"
-        :fileForm="operateForm"
+        :tenderForm="operateForm"
         :rules="rules"
-        ref="fileForm"
-      ></file-form>
+        ref="tenderForm"
+      ></tender-form>
       <!-- action表示文件要上传到的后台API地址 -->
       <el-upload
         class="upload-demo"
@@ -91,7 +91,7 @@
 <script>
 import CommonForm from "../../components/CommonForm";
 import FileTable from "../../components/FileTable";
-import FileForm from "../../components/FileForm";
+import TenderForm from "../../components/TenderForm";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import axios from "../../axios/ajax";
@@ -100,13 +100,15 @@ export default {
   components: {
     CommonForm,
     FileTable,
-    FileForm,
+    TenderForm,
   },
   data() {
     let isLessTenDigits = (rule, value, callback) => {
       setTimeout(() => {
         if (!value) {
-          return callback();
+          callback();
+        } else if (!Number(value)) {
+          callback(new Error("请输入数字！"));
         } else {
           const re = /^\d{0,1}(\d{0,9})(\.\d*)?$/;
           const rsCheck = re.test(value);
@@ -121,7 +123,9 @@ export default {
     let isLessOneDigits = (rule, value, callback) => {
       setTimeout(() => {
         if (!value) {
-          return callback();
+          callback();
+        } else if (!Number(value)) {
+          callback(new Error("请输入数字！"));
         } else if (value > 1.0) {
           callback(new Error("请输入小于1的数字"));
         } else {
@@ -135,6 +139,24 @@ export default {
         }
       }, 1000);
     };
+    let isSpecialChar = (rule, value, callback) => {
+      setTimeout(() => {
+        if (!value) {
+          return callback();
+        } else if (value.length > 255) {
+          callback(new Error("输入长度需要在255 个字符以内！"));
+        } else {
+          const re = /`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘'，。、]/;
+          const rsCheck = re.test(value);
+          if (!rsCheck) {
+            callback(new Error("含非字母数字的特殊字符，请重新输入！"));
+          } else {
+            callback();
+          }
+        }
+      }, 1000);
+    };
+
     return {
       loadProgress: 0, // 动态显示进度条
       progressFlag: false, // 关闭进度条
@@ -195,7 +217,7 @@ export default {
           label: "中标份额",
           width: 80,
         },
-        
+
         {
           prop: "tender_ceiling",
           label: "中标合同上限(含税)",
@@ -276,7 +298,7 @@ export default {
         },
         {
           model: "tender_block_sum",
-          label: "标段预估金额(含税)(万元)",
+          label: "标段预估金额(含税)",
           width: 160,
         },
         {
@@ -318,32 +340,28 @@ export default {
         ],
         project_name: [
           { required: true, message: "请输入项目名称", trigger: "blur" },
-          {
-            min: 4,
-            max: 255,
-            message: "项目名称长度需要在 4 到 255 个字符",
-            trigger: "blur",
-          },
+          { validator: isSpecialChar, trigger: "blur" },
         ],
         audit_type: [
           { required: true, message: "请输入投标类型", trigger: "blur" },
-          { max: 255, message: "投标类型长度最高255 个字符", trigger: "blur" },
+          { validator: isSpecialChar, trigger: "blur" },
         ],
         tender_block: [
           { required: true, message: "请输入标段", trigger: "blur" },
-          { max: 255, message: "标段长度最高255 个字符", trigger: "blur" },
+          { validator: isSpecialChar, trigger: "blur" },
         ],
         tender_offer: [
           { required: true, message: "请输入投标报价", trigger: "blur" },
-          { max: 255, message: "投标报价最高255 个字符", trigger: "blur" },
+          { validator: isSpecialChar, trigger: "blur" },
         ],
         tender_block_sum: [
-          { required: true, message: "请输入标段报价", trigger: "blur" },
+          { required: true, message: "请输入标段预估金额", trigger: "blur" },
           { validator: isLessTenDigits, trigger: "blur" },
         ],
         tender_share: [{ validator: isLessOneDigits, trigger: "blur" }],
         tender_ceiling: [
           { max: 255, message: "中标上限最高255 个字符", trigger: "blur" },
+          { validator: isSpecialChar, trigger: "blur" },
         ],
         tender_discount: [{ validator: isLessOneDigits, trigger: "blur" }],
         tender_flag: [
@@ -491,7 +509,7 @@ export default {
       this.config.loading = true;
       name ? (this.config.page = 1) : "";
       axios._get("http://8.129.86.121:80/tender/getAllTender").then(
-      // axios._get("").then(
+        // axios._get("").then(
         (res) => {
           this.$message.success("获取投标列表成功！");
           this.tableData = res;
@@ -548,7 +566,7 @@ export default {
       this.operateForm = row;
     },
     confirm() {
-      this.$refs.fileForm.$children[0].validate((valid) => {
+      this.$refs.tenderForm.$children[0].validate((valid) => {
         if (valid) {
           if (
             this.fileList.length != 0 &&
