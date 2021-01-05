@@ -61,7 +61,7 @@
         <el-button type="info" @click="getList()">重置</el-button>
       </common-form>
     </div>
-    <audit-file-table
+    <project-check-table
       :tableData="tableData"
       :tableLabel="tableLabel"
       :config="config"
@@ -71,13 +71,13 @@
       @changePage="handlePageChange"
       @changeSize="handleSizeChange"
       id="out-table"
-    ></audit-file-table>
+    ></project-check-table>
   </div>
 </template>
 
 <script>
 import CommonForm from "../../components/CommonForm";
-import AuditFileTable from "../../components/AuditFileTable";
+import ProjectCheckTable from "../../components/ProjectCheckTable";
 import TenderForm from "../../components/TenderForm";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
@@ -86,7 +86,7 @@ import qs from "qs";
 export default {
   components: {
     CommonForm,
-    AuditFileTable,
+    ProjectCheckTable,
     TenderForm,
   },
   data() {
@@ -221,7 +221,7 @@ export default {
           type: "link",
         },
         {
-          prop: "operatorname",
+          prop: "staff_namej",
           label: "经办人",
           width: 100,
           type: "name",
@@ -232,7 +232,7 @@ export default {
           width: 100,
         },
         {
-          prop: "checker",
+          prop: "staff_names",
           label: "审核人",
           width: 100,
           type: "name",

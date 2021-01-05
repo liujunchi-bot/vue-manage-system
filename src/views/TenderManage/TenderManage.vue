@@ -74,7 +74,7 @@
       </common-form>
     </div>
 
-    <file-table
+    <project-table
       :tableData="tableData"
       :tableLabel="tableLabel"
       :config="config"
@@ -84,13 +84,13 @@
       @changePage="handlePageChange"
       @changeSize="handleSizeChange"
       id="out-table"
-    ></file-table>
+    ></project-table>
   </div>
 </template>
 
 <script>
 import CommonForm from "../../components/CommonForm";
-import FileTable from "../../components/FileTable";
+import ProjectTable from "../../components/ProjectTable";
 import TenderForm from "../../components/TenderForm";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
@@ -99,7 +99,7 @@ import qs from "qs";
 export default {
   components: {
     CommonForm,
-    FileTable,
+    ProjectTable,
     TenderForm,
   },
   data() {
@@ -245,7 +245,7 @@ export default {
           width: 100,
         },
         {
-          prop: "checker",
+          prop: "staff_names",
           label: "审核人",
           width: 100,
           type: "name",
