@@ -15,6 +15,24 @@
         <template slot="append">万元</template>
         </el-input>
       </template>
+      <template v-else-if="item.model==='tender_offer'">
+        <el-input
+          v-model="tenderForm[item.model]"
+          :placeholder="'请输入' + item.label"
+          v-if="!item.type"
+        >
+        <template slot="append">万元</template>
+        </el-input>
+      </template>
+      <template v-else-if="item.model==='tender_ceiling'">
+        <el-input
+          v-model="tenderForm[item.model]"
+          :placeholder="'请输入' + item.label"
+          v-if="!item.type"
+        >
+        <template slot="append">万元</template>
+        </el-input>
+      </template>
       <template v-else>
         <el-input
           v-model="tenderForm[item.model]"

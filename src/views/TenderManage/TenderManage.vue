@@ -80,7 +80,7 @@
       :config="config"
       @edit="editRow"
       @del="delRow"
-      @submit="submitTender"
+      @sub="submitTender"
       @changePage="handlePageChange"
       @changeSize="handleSizeChange"
       id="out-table"
@@ -120,25 +120,25 @@ export default {
         }
       }, 1000);
     };
-    let isLessOneDigits = (rule, value, callback) => {
-      setTimeout(() => {
-        if (!value) {
-          callback();
-        } else if (!Number(value)) {
-          callback(new Error("请输入数字！"));
-        } else if (value > 1.0) {
-          callback(new Error("请输入小于1的数字"));
-        } else {
-          const re = /^\d{0,1}(\d{0,1})(\.{0,1}\d*)?$/;
-          const rsCheck = re.test(value);
-          if (!rsCheck) {
-            callback(new Error("小数点前最多1位数字"));
-          } else {
-            callback();
-          }
-        }
-      }, 1000);
-    };
+    // let isLessOneDigits = (rule, value, callback) => {
+    //   setTimeout(() => {
+    //     if (!value) {
+    //       callback();
+    //     } else if (!Number(value)) {
+    //       callback(new Error("请输入数字！"));
+    //     } else if (value > 1.0) {
+    //       callback(new Error("请输入小于1.0的数字"));
+    //     } else {
+    //       const re = /^\d{0,1}(\d{0,1})(\.{0,1}\d*)?$/;
+    //       const rsCheck = re.test(value);
+    //       if (!rsCheck) {
+    //         callback(new Error("小数点前最多1位数字"));
+    //       } else {
+    //         callback();
+    //       }
+    //     }
+    //   }, 1000);
+    // };
     let isSpecialChar = (rule, value, callback) => {
       setTimeout(() => {
         if (!value) {
@@ -146,10 +146,11 @@ export default {
         } else if (value.length > 255) {
           callback(new Error("输入长度需要在255 个字符以内！"));
         } else {
-          const re = /`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘'，。、]/;
+          // const re = /[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘'，。、]/;
+          const re = /[【】]/;
           const rsCheck = re.test(value);
-          if (!rsCheck) {
-            callback(new Error("含非字母数字的特殊字符，请重新输入！"));
+          if (rsCheck) {
+            callback(new Error("输入不能包含【】，请重新输入！"));
           } else {
             callback();
           }
@@ -199,12 +200,12 @@ export default {
         },
         {
           prop: "tender_offer",
-          label: "投标报价",
+          label: "投标报价(万元)",
           width: 80,
         },
         {
           prop: "tender_block_sum",
-          label: "标段预估金额(含税)(万元)",
+          label: "含税标段预估金额(万元)",
           width: 80,
         },
         {
@@ -220,7 +221,7 @@ export default {
 
         {
           prop: "tender_ceiling",
-          label: "中标合同上限(含税)",
+          label: "含税中标合同上限(万元)",
           width: 80,
         },
         {
@@ -298,7 +299,7 @@ export default {
         },
         {
           model: "tender_block_sum",
-          label: "标段预估金额(含税)",
+          label: "含税标段预估金额",
           width: 160,
         },
         {
@@ -325,7 +326,7 @@ export default {
 
         {
           model: "tender_ceiling",
-          label: "中标合同上限(含税)",
+          label: "含税中标合同上限",
           width: 200,
         },
         {
@@ -358,12 +359,9 @@ export default {
           { required: true, message: "请输入标段预估金额", trigger: "blur" },
           { validator: isLessTenDigits, trigger: "blur" },
         ],
-        tender_share: [{ validator: isLessOneDigits, trigger: "blur" }],
-        tender_ceiling: [
-          { max: 255, message: "中标上限最高255 个字符", trigger: "blur" },
-          { validator: isSpecialChar, trigger: "blur" },
-        ],
-        tender_discount: [{ validator: isLessOneDigits, trigger: "blur" }],
+        tender_share: [{ validator: isSpecialChar, trigger: "blur" }],
+        tender_ceiling: [{ validator: isSpecialChar, trigger: "blur" }],
+        tender_discount: [{ validator: isSpecialChar, trigger: "blur" }],
         tender_flag: [
           { required: true, message: "请选择是否中标", trigger: "blur" },
           {
