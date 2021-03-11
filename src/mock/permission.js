@@ -142,6 +142,41 @@ export default {
                 label: '用户管理',
                 icon: 'user',
                 url: 'UserManage/AllUser'
+              },
+              {
+                path: '/adminproject',
+                name: 'adminproject',
+                label: '项目管理',
+                icon: 'user',
+                url: 'ProjectManage/AdminProjectManage'
+              },
+              {
+                path: "/adminfile",
+                name: "adminfile",
+                label: "文档管理",
+                icon: "location",
+                url: "FileManage/AdminFileManage"
+              },
+              {
+                path: '/admincontract',
+                name: 'admincontract',
+                label: '合同管理',
+                icon: 'video-play',
+                url: 'ContractManage/AdminContractManage'
+              },
+              {
+                path: "/knowledge",
+                name: "问答维护",
+                label: '问答维护',
+                icon: 'setting',
+                url: 'Front/Knowledge'
+              },
+              {
+                path: "/tender",
+                name: "投标管理",
+                label: "投标管理",
+                icon: "position",
+                url: 'TenderManage/AdminTenderManage'
               }
             ],
             token: Mock.Random.guid(),
